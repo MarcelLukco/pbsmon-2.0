@@ -1,0 +1,2969 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "controlplane-001",
+          "instance": "10.16.88.11:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810200915968"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "controlplane-002",
+          "instance": "10.16.88.12:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810200915968"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "controlplane-003",
+          "instance": "10.16.88.13:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810200911872"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "controlplane-004",
+          "instance": "10.16.88.14:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810200920064"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "controlplane-005",
+          "instance": "10.16.88.15:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810200928256"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-001-ics",
+          "instance": "10.16.88.81:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810248503296"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-002-ics",
+          "instance": "10.16.88.82:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810248507392"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-003-ics",
+          "instance": "10.16.88.83:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810248503296"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-004-ics",
+          "instance": "10.16.88.84:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810248609792"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-005-ics",
+          "instance": "10.16.88.85:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810239852544"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-006-ics",
+          "instance": "10.16.88.86:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810248495104"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-008-ics",
+          "instance": "10.16.88.88:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810238173184"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-009-ics",
+          "instance": "10.16.88.89:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810248495104"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cra-012-ics",
+          "instance": "10.16.88.92:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810248499200"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-001-ics",
+          "instance": "10.16.88.171:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996115456"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-003-ics",
+          "instance": "10.16.88.173:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996115456"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-004-ics",
+          "instance": "10.16.88.174:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1081853935616"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-005-ics",
+          "instance": "10.16.88.175:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996103168"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-006-ics",
+          "instance": "10.16.88.176:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996115456"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-007-ics",
+          "instance": "10.16.88.177:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996090880"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-008-ics",
+          "instance": "10.16.88.178:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019393024"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-009-ics",
+          "instance": "10.16.88.179:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996205568"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-010-ics",
+          "instance": "10.16.88.180:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996094976"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-011-ics",
+          "instance": "10.16.88.181:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019388928"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-014-ics",
+          "instance": "10.16.88.184:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996123648"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-015-ics",
+          "instance": "10.16.88.185:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996107264"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-016-fss",
+          "instance": "10.16.88.186:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623004561408"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crd-017-fss",
+          "instance": "10.16.88.187:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623004528640"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cre-001-rcx",
+          "instance": "10.16.88.211:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996213760"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cre-002-rcx",
+          "instance": "10.16.88.212:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019474944"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cre-003-rcx",
+          "instance": "10.16.88.213:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1555358810112"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cre-004-rcx",
+          "instance": "10.16.88.214:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996111360"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cre-005-rcx",
+          "instance": "10.16.88.215:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996099072"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cre-006-rcx",
+          "instance": "10.16.88.216:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996090880"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "cre-007-rcx",
+          "instance": "10.16.88.217:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1622996115456"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-001-ics",
+          "instance": "10.16.88.21:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201653248"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-002-ics",
+          "instance": "10.16.88.22:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201632768"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-003-ics",
+          "instance": "10.16.88.23:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201993216"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-004-ics",
+          "instance": "10.16.88.24:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201632768"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-005-ics",
+          "instance": "10.16.88.25:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201628672"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-006-ics",
+          "instance": "10.16.88.26:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810202005504"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-007-ics",
+          "instance": "10.16.88.27:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201628672"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-008-ics",
+          "instance": "10.16.88.28:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201645056"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-009-ics",
+          "instance": "10.16.88.29:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201645056"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-010-ics",
+          "instance": "10.16.88.30:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201636864"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-011-ics",
+          "instance": "10.16.88.31:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201620480"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-012-ics",
+          "instance": "10.16.88.32:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201649152"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-013-ics",
+          "instance": "10.16.88.33:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810591883264"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-014-ics",
+          "instance": "10.16.88.34:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201632768"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "crf-021-ics",
+          "instance": "10.16.88.20:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810591883264"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "gla-005-ics",
+          "instance": "10.16.88.195:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "404106125312"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "gla-009-ics",
+          "instance": "10.16.88.199:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "404148862976"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-005-eli",
+          "instance": "10.16.88.105:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "743636635648"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-006-eli",
+          "instance": "10.16.88.106:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225360896"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-007-eli",
+          "instance": "10.16.88.107:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225364992"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-010-eli",
+          "instance": "10.16.88.110:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225307648"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-011-eli",
+          "instance": "10.16.88.111:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236112896"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-012-eli",
+          "instance": "10.16.88.112:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225336320"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-017-eli",
+          "instance": "10.16.88.117:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236116992"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-018-eli",
+          "instance": "10.16.88.118:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236100608"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-019-eli",
+          "instance": "10.16.88.119:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236026880"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-020-eli",
+          "instance": "10.16.88.120:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236121088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-022-eli",
+          "instance": "10.16.88.122:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236121088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-024-eli",
+          "instance": "10.16.88.124:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236121088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-025-eli",
+          "instance": "10.16.88.125:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236026880"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-028-eli",
+          "instance": "10.16.88.128:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236108800"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-030-eli",
+          "instance": "10.16.88.130:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225344512"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-031-eli",
+          "instance": "10.16.88.131:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225360896"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-032-eli",
+          "instance": "10.16.88.132:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225381376"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-034-eli",
+          "instance": "10.16.88.134:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236121088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-035-eli",
+          "instance": "10.16.88.135:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236121088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-036-eli",
+          "instance": "10.16.88.136:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225405952"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-037-eli",
+          "instance": "10.16.88.137:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225340416"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-039-eli",
+          "instance": "10.16.88.139:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236100608"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-040-eli",
+          "instance": "10.16.88.140:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236137472"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-046-eli",
+          "instance": "10.16.88.146:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225389568"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-048-eli",
+          "instance": "10.16.88.148:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236104704"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-050-eli",
+          "instance": "10.16.88.150:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810225369088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hda-053-eli",
+          "instance": "10.16.88.153:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810236403712"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdb-001-rcx",
+          "instance": "10.16.88.201:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019372544"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdb-003-rcx",
+          "instance": "10.16.88.203:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019368448"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdb-004-rcx",
+          "instance": "10.16.88.204:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019393024"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdb-005-rcx",
+          "instance": "10.16.88.205:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019483136"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdb-007-rcx",
+          "instance": "10.16.88.207:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1623019474944"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-001-cerit",
+          "instance": "10.16.88.36:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540740251648"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-002-cerit",
+          "instance": "10.16.88.37:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540740239360"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-003-cerit",
+          "instance": "10.16.88.38:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540740231168"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-004-cerit",
+          "instance": "10.16.88.39:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540740235264"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-005-cerit",
+          "instance": "10.16.88.40:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540740235264"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-006-cerit",
+          "instance": "10.16.88.41:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540738527232"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-007-cerit",
+          "instance": "10.16.88.42:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540740247552"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-008-cerit",
+          "instance": "10.16.88.48:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540745908224"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdg-009-cerit",
+          "instance": "10.16.88.49:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540738568192"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdh-001-cerit",
+          "instance": "10.16.88.35:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540738531328"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdh-002-cerit",
+          "instance": "10.16.88.43:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540740222976"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdh-003-cerit",
+          "instance": "10.16.88.44:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540738531328"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdh-004-cerit",
+          "instance": "10.16.88.45:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540738494464"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdh-005-cerit",
+          "instance": "10.16.88.46:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540745834496"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-001-meta",
+          "instance": "10.16.88.51:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863393792"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-002-meta",
+          "instance": "10.16.88.52:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863389696"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-003-meta",
+          "instance": "10.16.88.53:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863414272"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-004-meta",
+          "instance": "10.16.88.54:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540862820352"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-005-meta",
+          "instance": "10.16.88.55:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540861751296"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-006-meta",
+          "instance": "10.16.88.56:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863328256"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-007-meta",
+          "instance": "10.16.88.57:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863447040"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-008-meta",
+          "instance": "10.16.88.58:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863410176"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-009-meta",
+          "instance": "10.16.88.59:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863442944"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdi-010-meta",
+          "instance": "10.16.88.60:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540863426560"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-001-meta",
+          "instance": "10.16.88.61:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540856827904"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-002-meta",
+          "instance": "10.16.88.62:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540855726080"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-005-meta",
+          "instance": "10.16.88.65:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540855881728"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-006-meta",
+          "instance": "10.16.88.66:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540855840768"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-007-meta",
+          "instance": "10.16.88.67:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540855812096"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-008-meta",
+          "instance": "10.16.88.68:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540855980032"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-009-meta",
+          "instance": "10.16.88.69:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540855955456"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdj-010-meta",
+          "instance": "10.16.88.70:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540856025088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdk-001-eli",
+          "instance": "10.16.88.71:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "270280638464"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdk-002-eli",
+          "instance": "10.16.88.72:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "270280663040"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdk-003-eli",
+          "instance": "10.16.88.73:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "270280663040"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdk-004-eli",
+          "instance": "10.16.88.74:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "270280646656"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdk-005-eli",
+          "instance": "10.16.88.75:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "270280638464"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdk-006-eli",
+          "instance": "10.16.88.76:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "270280642560"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdl-001-eli",
+          "instance": "10.16.88.161:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860239872"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdl-002-eli",
+          "instance": "10.16.88.162:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540859154432"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdl-008-eli",
+          "instance": "10.16.88.168:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860243968"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdm-001-meta",
+          "instance": "10.16.88.241:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860276736"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdm-002-meta",
+          "instance": "10.16.88.242:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860411904"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-001-meta",
+          "instance": "10.16.89.1:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860628992"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-003-meta",
+          "instance": "10.16.89.3:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860674048"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-004-meta",
+          "instance": "10.16.89.4:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860633088"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-005-meta",
+          "instance": "10.16.89.5:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860661760"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-007-meta",
+          "instance": "10.16.89.7:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860649472"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-008-meta",
+          "instance": "10.16.89.8:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860751872"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-009-meta",
+          "instance": "10.16.89.9:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860678144"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-010-meta",
+          "instance": "10.16.89.10:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860649472"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-011-meta",
+          "instance": "10.16.89.11:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860649472"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdn-012-meta",
+          "instance": "10.16.89.12:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "540860661760"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdo-001-meta",
+          "instance": "10.16.88.251:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "811263336448"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "hdo-002-meta",
+          "instance": "10.16.88.252:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "811263348736"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "mem-001-meta",
+          "instance": "10.16.88.47:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "1069346615296"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "node_memory_MemTotal_bytes",
+          "app_kubernetes_io_managed_by": "Helm",
+          "application": "node_exporter",
+          "component": "metrics",
+          "environment": "prod-brno",
+          "helm_toolkit_fluxcd_io_name": "node-exporter",
+          "helm_toolkit_fluxcd_io_namespace": "osh-infra",
+          "hostname": "service-001",
+          "instance": "10.16.88.10:9100",
+          "job": "node-exporter",
+          "kubernetes_name": "node-exporter",
+          "kubernetes_namespace": "osh-infra",
+          "release_group": "osh-infra-node-exporter"
+        },
+        "value": [
+          1757657205,
+          "810201399296"
+        ]
+      }
+    ]
+  }
+}

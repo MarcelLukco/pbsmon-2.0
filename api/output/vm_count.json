@@ -1,0 +1,899 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "hostname": "cra-004-ics"
+        },
+        "value": [
+          1757657206,
+          "14"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cra-008-ics"
+        },
+        "value": [
+          1757657206,
+          "27"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-004-ics"
+        },
+        "value": [
+          1757657206,
+          "23"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-006-ics"
+        },
+        "value": [
+          1757657206,
+          "29"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-007-ics"
+        },
+        "value": [
+          1757657206,
+          "28"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-008-ics"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-009-ics"
+        },
+        "value": [
+          1757657206,
+          "40"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-015-ics"
+        },
+        "value": [
+          1757657206,
+          "8"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-016-fss"
+        },
+        "value": [
+          1757657206,
+          "65"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crd-017-fss"
+        },
+        "value": [
+          1757657206,
+          "26"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cre-001-rcx"
+        },
+        "value": [
+          1757657206,
+          "31"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cre-002-rcx"
+        },
+        "value": [
+          1757657206,
+          "37"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cre-003-rcx"
+        },
+        "value": [
+          1757657206,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cre-004-rcx"
+        },
+        "value": [
+          1757657206,
+          "35"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cre-005-rcx"
+        },
+        "value": [
+          1757657206,
+          "27"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cre-006-rcx"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "cre-007-rcx"
+        },
+        "value": [
+          1757657206,
+          "5"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-001-ics"
+        },
+        "value": [
+          1757657206,
+          "51"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-002-ics"
+        },
+        "value": [
+          1757657206,
+          "40"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-004-ics"
+        },
+        "value": [
+          1757657206,
+          "11"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-005-ics"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-006-ics"
+        },
+        "value": [
+          1757657206,
+          "11"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-007-ics"
+        },
+        "value": [
+          1757657206,
+          "49"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-008-ics"
+        },
+        "value": [
+          1757657206,
+          "37"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-010-ics"
+        },
+        "value": [
+          1757657206,
+          "12"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-011-ics"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-012-ics"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-013-ics"
+        },
+        "value": [
+          1757657206,
+          "5"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-014-ics"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "crf-021-ics"
+        },
+        "value": [
+          1757657206,
+          "5"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-010-eli"
+        },
+        "value": [
+          1757657206,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-011-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-012-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-017-eli"
+        },
+        "value": [
+          1757657206,
+          "15"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-018-eli"
+        },
+        "value": [
+          1757657206,
+          "20"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-019-eli"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-020-eli"
+        },
+        "value": [
+          1757657206,
+          "8"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-022-eli"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-024-eli"
+        },
+        "value": [
+          1757657206,
+          "6"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-025-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-028-eli"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-030-eli"
+        },
+        "value": [
+          1757657206,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-032-eli"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-034-eli"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-035-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-036-eli"
+        },
+        "value": [
+          1757657206,
+          "14"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-037-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-039-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-040-eli"
+        },
+        "value": [
+          1757657206,
+          "7"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-046-eli"
+        },
+        "value": [
+          1757657206,
+          "9"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-048-eli"
+        },
+        "value": [
+          1757657206,
+          "6"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-050-eli"
+        },
+        "value": [
+          1757657206,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hda-053-eli"
+        },
+        "value": [
+          1757657206,
+          "12"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdb-001-rcx"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdb-003-rcx"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdb-005-rcx"
+        },
+        "value": [
+          1757657206,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdb-007-rcx"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-001-cerit"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-002-cerit"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-003-cerit"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-004-cerit"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-005-cerit"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-007-cerit"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-008-cerit"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdg-009-cerit"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdh-001-cerit"
+        },
+        "value": [
+          1757657206,
+          "8"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdh-002-cerit"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdh-003-cerit"
+        },
+        "value": [
+          1757657206,
+          "5"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdh-004-cerit"
+        },
+        "value": [
+          1757657206,
+          "7"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdh-005-cerit"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdi-001-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdi-003-meta"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdi-005-meta"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdi-007-meta"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdi-008-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdi-009-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdi-010-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-001-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-002-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-005-meta"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-006-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-007-meta"
+        },
+        "value": [
+          1757657206,
+          "5"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-008-meta"
+        },
+        "value": [
+          1757657206,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-009-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdj-010-meta"
+        },
+        "value": [
+          1757657206,
+          "5"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdk-001-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdk-002-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdk-003-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdk-004-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdk-005-eli"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdk-006-eli"
+        },
+        "value": [
+          1757657206,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdl-002-eli"
+        },
+        "value": [
+          1757657206,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdl-008-eli"
+        },
+        "value": [
+          1757657206,
+          "10"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdm-002-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdn-008-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdn-010-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdn-011-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "hdn-012-meta"
+        },
+        "value": [
+          1757657206,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "hostname": "service-001"
+        },
+        "value": [
+          1757657206,
+          "43"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,4681 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-001",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-002",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-003",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-004",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-005",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-001-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-002-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-003-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-004-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-005-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-006-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-008-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-009-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-012-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-001-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-002-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-003-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-004-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-005-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-006-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-007-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-008-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-009-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-010-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-011-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-012-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-013-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-014-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-021-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "service-001",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-001-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-002-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-003-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-004-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-005-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-006-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-007-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-008-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-009-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-010-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-001-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-002-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-003-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-004-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-005-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-006-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-001-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-003-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-004-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-005-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-007-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-008-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-009-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-010-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-011-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-012-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-005-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-006-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-007-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-010-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-011-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-012-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-017-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-018-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-019-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-020-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-022-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-024-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-025-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-028-eli",
+          "speed_mbps": "100"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-030-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-031-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-032-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-034-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-035-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-036-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-037-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-039-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-040-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-046-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-048-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-050-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-053-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-001-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-003-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-004-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-005-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-006-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-007-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-008-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-009-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-010-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-011-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-014-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-015-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-016-fss",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-017-fss",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-001-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-002-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-003-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-004-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-005-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-006-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-007-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-001-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-003-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-004-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-005-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-007-rcx",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "mem-001-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnxt_en",
+          "hostname": "gla-005-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnxt_en",
+          "hostname": "gla-009-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-001",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-002",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-003",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-004",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "controlplane-005",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-001-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-002-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-003-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-004-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-005-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-006-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-007-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-008-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-009-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-010-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-011-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-012-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-013-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-014-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "crf-021-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "service-001",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "cra-004-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-001-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-002-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-003-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-004-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-005-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-007-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-008-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-009-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-010-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-001-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-002-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-003-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-004-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-005-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdk-006-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdi-006-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-001-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-003-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-004-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-005-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-007-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-008-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-009-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-010-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-011-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdn-012-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-028-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-005-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-006-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-007-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-010-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-011-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-012-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "mem-001-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-001-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-003-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-004-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-005-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-006-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-007-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-008-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-009-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-010-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-011-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-014-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-015-ics"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-016-fss"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "crd-017-fss"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-001-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-002-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-003-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-004-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-005-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-006-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "cre-007-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-001-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-003-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-004-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-005-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "hdb-007-rcx"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnxt_en",
+          "hostname": "gla-005-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnxt_en",
+          "hostname": "gla-009-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "gla-005-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "gla-009-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "mem-001-meta"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "gla-005-ics",
+          "speed_mbps": "100"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "tg3",
+          "hostname": "gla-009-ics",
+          "speed_mbps": "100"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-001-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-003-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-004-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-005-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-006-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-007-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-008-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-009-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-010-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-011-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-014-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-015-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-016-fss",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "crd-017-fss",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "cre-001-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "cre-002-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "cre-003-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "cre-004-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "cre-005-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "cre-006-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "cre-007-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "hdb-001-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "hdb-003-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "hdb-004-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "hdb-005-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "bnx2x",
+          "hostname": "hdb-007-rcx",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "i40e",
+          "hostname": "mem-001-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "controlplane-001",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "controlplane-002",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "controlplane-003",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "controlplane-004",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "controlplane-005",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "4"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-001-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-002-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-003-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-004-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-005-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-006-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-007-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-008-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-009-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-010-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-011-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-012-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-013-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-014-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-021-ics",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "service-001",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "crf-014-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdm-001-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdm-002-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdk-001-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdk-002-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdk-003-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdk-004-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdk-005-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdk-006-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdm-001-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdm-002-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdm-001-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdm-002-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-001-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-002-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-003-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-004-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-005-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-006-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-007-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-008-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-009-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdi-010-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-001-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-002-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-003-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-004-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-005-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-006-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-008-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-009-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-012-ics",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-004-ics",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-001-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-002-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-003-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-005-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-006-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-008-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-009-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "cra-012-ics"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-005-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-006-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-007-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-008-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-009-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-010-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-001-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-002-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-001-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-002-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-008-eli",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-004-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-005-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-007-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-008-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-009-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-010-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-011-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-012-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-001-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-003-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-001-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdj-002-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-001-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-002-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-008-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-001-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-003-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-004-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-005-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-007-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-008-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-009-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-010-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-011-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdn-012-meta",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-001-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-002-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hdl-008-eli",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-005-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-006-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-007-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-010-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-011-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-012-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-017-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-018-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-019-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-020-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-022-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-024-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-025-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-028-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-030-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-031-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-032-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-034-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-035-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-036-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-037-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-039-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-040-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-046-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-048-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-050-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ixgbe",
+          "hostname": "hda-053-eli",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-001-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-002-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-005-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-006-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-007-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-008-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-010-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-009-meta"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-001-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-002-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-005-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-006-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-007-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-008-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-009-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdj-010-meta",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-001-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-002-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-003-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-004-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-005-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-006-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-007-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-008-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-009-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-001-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-002-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-003-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-004-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-005-cerit",
+          "speed_mbps": "1000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-001-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-002-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-003-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-004-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-005-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-007-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-008-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-009-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-001-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-002-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-003-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-004-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-005-cerit",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-006-cerit"
+        },
+        "value": [
+          1757657205,
+          "3"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-001-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-002-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-003-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-004-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-005-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-007-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-008-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdg-009-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-001-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-002-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-003-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-004-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "igb",
+          "hostname": "hdh-005-cerit"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdh-001-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdh-002-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdh-003-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdh-004-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdh-005-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ice",
+          "hostname": "hdo-001-meta",
+          "speed_mbps": "100000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ice",
+          "hostname": "hdo-002-meta",
+          "speed_mbps": "100000"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ice",
+          "hostname": "hdo-001-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "ice",
+          "hostname": "hdo-002-meta",
+          "speed_mbps": "-1"
+        },
+        "value": [
+          1757657205,
+          "1"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-001-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-002-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-003-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-004-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-005-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-006-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-007-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-008-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      },
+      {
+        "metric": {
+          "driver": "qede",
+          "hostname": "hdg-009-cerit",
+          "speed_mbps": "10000"
+        },
+        "value": [
+          1757657205,
+          "2"
+        ]
+      }
+    ]
+  }
+}
