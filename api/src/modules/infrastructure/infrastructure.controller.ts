@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
 import { ApiResponse } from '@/common/dto/api-response.dto';
 
 @Controller('infrastructure')
@@ -10,6 +10,6 @@ export class InfrastructureController {
 
   @Get(':id')
   getInfrastructureDetail(@Param('id') id: string): ApiResponse<any> {
-    return new ApiResponse(null);
+    throw new NotFoundException(`Infrastructure with id '${id}' was not found`);
   }
 }
