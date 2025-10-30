@@ -8,9 +8,8 @@ async function bootstrap() {
   // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('PBSMON API')
-    .setDescription('API for PBS monitoring data from Prometheus')
+    .setDescription('API for showing data from Metacentrum computing grid')
     .setVersion('1.0')
-    .addTag('app')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
