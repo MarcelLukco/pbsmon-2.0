@@ -5,10 +5,12 @@
 //
 // Usage Example for success:
 //   return new ApiResponse(dataEntity, metaInfo);
-export class ApiResponse<T = any> {
+import { MetaDto } from './meta.dto';
+
+export class ApiResponse<T = any, M = MetaDto> {
   data: T;
-  meta?: any;
-  constructor(data: T, meta?: any) {
+  meta?: M;
+  constructor(data: T, meta?: M) {
     this.data = data;
     if (meta) {
       this.meta = meta;
