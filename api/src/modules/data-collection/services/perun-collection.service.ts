@@ -59,7 +59,7 @@ export class PerunCollectionService {
       }
 
       // Load all etc_group files
-      const etcGroups: PerunEtcGroups = {};
+      const etcGroups: PerunEtcGroups = [];
       try {
         const etcGroupsPath = path.join(this.config.dataPath, 'etc_groups');
         const files = await fs.readdir(etcGroupsPath);
@@ -72,9 +72,13 @@ export class PerunCollectionService {
           const filePath = path.join(etcGroupsPath, file);
           try {
             const content = await fs.readFile(filePath, 'utf-8');
-            etcGroups[serverName] = this.parseEtcGroup(content);
+            const entries = this.parseEtcGroup(content);
+            etcGroups.push({
+              serverName,
+              entries,
+            });
             this.logger.debug(
-              `Loaded etc_group file for server: ${serverName} (${etcGroups[serverName].length} groups)`,
+              `Loaded etc_group file for server: ${serverName} (${entries.length} groups)`,
             );
           } catch (error) {
             this.logger.warn(
@@ -102,7 +106,7 @@ export class PerunCollectionService {
       };
 
       this.logger.log(
-        `PERUN data collected - Machines: ${machines ? '✓' : '✗'}, Users: ${users ? '✓' : '✗'}, Etc Groups: ${Object.keys(etcGroups).length} servers`,
+        `PERUN data collected - Machines: ${machines ? '✓' : '✗'}, Users: ${users ? '✓' : '✗'}, Etc Groups: ${etcGroups.length} servers`,
       );
     } catch (error) {
       this.logger.error(

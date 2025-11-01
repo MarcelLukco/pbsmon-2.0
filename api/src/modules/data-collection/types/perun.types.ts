@@ -106,11 +106,17 @@ export interface EtcGroupEntry {
 }
 
 /**
- * Etc Groups mapping by server name
+ * Etc Groups entry for a specific server
  */
-export interface PerunEtcGroups {
-  [serverName: string]: EtcGroupEntry[];
+export interface PerunEtcGroupServer {
+  serverName: string;
+  entries: EtcGroupEntry[];
 }
+
+/**
+ * Etc Groups array structure
+ */
+export type PerunEtcGroups = PerunEtcGroupServer[];
 
 /**
  * Combined Perun data structure
