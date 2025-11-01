@@ -39,6 +39,16 @@ export class DataCollectionController {
     return { message: 'ok' };
   }
 
+  @Get('pbs')
+  @ApiOperation({ summary: 'Get PBS data from memory' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns PBS data stored in memory',
+  })
+  getPbsData() {
+    return this.dataCollectionService.getPbsData();
+  }
+
   @Post('pbs')
   @ApiOperation({ summary: 'Manually trigger PBS data collection' })
   @ApiResponse({

@@ -3,20 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { PerunConfig } from '@/config/perun.config';
-
-export interface EtcGroupEntry {
-  groupname: string;
-  password: string;
-  gid: string;
-  members: string[];
-}
-
-export interface PerunData {
-  timestamp: string;
-  machines: any;
-  users: any;
-  etcGroups: Record<string, EtcGroupEntry[]>;
-}
+import {
+  PerunData,
+  PerunMachines,
+  PerunUsers,
+  EtcGroupEntry,
+  PerunEtcGroups,
+} from '../types/perun.types';
 
 @Injectable()
 export class PerunCollectionService {
@@ -41,10 +34,10 @@ export class PerunCollectionService {
         this.config.dataPath,
         'pbsmon_machines.json',
       );
-      let machines = null;
+      let machines: PerunMachines | null = null;
       try {
         const machinesContent = await fs.readFile(machinesPath, 'utf-8');
-        machines = JSON.parse(machinesContent);
+        machines = JSON.parse(machinesContent) as PerunMachines;
         this.logger.debug(`Loaded machines data from ${machinesPath}`);
       } catch (error) {
         this.logger.warn(
@@ -54,10 +47,10 @@ export class PerunCollectionService {
 
       // Load users JSON file
       const usersPath = path.join(this.config.dataPath, 'pbsmon_users.json');
-      let users = null;
+      let users: PerunUsers | null = null;
       try {
         const usersContent = await fs.readFile(usersPath, 'utf-8');
-        users = JSON.parse(usersContent);
+        users = JSON.parse(usersContent) as PerunUsers;
         this.logger.debug(`Loaded users data from ${usersPath}`);
       } catch (error) {
         this.logger.warn(
@@ -66,7 +59,7 @@ export class PerunCollectionService {
       }
 
       // Load all etc_group files
-      const etcGroups: Record<string, EtcGroupEntry[]> = {};
+      const etcGroups: PerunEtcGroups = {};
       try {
         const etcGroupsPath = path.join(this.config.dataPath, 'etc_groups');
         const files = await fs.readdir(etcGroupsPath);

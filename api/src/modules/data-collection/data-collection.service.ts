@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { PerunCollectionService } from './services/perun-collection.service';
 import { PrometheusCollectionService } from './services/prometheus-collection.service';
 import { PbsCollectionService } from './services/pbs-collection.service';
-import { PerunData, EtcGroupEntry } from './services/perun-collection.service';
+import { PerunData, EtcGroupEntry } from './types/perun.types';
 
 export { PerunData, EtcGroupEntry };
 

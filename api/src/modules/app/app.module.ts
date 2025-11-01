@@ -13,13 +13,14 @@ import { DataCollectionModule } from '@/modules/data-collection/data-collection.
 import configuration, {
   prometheusConfig,
   perunConfig,
+  pbsConfig,
 } from '@/config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration, prometheusConfig, perunConfig],
+      load: [configuration, prometheusConfig, perunConfig, pbsConfig],
       envFilePath: '.env',
     }),
     TasksModule,

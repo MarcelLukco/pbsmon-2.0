@@ -4,6 +4,7 @@ import { plainToInstance } from 'class-transformer';
 import { AppConfig, getAppConfig } from './app.config';
 import { PrometheusConfig, getPrometheusConfig } from './prometheus.config';
 import { PerunConfig, getPerunConfig } from './perun.config';
+import { PbsConfig, getPbsConfig } from './pbs.config';
 
 function validate<T extends object>(
   config: T,
@@ -40,4 +41,9 @@ export const prometheusConfig = registerAs('prometheus', () => {
 export const perunConfig = registerAs('perun', () => {
   const config = getPerunConfig();
   return validate(config, PerunConfig, 'Perun');
+});
+
+export const pbsConfig = registerAs('pbs', () => {
+  const config = getPbsConfig();
+  return validate(config, PbsConfig, 'PBS');
 });
