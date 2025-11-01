@@ -4,6 +4,7 @@ import { DataCollectionController } from './data-collection.controller';
 import { DataCollectionService } from './data-collection.service';
 import { PerunCollectionService } from './services/perun-collection.service';
 import { PrometheusCollectionService } from './services/prometheus-collection.service';
+import { PrometheusClient } from './clients/prometheus.client';
 import { PbsCollectionService } from './services/pbs-collection.service';
 
 @Module({
@@ -13,7 +14,9 @@ import { PbsCollectionService } from './services/pbs-collection.service';
     DataCollectionService,
     PerunCollectionService,
     PrometheusCollectionService,
+    PrometheusClient,
     PbsCollectionService,
   ],
+  exports: [PrometheusClient, PrometheusCollectionService],
 })
 export class DataCollectionModule {}

@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
 import { Command } from 'commander';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -79,7 +79,13 @@ class PrometheusClient {
 
       return response.data;
     } catch (error) {
-      console.error('Error querying Prometheus:', error);
+      const errorMessage =
+        error instanceof AxiosError
+          ? error.response?.data?.message || error.message
+          : error instanceof Error
+            ? error.message
+            : String(error);
+      console.error('Error querying Prometheus:', errorMessage);
       throw error;
     }
   }
@@ -110,7 +116,7 @@ class PrometheusClient {
   }
 
   async saveToFile(data: string, filename: string): Promise<void> {
-    const outputDir = path.join(process.cwd(), 'output');
+    const outputDir = path.join(process.cwd(), 'data', 'prometheus');
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
