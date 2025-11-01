@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TasksModule } from '@/modules/tasks/tasks.module';
 import { QsubModule } from '@/modules/qsub/qsub.module';
 import { QueuesModule } from '@/modules/queues/queues.module';
@@ -9,9 +10,18 @@ import { OutagesModule } from '@/modules/outages/outages.module';
 import { NewsModule } from '@/modules/news/news.module';
 import { StatusModule } from '@/modules/status/status.module';
 import { DataCollectionModule } from '@/modules/data-collection/data-collection.module';
+import configuration, {
+  prometheusConfig,
+  perunConfig,
+} from '@/config/configuration';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration, prometheusConfig, perunConfig],
+      envFilePath: '.env',
+    }),
     TasksModule,
     QsubModule,
     QueuesModule,

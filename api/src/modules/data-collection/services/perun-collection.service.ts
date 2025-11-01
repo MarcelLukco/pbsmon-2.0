@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { PerunConfig } from '@/config/perun.config';
 
 export interface EtcGroupEntry {
   groupname: string;
@@ -19,14 +21,15 @@ export interface PerunData {
 @Injectable()
 export class PerunCollectionService {
   private readonly logger = new Logger(PerunCollectionService.name);
-  private readonly PERUN_DATA_PATH =
-    process.env.PERUN_DATA_PATH || 'data/perun';
+  private readonly config: PerunConfig;
 
   private perunData: PerunData | null = null;
 
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
+    this.config = this.configService.get<PerunConfig>('perun')!;
+
     this.logger.log(
-      `PERUN data path configured: ${this.PERUN_DATA_PATH} (set PERUN_DATA_PATH env var to override)`,
+      `PERUN data path configured: ${this.config.dataPath} (set PERUN_DATA_PATH env var to override)`,
     );
   }
 
@@ -35,7 +38,7 @@ export class PerunCollectionService {
     try {
       // Load machines JSON file
       const machinesPath = path.join(
-        this.PERUN_DATA_PATH,
+        this.config.dataPath,
         'pbsmon_machines.json',
       );
       let machines = null;
@@ -50,7 +53,7 @@ export class PerunCollectionService {
       }
 
       // Load users JSON file
-      const usersPath = path.join(this.PERUN_DATA_PATH, 'pbsmon_users.json');
+      const usersPath = path.join(this.config.dataPath, 'pbsmon_users.json');
       let users = null;
       try {
         const usersContent = await fs.readFile(usersPath, 'utf-8');
@@ -65,7 +68,7 @@ export class PerunCollectionService {
       // Load all etc_group files
       const etcGroups: Record<string, EtcGroupEntry[]> = {};
       try {
-        const etcGroupsPath = path.join(this.PERUN_DATA_PATH, 'etc_groups');
+        const etcGroupsPath = path.join(this.config.dataPath, 'etc_groups');
         const files = await fs.readdir(etcGroupsPath);
         const etcGroupFiles = files.filter((file) =>
           file.startsWith('etc_group_'),
@@ -91,7 +94,7 @@ export class PerunCollectionService {
           error instanceof Error ? error.message : String(error);
         if (errorMessage.includes('ENOENT')) {
           this.logger.warn(
-            `PERUN data directory not found: ${this.PERUN_DATA_PATH}. Please ensure the directory exists or set PERUN_DATA_PATH environment variable.`,
+            `PERUN data directory not found: ${this.config.dataPath}. Please ensure the directory exists or set PERUN_DATA_PATH environment variable.`,
           );
         } else {
           this.logger.warn(`Failed to read directory: ${errorMessage}`);

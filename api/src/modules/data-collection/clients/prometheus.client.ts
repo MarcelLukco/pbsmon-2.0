@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios, { AxiosError } from 'axios';
+import { PrometheusConfig } from '@/config/prometheus.config';
 
 export interface PrometheusResponse {
   status: string;
@@ -19,26 +21,27 @@ export interface PrometheusResponse {
 @Injectable()
 export class PrometheusClient {
   private readonly logger = new Logger(PrometheusClient.name);
-  private readonly baseUrl: string;
-  private readonly apiEndpoint: string;
-  private readonly rangeHours: number;
+  private readonly config: PrometheusConfig;
 
-  constructor() {
-    this.baseUrl =
-      process.env.PROMETHEUS_BASE_URL ||
-      'https://prometheus.brno.openstack.cloud.e-infra.cz';
-    this.apiEndpoint = process.env.PROMETHEUS_API_ENDPOINT || '/api/v1/query';
-    this.rangeHours = parseInt(process.env.QUERY_RANGE_HOURS || '1');
+  constructor(private readonly configService: ConfigService) {
+    this.config = this.configService.get<PrometheusConfig>('prometheus')!;
+
+    if (!this.config.username || !this.config.password) {
+      throw new Error(
+        'PROMETHEUS_USERNAME and PROMETHEUS_PASSWORD must be set in environment variables',
+      );
+    }
 
     this.logger.log(
-      `Prometheus client configured: ${this.baseUrl}${this.apiEndpoint}`,
+      `Prometheus client configured: ${this.config.baseUrl}${this.config.apiEndpoint}`,
     );
   }
 
   async query(query: string): Promise<PrometheusResponse> {
-    const url = `${this.baseUrl}${this.apiEndpoint}`;
+    const url = `${this.config.baseUrl}${this.config.apiEndpoint}`;
     const endTime = Math.floor(Date.now() / 1000);
-    const startTime = endTime - this.rangeHours * 3600;
+    const rangeHours = this.config.queryRangeHours || 1;
+    const startTime = endTime - rangeHours * 3600;
 
     try {
       const response = await axios.get(url, {
@@ -51,17 +54,14 @@ export class PrometheusClient {
         },
         headers: {
           'Content-Type': 'application/json',
-          ...(process.env.PROMETHEUS_TOKEN && {
-            Authorization: `Bearer ${process.env.PROMETHEUS_TOKEN}`,
+          ...(this.config.token && {
+            Authorization: `Bearer ${this.config.token}`,
           }),
         },
-        auth:
-          process.env.PROMETHEUS_USERNAME && process.env.PROMETHEUS_PASSWORD
-            ? {
-                username: process.env.PROMETHEUS_USERNAME,
-                password: process.env.PROMETHEUS_PASSWORD,
-              }
-            : undefined,
+        auth: {
+          username: this.config.username,
+          password: this.config.password,
+        },
       });
 
       return response.data;
