@@ -8,6 +8,7 @@ import { UsersModule } from '@/modules/users/users.module';
 import { OutagesModule } from '@/modules/outages/outages.module';
 import { NewsModule } from '@/modules/news/news.module';
 import { StatusModule } from '@/modules/status/status.module';
+import { DataCollectionModule } from '@/modules/data-collection/data-collection.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { StatusModule } from '@/modules/status/status.module';
     OutagesModule,
     NewsModule,
     StatusModule,
+    DataCollectionModule,
   ],
 })
 export class AppModule {}
