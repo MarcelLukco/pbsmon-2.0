@@ -17,6 +17,10 @@ import { PbsCollectionService } from './services/pbs-collection.service';
     PrometheusClient,
     PbsCollectionService,
   ],
-  exports: [PrometheusClient, PrometheusCollectionService],
+  exports: [
+    DataCollectionService,
+    PrometheusClient,
+    PrometheusCollectionService,
+  ],
 })
 export class DataCollectionModule {}

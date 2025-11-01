@@ -1,32 +1,50 @@
-import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { ApiOperation, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/dto/api-response.dto';
-import { ApiNotFoundResponse } from '@nestjs/swagger';
-import { InfrastructureDTO } from './infrastructure-detail.dto';
 import {
   ApiOkResponseArray,
   ApiOkResponseModel,
 } from '@/common/swagger/api-generic-response';
+import { InfrastructureService } from './infrastructure.service';
+import { InfrastructureOrganizationListDTO } from './dto/infrastructure-list.dto';
+import { InfrastructureDetailDTO } from './dto/infrastructure-detail.dto';
+import { InfrastructureListMetaDto } from './dto/infrastructure-list-meta.dto';
 
+@ApiTags('infrastructure')
 @Controller('infrastructure')
 export class InfrastructureController {
+  constructor(private readonly infrastructureService: InfrastructureService) {}
+
   @Get()
-  @ApiOkResponseArray(InfrastructureDTO, 'List of infrastructure resources')
-  getInfrastructure(): ApiResponse<InfrastructureDTO[]> {
-    return new ApiResponse([], { totalCount: 0 });
+  @ApiOperation({
+    summary: 'Get list of all infrastructure',
+    description:
+      'Returns hierarchical list of organizations, clusters, and nodes with limited data and statistics. ID formats: organization-{id}, cluster-{id}, node-{clusterId}-{nodeName}',
+  })
+  @ApiOkResponseArray(
+    InfrastructureOrganizationListDTO,
+    'List of infrastructure organizations',
+  )
+  getInfrastructure(): ApiResponse<
+    InfrastructureOrganizationListDTO[],
+    InfrastructureListMetaDto
+  > {
+    const { data, meta } = this.infrastructureService.getInfrastructureList();
+    return new ApiResponse(data, meta);
   }
 
   @Get(':id')
-  @ApiOkResponseModel(InfrastructureDTO, 'Infrastructure found')
+  @ApiOperation({
+    summary: 'Get infrastructure detail',
+    description:
+      'Returns full infrastructure details by ID. ID formats: organization-{id}, cluster-{id}, node-{clusterId}-{nodeName}',
+  })
+  @ApiOkResponseModel(InfrastructureDetailDTO, 'Infrastructure detail')
   @ApiNotFoundResponse({ description: 'Infrastructure not found' })
   getInfrastructureDetail(
     @Param('id') id: string,
-  ): ApiResponse<InfrastructureDTO> {
-    if (id === '1') {
-      throw new NotFoundException(
-        `Infrastructure with id '${id}' was not found`,
-      );
-    }
-
-    return new ApiResponse(new InfrastructureDTO());
+  ): ApiResponse<InfrastructureDetailDTO> {
+    const data = this.infrastructureService.getInfrastructureDetail(id);
+    return new ApiResponse(data);
   }
 }
