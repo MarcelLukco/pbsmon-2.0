@@ -18,6 +18,8 @@ import { UserDetailPage } from "@/pages/UserDetailPage";
 import "@/i18n";
 import "@/app.css";
 import { QsubAssemblerPage } from "@/pages/QsubAssemblerPage.tsx";
+import { StorageSpacesPage } from "@/pages/StorageSpacesPage";
+import { WaitingJobsPage } from "@/pages/WaitingJobsPage";
 
 export default function App() {
   return (
@@ -29,8 +31,10 @@ export default function App() {
           <Route path="qsub-assembler" element={<QsubAssemblerPage />} />
           <Route path="machines" element={<MachinesPage />} />
           <Route path="machines/:machineId" element={<MachineDetailPage />} />
+          <Route path="storage-spaces" element={<StorageSpacesPage />} />
           <Route path="jobs" element={<JobsPage />} />
           <Route path="jobs/:jobId" element={<JobDetailPage />} />
+          <Route path="waiting-jobs" element={<WaitingJobsPage />} />
           <Route path="queues" element={<JobsQueuesPage />} />
           <Route path="queues/:queueId" element={<QueueDetailPage />} />
           <Route
