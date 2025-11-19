@@ -1,0 +1,259 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Expose, Type } from 'class-transformer';
+
+/**
+ * Access Control List (ACL) information
+ */
+export class QueueAclDTO {
+  @Expose()
+  @ApiProperty({
+    description: 'ACL users (if acl_user_enable is true)',
+    type: [String],
+    nullable: true,
+  })
+  users?: string[] | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'ACL groups (if acl_group_enable is true)',
+    type: [String],
+    nullable: true,
+  })
+  groups?: string[] | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'ACL hosts (if acl_host_enable is true)',
+    type: [String],
+    nullable: true,
+  })
+  hosts?: string[] | null;
+}
+
+/**
+ * Resource limits and defaults
+ */
+export class QueueResourcesDTO {
+  @Expose()
+  @ApiProperty({
+    description: 'Minimum memory required',
+    nullable: true,
+  })
+  minMem?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Minimum CPUs required',
+    nullable: true,
+  })
+  minNcpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Minimum GPUs required',
+    nullable: true,
+  })
+  minNgpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Minimum walltime required',
+    nullable: true,
+  })
+  minWalltime?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Maximum CPUs allowed',
+    nullable: true,
+  })
+  maxNcpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Maximum GPUs allowed',
+    nullable: true,
+  })
+  maxNgpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Maximum walltime allowed',
+    nullable: true,
+  })
+  maxWalltime?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Default walltime',
+    nullable: true,
+  })
+  defaultWalltime?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Default CPUs',
+    nullable: true,
+  })
+  defaultNcpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Default GPUs',
+    nullable: true,
+  })
+  defaultNgpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Assigned memory',
+    nullable: true,
+  })
+  assignedMem?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Assigned CPUs',
+    nullable: true,
+  })
+  assignedNcpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Assigned GPUs',
+    nullable: true,
+  })
+  assignedNgpus?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Assigned node count',
+    nullable: true,
+  })
+  assignedNodect?: string | null;
+}
+
+/**
+ * Queue state counts
+ */
+export class QueueStateCountDTO {
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Transit state' })
+  transit: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Queued state' })
+  queued: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Held state' })
+  held: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Waiting state' })
+  waiting: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Running state' })
+  running: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Exiting state' })
+  exiting: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Begun state' })
+  begun: number;
+}
+
+/**
+ * Queue Detail DTO
+ */
+export class QueueDetailDTO {
+  @Expose()
+  @ApiProperty({ description: 'Queue name' })
+  name: string;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Queue type',
+    enum: ['Execution', 'Route'],
+  })
+  queueType: 'Execution' | 'Route';
+
+  @Expose()
+  @ApiProperty({ description: 'Queue priority', nullable: true })
+  priority?: number | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Total number of jobs', nullable: true })
+  totalJobs?: number | null;
+
+  @Expose()
+  @Type(() => QueueStateCountDTO)
+  @ApiProperty({
+    description: 'Job state counts',
+    type: QueueStateCountDTO,
+    nullable: true,
+  })
+  stateCount?: QueueStateCountDTO | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Is queue enabled' })
+  enabled: boolean;
+
+  @Expose()
+  @ApiProperty({ description: 'Is queue started' })
+  started: boolean;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Whether the current user has access to this queue',
+    required: false,
+  })
+  hasAccess?: boolean;
+
+  @Expose()
+  @Type(() => QueueAclDTO)
+  @ApiProperty({
+    description: 'Access Control List information',
+    type: QueueAclDTO,
+    nullable: true,
+  })
+  acl?: QueueAclDTO | null;
+
+  @Expose()
+  @Type(() => QueueResourcesDTO)
+  @ApiProperty({
+    description: 'Resource limits and assignments',
+    type: QueueResourcesDTO,
+    nullable: true,
+  })
+  resources?: QueueResourcesDTO | null;
+
+  @Expose()
+  @Type(() => QueueDetailDTO)
+  @ApiProperty({
+    description: 'Child queues (queues that this queue routes to)',
+    type: [QueueDetailDTO],
+    nullable: true,
+  })
+  children?: QueueDetailDTO[] | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Parent queues (Route queues that route to this queue)',
+    type: [String],
+    nullable: true,
+  })
+  parents?: string[] | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Additional queue attributes',
+    type: 'object',
+    additionalProperties: { type: 'string' },
+    nullable: true,
+  })
+  additionalAttributes?: Record<string, string> | null;
+}

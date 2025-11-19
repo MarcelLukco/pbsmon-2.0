@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiResponse, ApiError } from '@/common/dto/api-response.dto';
 
-@Controller('tasks')
+@Controller('pbs/tasks')
 export class TasksController {
   @Get()
   getTasks(): ApiResponse<any[]> {
