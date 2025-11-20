@@ -245,6 +245,9 @@ export class QueuesService {
       ? parseInt(queue.attributes.total_jobs, 10)
       : null;
 
+    const minWalltime = queue.attributes['resources_min.walltime'] || null;
+    const maxWalltime = queue.attributes['resources_max.walltime'] || null;
+
     const enabled = queue.attributes.enabled === 'True';
     const started = queue.attributes.started === 'True';
 
@@ -255,6 +258,8 @@ export class QueuesService {
       queueType: queue.attributes.queue_type as 'Execution' | 'Route',
       priority,
       totalJobs,
+      minWalltime,
+      maxWalltime,
       enabled,
       started,
       hasAccess,

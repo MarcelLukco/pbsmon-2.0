@@ -256,7 +256,7 @@ export function SidebarLayout() {
           </div>
 
           {/* Main Navigation */}
-          <nav className="flex-1 overflow-y-auto">
+          <nav>
             <ul className="space-y-0">
               {menuItems.map((item) => (
                 <li key={item.id}>

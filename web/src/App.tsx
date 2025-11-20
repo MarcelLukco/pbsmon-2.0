@@ -12,7 +12,6 @@ import { JobsPage } from "@/pages/JobsPage";
 import { JobDetailPage } from "@/pages/JobDetailPage";
 import { JobsQueuesPage } from "@/pages/JobsQueuesPage";
 import { QueueDetailPage } from "@/pages/QueueDetailPage";
-import { PropertiesOfMachinesPage } from "@/pages/PropertiesOfMachinesPage";
 import { UsersPage } from "@/pages/UsersPage";
 import { UserDetailPage } from "@/pages/UserDetailPage";
 import "@/i18n";
@@ -37,10 +36,6 @@ export default function App() {
           <Route path="waiting-jobs" element={<WaitingJobsPage />} />
           <Route path="queues" element={<JobsQueuesPage />} />
           <Route path="queues/:queueId" element={<QueueDetailPage />} />
-          <Route
-            path="machines-properties"
-            element={<PropertiesOfMachinesPage />}
-          />
           <Route path="users" element={<UsersPage />} />
           <Route path="users/:userId" element={<UserDetailPage />} />
         </Route>

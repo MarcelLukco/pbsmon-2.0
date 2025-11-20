@@ -25,6 +25,20 @@ export class QueueListDTO {
   totalJobs?: number | null;
 
   @Expose()
+  @ApiProperty({
+    description: 'Minimum walltime required',
+    nullable: true,
+  })
+  minWalltime?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Maximum walltime allowed',
+    nullable: true,
+  })
+  maxWalltime?: string | null;
+
+  @Expose()
   @ApiProperty({ description: 'Is queue enabled' })
   enabled: boolean;
 
