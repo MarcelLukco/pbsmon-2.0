@@ -7,9 +7,11 @@ export class PrometheusConfig {
   @IsString()
   apiEndpoint: string;
 
+  @IsOptional()
   @IsString()
   username: string;
 
+  @IsOptional()
   @IsString()
   password: string;
 

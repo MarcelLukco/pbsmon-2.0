@@ -27,9 +27,7 @@ export class PrometheusClient {
     this.config = this.configService.get<PrometheusConfig>('prometheus')!;
 
     if (!this.config.username || !this.config.password) {
-      throw new Error(
-        'PROMETHEUS_USERNAME and PROMETHEUS_PASSWORD must be set in environment variables',
-      );
+      this.logger.error('Prometheus credentials not configured');
     }
 
     this.logger.log(
