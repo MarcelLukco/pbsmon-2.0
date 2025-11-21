@@ -49,7 +49,7 @@ async function bootstrap() {
   const appConfig = configService.get<AppConfig>('app')!;
   const port = appConfig.port || 3000;
 
-  // Swagger configuration
+  // Swagger configuration - setup before global prefix
   const config = new DocumentBuilder()
     .setTitle('PBSMON API')
     .setDescription('API for showing data from Metacentrum computing grid')
@@ -57,10 +57,15 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+
+  // Set global prefix for all routes (after Swagger document creation)
+  app.setGlobalPrefix('api');
+
+  // Swagger at /api/docs (global prefix + docs path)
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(port);
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`📚 Swagger UI available at: http://localhost:${port}/api`);
+  console.log(`🚀 Application is running on: http://localhost:${port}/api`);
+  console.log(`📚 Swagger UI available at: http://localhost:${port}/api/docs`);
 }
 bootstrap();
