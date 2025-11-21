@@ -113,7 +113,7 @@ const menuItems: MenuItem[] = [
 const supportLinks: SupportLink[] = [
   {
     id: "user-support",
-    href: "#",
+    href: "https://www.metacentrum.cz/cs/about/user_support.html",
     translationKey: "pages.userSupport",
     external: true,
     icon: (
@@ -142,7 +142,7 @@ const supportLinks: SupportLink[] = [
   },
   {
     id: "documentation",
-    href: "#",
+    href: "https://docs.metacentrum.cz/en/docs/welcome",
     translationKey: "pages.documentation",
     external: true,
     icon: (
@@ -162,7 +162,7 @@ const supportLinks: SupportLink[] = [
   },
   {
     id: "faq",
-    href: "#",
+    href: "https://docs.metacentrum.cz/docs/support/faqs",
     translationKey: "pages.faq",
     external: true,
     icon: (
@@ -182,7 +182,7 @@ const supportLinks: SupportLink[] = [
   },
   {
     id: "metacentrum",
-    href: "#",
+    href: "https://www.metacentrum.cz",
     translationKey: "pages.metacentrum",
     external: true,
     icon: (
@@ -292,7 +292,7 @@ export function SidebarLayout() {
                         className={[
                           "w-full flex items-center justify-between pl-[14px] pr-4 h-[54px] transition-colors",
                           isItemActive(item)
-                            ? "bg-secondary text-white rounded-[5px]"
+                            ? "bg-secondary text-white"
                             : "text-white hover:bg-primary-700",
                         ].join(" ")}
                       >
