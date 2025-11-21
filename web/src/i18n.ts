@@ -44,6 +44,8 @@ i18n.use(initReactI18next).init({
           jobs: "Jobs",
           status: "Status",
           noQueuesFound: "No enabled and started queues found",
+          maxForUser: "Max/User",
+          fairshare: "Fairshare",
         },
         language: {
           english: "English",
@@ -91,6 +93,8 @@ i18n.use(initReactI18next).init({
           jobs: "Úlohy",
           status: "Stav",
           noQueuesFound: "Nebyly nalezeny žádné povolené a spuštěné fronty",
+          maxForUser: "Max na uživatele",
+          fairshare: "Fairshare",
         },
         language: {
           english: "English",

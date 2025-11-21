@@ -1,11 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 
+export interface QueueStateCountDTO {
+  transit: number;
+  queued: number;
+  held: number;
+  waiting: number;
+  running: number;
+  exiting: number;
+  begun: number;
+}
+
 export interface QueueListDTO {
   name: string;
   queueType: "Execution" | "Route";
   priority?: number | null;
   totalJobs?: number | null;
+  stateCount?: QueueStateCountDTO | null;
+  fairshare?: string | null;
+  maximumForUser?: number | null;
   minWalltime?: string | null;
   maxWalltime?: string | null;
   enabled: boolean;

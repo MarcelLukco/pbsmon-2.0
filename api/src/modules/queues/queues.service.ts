@@ -253,11 +253,27 @@ export class QueuesService {
 
     const hasAccess = this.checkQueueAccess(queue, userContext);
 
+    const stateCount = this.parseStateCount(queue.attributes.state_count);
+
+    const fairshare = queue.attributes.fairshare_tree || null;
+
+    // Parse max_run format: "[u:PBS_GENERIC=5]" -> extract 5
+    let maximumForUser: number | null = null;
+    if (queue.attributes.max_run) {
+      const match = queue.attributes.max_run.match(/=\s*(\d+)/);
+      if (match) {
+        maximumForUser = parseInt(match[1], 10);
+      }
+    }
+
     return {
       name: queue.name,
       queueType: queue.attributes.queue_type as 'Execution' | 'Route',
       priority,
       totalJobs,
+      stateCount,
+      fairshare,
+      maximumForUser,
       minWalltime,
       maxWalltime,
       enabled,

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
+import { QueueStateCountDTO } from './queue-detail.dto';
 
 /**
  * Queue DTO for list view
@@ -23,6 +24,29 @@ export class QueueListDTO {
   @Expose()
   @ApiProperty({ description: 'Total number of jobs', nullable: true })
   totalJobs?: number | null;
+
+  @Expose()
+  @Type(() => QueueStateCountDTO)
+  @ApiProperty({
+    description: 'Job state counts',
+    type: QueueStateCountDTO,
+    nullable: true,
+  })
+  stateCount?: QueueStateCountDTO | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Fairshare tree name',
+    nullable: true,
+  })
+  fairshare?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Maximum jobs per user',
+    nullable: true,
+  })
+  maximumForUser?: number | null;
 
   @Expose()
   @ApiProperty({

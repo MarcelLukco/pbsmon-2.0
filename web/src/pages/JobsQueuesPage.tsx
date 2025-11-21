@@ -17,28 +17,45 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
     navigate(`/queues/${queue.name}`);
   };
 
-  const indentWidth = level * 24;
+  const indentWidth = level * 55;
+
+  // Calculate job statistics
+  const queuedJobs = queue.stateCount?.queued ?? 0;
+  const runningJobs = queue.stateCount?.running ?? 0;
+  const doneJobs =
+    (queue.stateCount?.begun ?? 0) + (queue.stateCount?.exiting ?? 0);
+  const totalJobs = queue.totalJobs ?? 0;
+
+  // Background color based on level
+  const bgColorClass =
+    level === 0
+      ? "bg-white hover:bg-gray-50"
+      : level === 1
+        ? "bg-blue-50 hover:bg-blue-100"
+        : level === 2
+          ? "bg-indigo-50 hover:bg-indigo-100"
+          : "bg-purple-50 hover:bg-purple-100";
 
   return (
     <>
-      <div className="grid grid-cols-12 gap-4 items-center py-3 px-4 hover:bg-gray-50 border-b border-gray-100 relative">
+      <div
+        className={`grid grid-cols-12 gap-x-2 items-center py-2 px-4 border-b border-gray-100 relative ${bgColorClass}`}
+      >
         {/* Tree connector lines */}
         {level > 0 && (
           <>
             <div
               className="absolute left-0 top-0 bottom-0 flex items-center pointer-events-none"
-              style={{ left: `${indentWidth - 12}px` }}
+              style={{ left: `${indentWidth - 20}px` }}
             >
               {/* Vertical line */}
-              <div
-                className={`w-px bg-gray-300 ${isLast ? "h-1/2" : "h-full"}`}
-                style={{ marginLeft: "11px" }}
-              />
+              <div className={`w-px h-full`} style={{ marginLeft: "19px" }}>
+                <div
+                  className={`w-px bg-gray-400 ${isLast ? "h-1/2" : "h-full"}`}
+                ></div>
+              </div>
               {/* Horizontal line */}
-              <div
-                className="h-px bg-gray-300"
-                style={{ width: "12px", marginLeft: "11px" }}
-              />
+              <div className="h-px bg-gray-400" style={{ width: "20px" }} />
             </div>
           </>
         )}
@@ -124,36 +141,34 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
           )}
         </div>
 
-        {/* Jobs Column */}
-        <div className="col-span-1 text-sm text-gray-600">
-          {queue.totalJobs !== null && queue.totalJobs !== undefined
-            ? queue.totalJobs
-            : "-"}
+        {/* Jobs Breakdown Column */}
+        <div className="col-span-4 text-sm text-gray-600">
+          <div className="flex flex-col gap-1">
+            <div className="flex gap-2 flex-wrap">
+              <span className="text-gray-500">Q:</span>
+              <span className="font-medium">{queuedJobs}</span>
+              <span className="text-gray-500">R:</span>
+              <span className="font-medium text-blue-600">{runningJobs}</span>
+              <span className="text-gray-500">D:</span>
+              <span className="font-medium text-green-600">{doneJobs}</span>
+              <span className="text-gray-500">Total:</span>
+              <span className="font-medium">{totalJobs}</span>
+
+              <span className="text-gray-500">{t("queues.maxForUser")}:</span>
+              {!!queue.maximumForUser ? (
+                <span className="text-center">{queue.maximumForUser}</span>
+              ) : (
+                "-"
+              )}
+            </div>
+          </div>
         </div>
-        {/* Status Column */}
-        <div className="col-span-2 flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                queue.enabled ? "bg-green-500" : "bg-gray-400"
-              }`}
-              title={queue.enabled ? t("queues.enabled") : t("queues.disabled")}
-            />
-            <span className="text-xs text-gray-600">
-              {queue.enabled ? t("queues.enabled") : t("queues.disabled")}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                queue.started ? "bg-green-500" : "bg-gray-400"
-              }`}
-              title={queue.started ? t("queues.started") : t("queues.stopped")}
-            />
-            <span className="text-xs text-gray-600">
-              {queue.started ? t("queues.started") : t("queues.stopped")}
-            </span>
-          </div>
+
+        <div className="col-span-1 text-sm text-gray-600"></div>
+
+        {/* Fairshare Column */}
+        <div className="col-span-1 text-sm text-gray-600">
+          {queue.fairshare || ""}
         </div>
       </div>
 
@@ -225,12 +240,13 @@ export function JobsQueuesPage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
             {/* Table Header */}
             <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-              <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-700">
+              <div className="grid grid-cols-12 gap-2 text-sm font-medium text-gray-700">
                 <div className="col-span-3">{t("queues.queueName")}</div>
                 <div className="col-span-1">{t("queues.priority")}</div>
                 <div className="col-span-2">{t("queues.timeLimits")}</div>
-                <div className="col-span-1">{t("queues.jobs")}</div>
-                <div className="col-span-2">{t("queues.status")}</div>
+                <div className="col-span-4">{t("queues.jobs")}</div>
+                <div className="col-span-1">{t("queues.maxForUser")}</div>
+                <div className="col-span-1">{t("queues.fairshare")}</div>
               </div>
             </div>
 
