@@ -1,4 +1,6 @@
-export function QueueDetailPage() {
-  return <h1>Queue Detail</h1>;
-}
+import { useTranslation } from "react-i18next";
 
+export function QueueDetailPage() {
+  const { t } = useTranslation();
+  return <h1>{t("pages.queueDetail")}</h1>;
+}

@@ -12,6 +12,13 @@ export class QueueListDTO {
 
   @Expose()
   @ApiProperty({
+    description: 'Server name this queue belongs to',
+    nullable: true,
+  })
+  server?: string | null;
+
+  @Expose()
+  @ApiProperty({
     description: 'Queue type',
     enum: ['Execution', 'Route'],
   })

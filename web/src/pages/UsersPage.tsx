@@ -12,7 +12,7 @@ export function UsersPage() {
         </div>
       </header>
       <div className="p-6">
-        <h1>Users</h1>
+        <h1>{t("pages.users")}</h1>
       </div>
     </>
   );

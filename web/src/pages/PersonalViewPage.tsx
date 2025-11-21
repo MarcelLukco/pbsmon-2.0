@@ -12,7 +12,7 @@ export function PersonalViewPage() {
         </div>
       </header>
       <div className="p-6">
-        <h1>Personal View</h1>
+        <h1>{t("pages.personalView")}</h1>
       </div>
     </>
   );

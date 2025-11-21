@@ -12,7 +12,7 @@ export function StorageSpacesPage() {
         </div>
       </header>
       <div className="p-6">
-        <h1>Storage Spaces</h1>
+        <h1>{t("pages.storageSpaces")}</h1>
       </div>
     </>
   );

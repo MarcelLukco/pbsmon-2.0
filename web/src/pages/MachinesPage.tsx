@@ -12,7 +12,7 @@ export function MachinesPage() {
         </div>
       </header>
       <div className="p-6">
-        <h1>Machines</h1>
+        <h1>{t("pages.machines")}</h1>
       </div>
     </>
   );

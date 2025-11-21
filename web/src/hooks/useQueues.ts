@@ -13,6 +13,7 @@ export interface QueueStateCountDTO {
 
 export interface QueueListDTO {
   name: string;
+  server?: string | null;
   queueType: "Execution" | "Route";
   priority?: number | null;
   totalJobs?: number | null;

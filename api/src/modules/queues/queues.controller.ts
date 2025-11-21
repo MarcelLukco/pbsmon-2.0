@@ -1,5 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOperation, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { ApiResponse } from '@/common/dto/api-response.dto';
 import {
   ApiOkResponseArray,
@@ -20,13 +25,20 @@ export class QueuesController {
   @ApiOperation({
     summary: 'Get list of all queues',
     description:
-      'Returns hierarchical list of queues with routing relationships and user access information. User context is extracted from access token via middleware.',
+      'Returns hierarchical list of queues with routing relationships and user access information. User context is extracted from access token via middleware. Optionally filter by server name.',
+  })
+  @ApiQuery({
+    name: 'server',
+    required: false,
+    description:
+      'Filter queues by server name (e.g., "pbs-m1"). If not provided, returns queues from all servers.',
   })
   @ApiOkResponseModel(QueuesListDTO, 'Hierarchical list of queues')
   getQueues(
     @UserContextDecorator() userContext: UserContext,
+    @Query('server') server?: string,
   ): ApiResponse<QueuesListDTO> {
-    const data = this.queuesService.getQueuesList(userContext);
+    const data = this.queuesService.getQueuesList(userContext, server);
     return new ApiResponse(data, {
       totalCount: this.countQueues(data.queues),
     });
@@ -36,15 +48,22 @@ export class QueuesController {
   @ApiOperation({
     summary: 'Get queue detail',
     description:
-      'Returns full queue details including ACL information, resources, hierarchical relationships, and user access. User context is extracted from access token via middleware.',
+      'Returns full queue details including ACL information, resources, hierarchical relationships, and user access. User context is extracted from access token via middleware. Optionally filter by server name.',
+  })
+  @ApiQuery({
+    name: 'server',
+    required: false,
+    description:
+      'Filter queue by server name (e.g., "pbs-m1"). If not provided, searches all servers.',
   })
   @ApiOkResponseModel(QueueDetailDTO, 'Queue detail')
   @ApiNotFoundResponse({ description: 'Queue not found' })
   getQueueDetail(
     @Param('id') id: string,
     @UserContextDecorator() userContext: UserContext,
+    @Query('server') server?: string,
   ): ApiResponse<QueueDetailDTO> {
-    const data = this.queuesService.getQueueDetail(id, userContext);
+    const data = this.queuesService.getQueueDetail(id, userContext, server);
     return new ApiResponse(data);
   }
 

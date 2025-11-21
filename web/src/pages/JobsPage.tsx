@@ -12,7 +12,7 @@ export function JobsPage() {
         </div>
       </header>
       <div className="p-6">
-        <h1>Jobs</h1>
+        <h1>{t("pages.jobs")}</h1>
       </div>
     </>
   );

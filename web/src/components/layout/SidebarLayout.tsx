@@ -253,7 +253,7 @@ export function SidebarLayout() {
           <div className="pl-[29px] pr-4 pt-10 pb-6 border-b border-primary-700">
             <img
               src="/images/logo-white.png"
-              alt="metacentrum cesnet"
+              alt={t("common.logoAlt")}
               className="w-[195px] h-[47px]"
             />
           </div>

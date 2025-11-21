@@ -12,7 +12,7 @@ export function WaitingJobsPage() {
         </div>
       </header>
       <div className="p-6">
-        <h1>Waiting Jobs</h1>
+        <h1>{t("pages.waitingJobs")}</h1>
       </div>
     </>
   );

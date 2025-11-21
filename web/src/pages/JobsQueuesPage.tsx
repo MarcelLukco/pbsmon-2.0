@@ -14,10 +14,10 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
   const hasChildren = queue.children && queue.children.length > 0;
 
   const handleRowClick = () => {
-    navigate(`/queues/${queue.name}`);
+    navigate(`/queues/${queue.name}.${queue.server}.metacentrum.cz`);
   };
 
-  const indentWidth = level * 55;
+  const indentWidth = level * 40;
 
   // Calculate job statistics
   const queuedJobs = queue.stateCount?.queued ?? 0;
@@ -39,7 +39,7 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
   return (
     <>
       <div
-        className={`grid grid-cols-12 gap-x-2 items-center py-2 px-4 border-b border-gray-100 relative ${bgColorClass}`}
+        className={`grid grid-cols-12 gap-2 items-center py-2 px-0 border-b border-gray-100 relative ${bgColorClass}`}
       >
         {/* Tree connector lines */}
         {level > 0 && (
@@ -94,7 +94,7 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
               className="font-medium text-gray-900 cursor-pointer hover:text-primary-600 truncate"
               onClick={handleRowClick}
             >
-              {queue.name}
+              {`${queue.name}.${queue.server}.metacentrum.cz`}
             </span>
             {queue.hasAccess === false && (
               <span
@@ -142,29 +142,36 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
         </div>
 
         {/* Jobs Breakdown Column */}
-        <div className="col-span-4 text-sm text-gray-600">
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-2 flex-wrap">
-              <span className="text-gray-500">Q:</span>
-              <span className="font-medium">{queuedJobs}</span>
-              <span className="text-gray-500">R:</span>
-              <span className="font-medium text-blue-600">{runningJobs}</span>
-              <span className="text-gray-500">D:</span>
-              <span className="font-medium text-green-600">{doneJobs}</span>
-              <span className="text-gray-500">Total:</span>
-              <span className="font-medium">{totalJobs}</span>
-
+        <div className="col-span-5 text-sm text-gray-600 pe-12">
+          <div className="flex gap-2 flex-wrap lg:justify-between">
+            <div>
+              <span className="text-gray-500">{t("queues.queued")}</span>
+              <span className="font-medium ml-2">{queuedJobs}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">{t("queues.running")}</span>
+              <span className="font-medium text-blue-600 ml-2">
+                {runningJobs}
+              </span>
+            </div>
+            <div>
+              <span className="text-gray-500">{t("queues.done")}</span>
+              <span className="font-medium text-green-600 ml-2">
+                {doneJobs}
+              </span>
+            </div>
+            <div>
+              <span className="text-gray-500">{t("queues.total")}</span>
+              <span className="font-medium ml-2">{totalJobs}</span>
+            </div>
+            <div>
               <span className="text-gray-500">{t("queues.maxForUser")}:</span>
-              {!!queue.maximumForUser ? (
-                <span className="text-center">{queue.maximumForUser}</span>
-              ) : (
-                "-"
-              )}
+              <span className="ml-2">
+                {!!queue.maximumForUser ? queue.maximumForUser : "-"}
+              </span>
             </div>
           </div>
         </div>
-
-        <div className="col-span-1 text-sm text-gray-600"></div>
 
         {/* Fairshare Column */}
         <div className="col-span-1 text-sm text-gray-600">
@@ -237,15 +244,14 @@ export function JobsQueuesPage() {
         )}
 
         {data && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {/* Table Header */}
             <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
               <div className="grid grid-cols-12 gap-2 text-sm font-medium text-gray-700">
                 <div className="col-span-3">{t("queues.queueName")}</div>
                 <div className="col-span-1">{t("queues.priority")}</div>
                 <div className="col-span-2">{t("queues.timeLimits")}</div>
-                <div className="col-span-4">{t("queues.jobs")}</div>
-                <div className="col-span-1">{t("queues.maxForUser")}</div>
+                <div className="col-span-5">{t("queues.jobs")}</div>
                 <div className="col-span-1">{t("queues.fairshare")}</div>
               </div>
             </div>

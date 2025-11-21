@@ -1,4 +1,6 @@
-export function UserDetailPage() {
-  return <h1>User Detail</h1>;
-}
+import { useTranslation } from "react-i18next";
 
+export function UserDetailPage() {
+  const { t } = useTranslation();
+  return <h1>{t("pages.userDetail")}</h1>;
+}

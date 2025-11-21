@@ -84,10 +84,11 @@ export interface PbsHook extends PbsEntity {
 }
 
 /**
- * Combined PBS data structure
+ * PBS data structure for a single server
  */
-export interface PbsData {
+export interface PbsServerData {
   timestamp: string;
+  serverName: string;
   jobs: PbsCollection<PbsJob> | null;
   queues: PbsCollection<PbsQueue> | null;
   nodes: PbsCollection<PbsNode> | null;
@@ -96,4 +97,13 @@ export interface PbsData {
   reservations: PbsCollection<PbsReservation> | null;
   schedulers: PbsCollection<PbsScheduler> | null;
   hooks: PbsCollection<PbsHook> | null;
+}
+
+/**
+ * Combined PBS data structure for multiple servers
+ * Keyed by server name (e.g., "pbs-m1")
+ */
+export interface PbsData {
+  timestamp: string;
+  servers: Record<string, PbsServerData>;
 }

@@ -19,18 +19,69 @@ export class QueuesService {
 
   /**
    * Get list of all queues in hierarchical structure
+   * @param userContext User context for access control
+   * @param serverName Optional server name filter. If not provided, returns queues from all servers.
    */
-  getQueuesList(userContext: UserContext): QueuesListDTO {
+  getQueuesList(userContext: UserContext, serverName?: string): QueuesListDTO {
     const pbsData = this.dataCollectionService.getPbsData();
 
-    if (!pbsData?.queues?.items) {
+    if (!pbsData?.servers) {
       return {
         queues: [],
       };
     }
 
-    const queues = pbsData.queues.items;
+    // If server name is provided, only get queues from that server
+    if (serverName) {
+      const serverData = pbsData.servers[serverName];
+      if (!serverData?.queues?.items) {
+        return {
+          queues: [],
+        };
+      }
+      return this.buildQueuesListFromQueues(
+        serverData.queues.items,
+        userContext,
+        serverName,
+      );
+    }
 
+    // Otherwise, aggregate queues from all servers
+    // Track which server each queue belongs to
+    const allQueues: PbsQueue[] = [];
+    const queueToServerMap = new Map<string, string>();
+    for (const [serverNameKey, serverData] of Object.entries(pbsData.servers)) {
+      if (serverData.queues?.items) {
+        for (const queue of serverData.queues.items) {
+          allQueues.push(queue);
+          queueToServerMap.set(queue.name, serverNameKey);
+        }
+      }
+    }
+
+    if (allQueues.length === 0) {
+      return {
+        queues: [],
+      };
+    }
+
+    return this.buildQueuesListFromQueues(
+      allQueues,
+      userContext,
+      undefined,
+      queueToServerMap,
+    );
+  }
+
+  /**
+   * Build queues list from a collection of queues
+   */
+  private buildQueuesListFromQueues(
+    queues: PbsQueue[],
+    userContext: UserContext,
+    serverName?: string,
+    queueToServerMap?: Map<string, string>,
+  ): QueuesListDTO {
     // Build queue map and parent-child relationships
     const queueMap = new Map<string, PbsQueue>();
     const parentMap = new Map<string, string[]>(); // child -> parents
@@ -95,7 +146,16 @@ export class QueuesService {
         return a.name.localeCompare(b.name);
       });
 
-      return this.mapQueueToList(queue, userContext, childQueues);
+      // Determine server name for this queue
+      const queueServerName =
+        serverName || queueToServerMap?.get(queue.name) || null;
+
+      return this.mapQueueToList(
+        queue,
+        userContext,
+        childQueues,
+        queueServerName,
+      );
     };
 
     // Build tree for each root queue
@@ -121,22 +181,69 @@ export class QueuesService {
 
   /**
    * Get queue detail by name
+   * @param name Queue name
+   * @param userContext User context for access control
+   * @param serverName Optional server name filter. If not provided, searches all servers.
    */
-  getQueueDetail(name: string, userContext: UserContext): QueueDetailDTO {
+  getQueueDetail(
+    name: string,
+    userContext: UserContext,
+    serverName?: string,
+  ): QueueDetailDTO {
     const pbsData = this.dataCollectionService.getPbsData();
 
-    if (!pbsData?.queues?.items) {
+    if (!pbsData?.servers) {
       throw new NotFoundException(`Queue '${name}' was not found`);
     }
 
-    const queue = pbsData.queues.items.find((q) => q.name === name);
+    // If server name is provided, only search in that server
+    if (serverName) {
+      const serverData = pbsData.servers[serverName];
+      if (!serverData?.queues?.items) {
+        throw new NotFoundException(`Queue '${name}' was not found`);
+      }
+
+      const queue = serverData.queues.items.find((q) => q.name === name);
+      if (!queue) {
+        throw new NotFoundException(`Queue '${name}' was not found`);
+      }
+
+      return this.buildQueueDetailFromQueues(
+        queue,
+        serverData.queues.items,
+        userContext,
+      );
+    }
+
+    // Search across all servers
+    let queue: PbsQueue | undefined;
+    let queues: PbsQueue[] = [];
+    for (const serverData of Object.values(pbsData.servers)) {
+      if (serverData.queues?.items) {
+        const foundQueue = serverData.queues.items.find((q) => q.name === name);
+        if (foundQueue) {
+          queue = foundQueue;
+          queues = serverData.queues.items;
+          break;
+        }
+      }
+    }
 
     if (!queue) {
       throw new NotFoundException(`Queue '${name}' was not found`);
     }
 
-    const queues = pbsData.queues.items;
+    return this.buildQueueDetailFromQueues(queue, queues, userContext);
+  }
 
+  /**
+   * Build queue detail from queue and queues collection
+   */
+  private buildQueueDetailFromQueues(
+    queue: PbsQueue,
+    queues: PbsQueue[],
+    userContext: UserContext,
+  ): QueueDetailDTO {
     // Build parent-child relationships
     const queueMap = new Map<string, PbsQueue>();
     const parentMap = new Map<string, string[]>();
@@ -236,6 +343,7 @@ export class QueuesService {
     queue: PbsQueue,
     userContext: UserContext,
     children: QueueListDTO[] = [],
+    serverName?: string | null,
   ): QueueListDTO {
     const priority = queue.attributes.Priority
       ? parseInt(queue.attributes.Priority, 10)
@@ -268,6 +376,7 @@ export class QueuesService {
 
     return {
       name: queue.name,
+      server: serverName || null,
       queueType: queue.attributes.queue_type as 'Execution' | 'Route',
       priority,
       totalJobs,

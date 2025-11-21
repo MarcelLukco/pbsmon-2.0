@@ -12,7 +12,7 @@ export function QsubAssemblerPage() {
         </div>
       </header>
       <div className="p-6">
-        <h1>QSUB assembler</h1>
+        <h1>{t("pages.qsubAssembler")}</h1>
       </div>
     </>
   );

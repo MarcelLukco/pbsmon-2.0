@@ -65,10 +65,15 @@ export class InfrastructureService {
 
     const pbsData = this.dataCollectionService.getPbsData();
     const pbsNodesMap = new Map<string, PbsNode>();
-    if (pbsData?.nodes?.items) {
-      pbsData.nodes.items.forEach((node) => {
-        pbsNodesMap.set(node.name, node);
-      });
+    if (pbsData?.servers) {
+      // Aggregate nodes from all servers
+      for (const serverData of Object.values(pbsData.servers)) {
+        if (serverData.nodes?.items) {
+          serverData.nodes.items.forEach((node) => {
+            pbsNodesMap.set(node.name, node);
+          });
+        }
+      }
     }
 
     // Calculate totals and GPU/memory from PBS
@@ -406,7 +411,7 @@ export class InfrastructureService {
   } {
     const pbsData = this.dataCollectionService.getPbsData();
 
-    if (!pbsData?.nodes?.items) {
+    if (!pbsData?.servers) {
       return {
         state: null,
         cpuUsage: null,
@@ -414,8 +419,16 @@ export class InfrastructureService {
       };
     }
 
-    // Find node in PBS data
-    const pbsNode = pbsData.nodes.items.find((node) => node.name === nodeName);
+    // Find node across all servers
+    let pbsNode: PbsNode | undefined;
+    for (const serverData of Object.values(pbsData.servers)) {
+      if (serverData.nodes?.items) {
+        pbsNode = serverData.nodes.items.find((node) => node.name === nodeName);
+        if (pbsNode) {
+          break;
+        }
+      }
+    }
 
     if (!pbsNode) {
       return {
