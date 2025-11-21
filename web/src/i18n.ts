@@ -1,6 +1,9 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+// Load language from localStorage or default to 'cs'
+const savedLanguage = localStorage.getItem("i18nextLng") || "cs";
+
 i18n.use(initReactI18next).init({
   resources: {
     en: {
@@ -41,6 +44,11 @@ i18n.use(initReactI18next).init({
           jobs: "Jobs",
           status: "Status",
           noQueuesFound: "No enabled and started queues found",
+        },
+        language: {
+          english: "English",
+          czech: "Čeština",
+          switchLanguage: "Switch Language",
         },
       },
     },
@@ -84,10 +92,20 @@ i18n.use(initReactI18next).init({
           status: "Stav",
           noQueuesFound: "Nebyly nalezeny žádné povolené a spuštěné fronty",
         },
+        language: {
+          english: "English",
+          czech: "Čeština",
+          switchLanguage: "Přepnout jazyk",
+        },
       },
     },
   },
-  lng: "cs",
+  lng: savedLanguage,
   fallbackLng: "cs",
   interpolation: { escapeValue: false },
+});
+
+// Persist language changes to localStorage
+i18n.on("languageChanged", (lng) => {
+  localStorage.setItem("i18nextLng", lng);
 });
