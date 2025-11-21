@@ -63,11 +63,11 @@ fi
 
 # Stop existing containers
 echo -e "${YELLOW}Stopping existing containers...${NC}"
-$DOCKER_COMPOSE down || true
+sudo $DOCKER_COMPOSE down || true
 
 # Build and start containers
 echo -e "${YELLOW}Building and starting containers...${NC}"
-if $DOCKER_COMPOSE up -d --build; then
+if sudo $DOCKER_COMPOSE up -d --build; then
     echo -e "${GREEN}✓ Containers started successfully${NC}"
 else
     echo -e "${RED}✗ Failed to start containers${NC}"
@@ -79,11 +79,11 @@ sleep 5
 
 # Check container status
 echo -e "${YELLOW}Checking container status...${NC}"
-$DOCKER_COMPOSE ps
+sudo $DOCKER_COMPOSE ps
 
 # Show logs for the last 20 lines
 echo -e "${YELLOW}Recent logs:${NC}"
-$DOCKER_COMPOSE logs --tail=20
+sudo $DOCKER_COMPOSE logs --tail=20
 
 echo -e "${GREEN}Deployment completed successfully!${NC}"
 echo -e "${GREEN}Services should be available at:${NC}"
