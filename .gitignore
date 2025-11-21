@@ -141,3 +141,6 @@ temp
 .DS_Store
 
 .idea
+
+# Nginx basic auth password file
+nginx/.htpasswd
