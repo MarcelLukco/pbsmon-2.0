@@ -142,7 +142,7 @@ export function SidebarLayout() {
       {/* Top Navbar */}
       <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary"></nav>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         {/* Sidebar */}
         <aside className="w-64 bg-primary-600 text-white flex flex-col shadow-[1px_1px_5px_rgba(0,0,0,0.25),inset_0_0_8px_rgba(0,0,0,0.25)]">
           {/* Logo Section */}
@@ -316,9 +316,9 @@ export function SidebarLayout() {
         </aside>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col">
           {/* Main Content */}
-          <main className="flex-1 overflow-auto bg-gray-light">
+          <main className="flex-1 bg-gray-light">
             <Outlet />
           </main>
         </div>
