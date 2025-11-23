@@ -24,6 +24,7 @@ export class InfrastructureController {
   @ApiOkResponseArray(
     InfrastructureOrganizationListDTO,
     'List of infrastructure organizations',
+    InfrastructureListMetaDto,
   )
   getInfrastructure(): ApiResponse<
     InfrastructureOrganizationListDTO[],

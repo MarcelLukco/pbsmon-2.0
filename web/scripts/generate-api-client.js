@@ -12,21 +12,9 @@ const __dirname = dirname(__filename);
 const API_URL = process.env.API_URL || "http://localhost:4200";
 const OPENAPI_JSON_URL = `${API_URL}/api/docs-json`;
 const OUTPUT_DIR = join(__dirname, "../src/lib/generated-api");
-const OPENAPI_JSON_FILE = join(OUTPUT_DIR, "openapi.json");
 
 async function fetchOpenApiSpec() {
-  // Try to use existing spec file first (for offline generation)
-  try {
-    const { readFileSync, existsSync } = await import("fs");
-    if (existsSync(OPENAPI_JSON_FILE)) {
-      console.log(`Using existing OpenAPI spec from ${OPENAPI_JSON_FILE}...`);
-      return JSON.parse(readFileSync(OPENAPI_JSON_FILE, "utf-8"));
-    }
-  } catch (error) {
-    // Ignore and try fetching
-  }
-
-  // Try to fetch from API
+  // Fetch from API directly
   try {
     console.log(`Fetching OpenAPI spec from ${OPENAPI_JSON_URL}...`);
     const response = await fetch(OPENAPI_JSON_URL);
@@ -44,24 +32,20 @@ async function fetchOpenApiSpec() {
     console.error(
       "Make sure the API server is running or set API_URL environment variable"
     );
-    console.error(
-      "Alternatively, place an openapi.json file in the generated-api directory"
-    );
-    process.exit(1);
+    if (process.env.WATCH_MODE !== "true") {
+      process.exit(1);
+    }
+    throw error;
   }
 }
 
 async function generateClient() {
   try {
-    // Fetch the OpenAPI spec
+    // Fetch the OpenAPI spec directly from API
     const openApiSpec = await fetchOpenApiSpec();
 
-    // Save the spec for reference
+    // Ensure output directory exists
     mkdirSync(OUTPUT_DIR, { recursive: true });
-    writeFileSync(
-      join(OUTPUT_DIR, "openapi.json"),
-      JSON.stringify(openApiSpec, null, 2)
-    );
 
     console.log("Generating TypeScript client...");
 
@@ -82,7 +66,10 @@ async function generateClient() {
     console.log(`✅ API client generated successfully in ${OUTPUT_DIR}`);
   } catch (error) {
     console.error("Error generating API client:", error);
-    process.exit(1);
+    if (process.env.WATCH_MODE !== "true") {
+      process.exit(1);
+    }
+    throw error;
   }
 }
 

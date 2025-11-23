@@ -1,19 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { MetaDto } from "@/lib/generated-api";
-
-// Infrastructure meta extends MetaDto with additional fields
-type InfrastructureListMetaDto = MetaDto & {
-  totalOrganizations: number;
-  totalClusters: number;
-  totalNodes: number;
-  totalCpu: number;
-  totalGpu?: number | null;
-  totalMemory?: number | null;
-  freeNodes: number;
-  partiallyUsedNodes: number;
-  usedNodes: number;
-  unknownNodes: number;
-};
+import type { InfrastructureListMetaDto } from "@/lib/generated-api";
 
 interface MetacentrumTotalProps {
   meta: InfrastructureListMetaDto;
@@ -64,7 +50,7 @@ export function MetacentrumTotal({ meta }: MetacentrumTotalProps) {
               {t("machines.totalGpu")}
             </div>
             <div className="text-2xl font-bold text-primary-900">
-              {meta.totalGpu}
+              {meta.totalGpu ?? "-"}
             </div>
           </div>
         )}

@@ -26,14 +26,14 @@ export class InfrastructureListMetaDto extends MetaDto {
     description: 'Total GPU count across all nodes (if available from PBS)',
     nullable: true,
   })
-  totalGpu?: number | null;
+  totalGpu: number;
 
   @ApiPropertyOptional({
     description:
       'Total memory across all nodes (in bytes, if available from PBS)',
     nullable: true,
   })
-  totalMemory?: number | null;
+  totalMemory: number;
 
   @ApiProperty({
     description: 'Number of free nodes',
