@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@iconify/react";
-import type { InfrastructureOrganizationListDTO } from "@/hooks/useInfrastructure";
+import type { InfrastructureOrganizationListDTO } from "@/lib/generated-api";
 
 interface QuickLinksSidebarProps {
   organizations: InfrastructureOrganizationListDTO[];

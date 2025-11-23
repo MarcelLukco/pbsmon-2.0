@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { InfrastructureNodeListDTO } from "@/hooks/useInfrastructure";
+import type { InfrastructureNodeListDTO } from "@/lib/generated-api";
 
 interface NodePreviewProps {
   node: InfrastructureNodeListDTO;
@@ -41,7 +41,13 @@ export function NodePreview({ node }: NodePreviewProps) {
         ({node.cpu} CPU
         {node.cpuUsagePercent !== null &&
           node.cpuUsagePercent !== undefined && (
-            <span className="ml-1">- {node.cpuUsagePercent}%</span>
+            <span className="ml-1">
+              -{" "}
+              {typeof node.cpuUsagePercent === "number"
+                ? node.cpuUsagePercent
+                : Number(node.cpuUsagePercent)}
+              %
+            </span>
           )}
         )
       </span>

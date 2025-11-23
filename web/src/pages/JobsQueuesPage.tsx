@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import { useQueues, type QueueListDTO } from "@/hooks/useQueues";
+import { useQueues } from "@/hooks/useQueues";
+import type { QueueListDTO } from "@/lib/generated-api";
 
 interface QueueTreeNodeProps {
   queue: QueueListDTO;
@@ -101,7 +102,7 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
         {/* Priority Column */}
         <div className="col-span-1 text-sm text-gray-600">
           {queue.priority !== null && queue.priority !== undefined
-            ? queue.priority
+            ? String(queue.priority)
             : "-"}
         </div>
 
@@ -141,12 +142,15 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
             </div>
             <div>
               <span className="text-gray-500">{t("queues.total")}</span>
-              <span className="font-medium ml-2">{totalJobs}</span>
+              <span className="font-medium ml-2">{String(totalJobs)}</span>
             </div>
             <div>
               <span className="text-gray-500">{t("queues.maxForUser")}:</span>
               <span className="ml-2">
-                {!!queue.maximumForUser ? queue.maximumForUser : "-"}
+                {queue.maximumForUser !== null &&
+                queue.maximumForUser !== undefined
+                  ? String(queue.maximumForUser)
+                  : "-"}
               </span>
             </div>
           </div>
@@ -154,7 +158,11 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
 
         {/* Fairshare Column */}
         <div className="col-span-1 text-sm text-gray-600">
-          {queue.fairshare || ""}
+          {typeof queue.fairshare === "string"
+            ? queue.fairshare
+            : queue.fairshare
+              ? String(queue.fairshare)
+              : ""}
         </div>
       </div>
 

@@ -1,48 +1,23 @@
+// This file provides API client functionality using the generated OpenAPI client
+
+import { ApiClient } from "./generated-api";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.API_BASE_URL ||
   (import.meta.env.PROD ? "/api" : "http://localhost:4200/api");
 
-export interface ApiResponse<T> {
-  data: T;
-  meta?: {
-    totalCount?: number;
-  };
-}
+// Ensure BASE URL doesn't have trailing slash (generated client will add paths with leading slash)
+const normalizedBaseUrl = API_BASE_URL.endsWith("/")
+  ? API_BASE_URL.slice(0, -1)
+  : API_BASE_URL;
 
-async function apiRequest<T>(
-  endpoint: string,
-  options?: RequestInit
-): Promise<ApiResponse<T>> {
-  const url = `${API_BASE_URL}${endpoint}`;
+// Create and export a configured API client instance
+export const apiClient = new ApiClient({
+  BASE: normalizedBaseUrl,
+  WITH_CREDENTIALS: true,
+  CREDENTIALS: "include",
+});
 
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`API request failed: ${response.statusText}`);
-  }
-
-  return response.json();
-}
-
-export const apiClient = {
-  get: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: "GET" }),
-  post: <T>(endpoint: string, data?: unknown) =>
-    apiRequest<T>(endpoint, {
-      method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
-    }),
-  put: <T>(endpoint: string, data?: unknown) =>
-    apiRequest<T>(endpoint, {
-      method: "PUT",
-      body: data ? JSON.stringify(data) : undefined,
-    }),
-  delete: <T>(endpoint: string) =>
-    apiRequest<T>(endpoint, { method: "DELETE" }),
-};
+// Re-export generated types and services for convenience
+export * from "./generated-api";

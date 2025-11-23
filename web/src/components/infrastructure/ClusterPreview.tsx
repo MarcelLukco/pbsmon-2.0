@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { InfrastructureClusterListDTO } from "@/hooks/useInfrastructure";
+import type { InfrastructureClusterListDTO } from "@/lib/generated-api";
 import { NodePreview } from "./NodePreview";
 
 interface ClusterPreviewProps {

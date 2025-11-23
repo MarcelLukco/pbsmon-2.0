@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useUserDetail } from "@/hooks/useUserDetail";
+import type { UserFairshareDTO } from "@/lib/generated-api";
 
 export function UserDetailPage() {
   const { t } = useTranslation();
@@ -108,7 +109,9 @@ export function UserDetailPage() {
                     {t("users.nickname")}
                   </div>
                   <div className="text-lg font-medium text-gray-900">
-                    {data.nickname}
+                    {typeof data.nickname === "string"
+                      ? data.nickname
+                      : String(data.nickname)}
                   </div>
                 </div>
               )}
@@ -237,7 +240,14 @@ export function UserDetailPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {data.fairsharePerServer.map((item) => {
+                    {data.fairsharePerServer.map((item: UserFairshareDTO) => {
+                      // Handle ranking - it might be number or Record<string, any> from generated types
+                      const rankingValue =
+                        typeof item.ranking === "number"
+                          ? item.ranking
+                          : item.ranking !== null
+                            ? Number(item.ranking)
+                            : null;
                       const getRankingIcon = (
                         ranking: number | null | undefined
                       ) => {
@@ -300,12 +310,13 @@ export function UserDetailPage() {
                             {item.server}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                            {item.ranking !== null &&
-                            item.ranking !== undefined ? (
+                            {rankingValue !== null &&
+                            rankingValue !== undefined &&
+                            !isNaN(rankingValue) ? (
                               <div className="flex items-center gap-2">
-                                {getRankingIcon(item.ranking)}
+                                {getRankingIcon(rankingValue)}
                                 <span className="font-medium">
-                                  {item.ranking}
+                                  {rankingValue}
                                 </span>
                               </div>
                             ) : (

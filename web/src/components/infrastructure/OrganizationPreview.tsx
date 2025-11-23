@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { InfrastructureOrganizationListDTO } from "@/hooks/useInfrastructure";
+import type { InfrastructureOrganizationListDTO } from "@/lib/generated-api";
 import { ClusterPreview } from "./ClusterPreview";
 
 interface OrganizationPreviewProps {

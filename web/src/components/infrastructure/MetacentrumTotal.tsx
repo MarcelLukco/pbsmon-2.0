@@ -1,5 +1,19 @@
 import { useTranslation } from "react-i18next";
-import type { InfrastructureListMetaDto } from "@/hooks/useInfrastructure";
+import type { MetaDto } from "@/lib/generated-api";
+
+// Infrastructure meta extends MetaDto with additional fields
+type InfrastructureListMetaDto = MetaDto & {
+  totalOrganizations: number;
+  totalClusters: number;
+  totalNodes: number;
+  totalCpu: number;
+  totalGpu?: number | null;
+  totalMemory?: number | null;
+  freeNodes: number;
+  partiallyUsedNodes: number;
+  usedNodes: number;
+  unknownNodes: number;
+};
 
 interface MetacentrumTotalProps {
   meta: InfrastructureListMetaDto;

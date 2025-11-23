@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "generate:api": "node scripts/generate-api-client.js",
+    "prebuild": "npm run generate:api",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -36,6 +38,8 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "node-fetch": "^3.3.2",
+    "openapi-typescript-codegen": "^0.29.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.10",
     "typescript": "~5.8.3",
