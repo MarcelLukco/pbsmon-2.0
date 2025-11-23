@@ -16,6 +16,8 @@ import {
   PbsReservation,
   PbsScheduler,
   PbsHook,
+  PbsFairshare,
+  PbsFairshareEntry,
 } from '../types/pbs.types';
 
 @Injectable()
@@ -94,6 +96,9 @@ export class PbsCollectionService {
           path.join(serverPath, 'hooks.json'),
           'hooks',
         );
+        const fairshare = await this.loadFairshareFile(
+          path.join(serverPath, 'default_fairshare.txt'),
+        );
 
         // Determine server name from servers collection or use directory name
         let serverName = serverDir;
@@ -114,6 +119,7 @@ export class PbsCollectionService {
           reservations,
           schedulers,
           hooks,
+          fairshare,
         };
 
         const loadedEntities = [
@@ -125,6 +131,7 @@ export class PbsCollectionService {
           reservations && 'Reservations',
           schedulers && 'Schedulers',
           hooks && 'Hooks',
+          fairshare && 'Fairshare',
         ]
           .filter(Boolean)
           .join(', ');
@@ -170,6 +177,57 @@ export class PbsCollectionService {
         );
       } else {
         this.logger.warn(`Failed to load ${entityType} file: ${errorMessage}`);
+      }
+      return null;
+    }
+  }
+
+  private async loadFairshareFile(
+    filePath: string,
+  ): Promise<PbsFairshare | null> {
+    try {
+      const content = await fs.readFile(filePath, 'utf-8');
+      const lines = content.split('\n').filter((line) => line.trim());
+      const entries: PbsFairshareEntry[] = [];
+
+      for (const line of lines) {
+        // Skip comment lines
+        if (line.trim().startsWith('#')) {
+          continue;
+        }
+
+        const parts = line.trim().split('\t');
+        if (parts.length >= 3) {
+          const username = parts[0];
+          const value1 = parseInt(parts[1], 10);
+          const value2 = parseInt(parts[2], 10);
+
+          if (!isNaN(value1) && !isNaN(value2)) {
+            entries.push({
+              username,
+              value1,
+              value2,
+            });
+          }
+        }
+      }
+
+      this.logger.debug(
+        `Loaded Fairshare data from ${filePath} (${entries.length} entries)`,
+      );
+
+      return {
+        entries,
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('ENOENT')) {
+        this.logger.warn(
+          `PBS Fairshare file not found: ${filePath}. Skipping fairshare.`,
+        );
+      } else {
+        this.logger.warn(`Failed to load fairshare file: ${errorMessage}`);
       }
       return null;
     }

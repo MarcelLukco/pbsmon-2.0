@@ -84,6 +84,22 @@ export interface PbsHook extends PbsEntity {
 }
 
 /**
+ * Fairshare entry from default_fairshare.txt
+ */
+export interface PbsFairshareEntry {
+  username: string;
+  value1: number;
+  value2: number; // The "crazy number" - fairshare value
+}
+
+/**
+ * Fairshare data for a server
+ */
+export interface PbsFairshare {
+  entries: PbsFairshareEntry[];
+}
+
+/**
  * PBS data structure for a single server
  */
 export interface PbsServerData {
@@ -97,6 +113,7 @@ export interface PbsServerData {
   reservations: PbsCollection<PbsReservation> | null;
   schedulers: PbsCollection<PbsScheduler> | null;
   hooks: PbsCollection<PbsHook> | null;
+  fairshare: PbsFairshare | null;
 }
 
 /**

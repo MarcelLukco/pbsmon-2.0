@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { Icon } from "@iconify/react";
 import { useQueues, type QueueListDTO } from "@/hooks/useQueues";
 
 interface QueueTreeNodeProps {
@@ -72,17 +73,7 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
             {/* Route icon next to name */}
             {queue.queueType === "Route" && (
               <div className="relative group flex-shrink-0 text-blue-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M11 21v-4q0-1.4-.425-2.075T9.45 13.6l1.425-1.425q.3.275.575.588t.55.662q.35-.475.713-.837t.737-.713Q14.4 11 15.175 9.85T16 5.825l-.875.875q-.275.275-.687.275t-.713-.275q-.3-.3-.3-.712t.3-.713L16.3 2.7q.15-.15.325-.213T17 2.425t.375.062t.325.213l2.6 2.6q.275.275.288.687T20.3 6.7q-.275.275-.7.275t-.7-.275l-.9-.875q-.05 3.575-1.1 5.088t-2.1 2.462q-.8.725-1.3 1.413T13 17v4q0 .425-.288.713T12 22t-.712-.288T11 21M6.2 8.175q-.1-.5-.137-1.1T6 5.825l-.9.9Q4.825 7 4.413 7T3.7 6.7q-.275-.275-.275-.7t.275-.7l2.6-2.6q.15-.15.325-.213T7 2.426t.375.063t.325.212l2.6 2.6q.3.3.288.7t-.313.7q-.3.275-.7.275t-.7-.275L8 5.85q0 .525.05.988t.1.862zm2.15 4.4q-.5-.525-.962-1.225t-.813-1.725L8.5 9.15q.25.675.575 1.15t.7.85z"
-                  />
-                </svg>
+                <Icon icon="material-symbols:alt-route" className="w-6 h-6" />
                 {/* Tooltip */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                   {t("queues.routeQueue")}
@@ -101,19 +92,7 @@ function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
                 className="flex items-center px-2 py-0.5 text-xs rounded bg-red-100 text-red-800 flex-shrink-0"
                 title={t("queues.noAccess")}
               >
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 17v1m6-7V9a6 6 0 00-12 0v2a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2zm-6 4a2 2 0 104 0 2 2 0 00-4 0z"
-                  />
-                </svg>
+                <Icon icon="bxs:lock-alt" className="w-4 h-4 mr-1" />
               </span>
             )}
           </div>

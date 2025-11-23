@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.2.6",
     "@hookform/resolvers": "^5.1.1",
+    "@iconify/react": "^6.0.2",
     "@tailwindcss/postcss": "^4.1.10",
     "@tailwindcss/vite": "^4.1.10",
     "@tanstack/react-query": "^5.81.0",

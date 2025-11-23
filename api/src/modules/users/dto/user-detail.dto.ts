@@ -1,0 +1,89 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Expose, Type } from 'class-transformer';
+
+/**
+ * User task counts (same as queue state counts)
+ */
+export class UserTaskCountDTO {
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Transit state' })
+  transit: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Queued state' })
+  queued: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Held state' })
+  held: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Waiting state' })
+  waiting: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Running state' })
+  running: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Exiting state' })
+  exiting: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of jobs in Begun state' })
+  begun: number;
+}
+
+/**
+ * Fairshare information for a specific server
+ */
+export class UserFairshareDTO {
+  @Expose()
+  @ApiProperty({ description: 'Server name' })
+  server: string;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Fairshare ranking (1 = best, higher = worse)',
+    nullable: true,
+  })
+  ranking?: number | null;
+}
+
+/**
+ * User Detail DTO
+ */
+export class UserDetailDTO {
+  @Expose()
+  @ApiProperty({ description: 'User login name (username)' })
+  username: string;
+
+  @Expose()
+  @ApiProperty({
+    description: 'User nickname (full name from Perun)',
+    nullable: true,
+  })
+  nickname?: string | null;
+
+  @Expose()
+  @Type(() => UserTaskCountDTO)
+  @ApiProperty({
+    description: 'Task counts (job state counts)',
+    type: UserTaskCountDTO,
+  })
+  tasks: UserTaskCountDTO;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Number of CPU tasks (running jobs with CPU resources)',
+  })
+  cpuTasks: number;
+
+  @Expose()
+  @Type(() => UserFairshareDTO)
+  @ApiProperty({
+    description: 'Fairshare information per server',
+    type: [UserFairshareDTO],
+  })
+  fairsharePerServer: UserFairshareDTO[];
+}
