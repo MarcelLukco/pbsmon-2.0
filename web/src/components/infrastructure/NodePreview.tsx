@@ -10,7 +10,6 @@ interface NodePreviewProps {
 export function NodePreview({ node }: NodePreviewProps) {
   const { t } = useTranslation();
 
-  // Map state to translation key and get color
   const getStateInfo = (
     state?: string | null
   ): { label: string; color: string } => {
@@ -18,28 +17,27 @@ export function NodePreview({ node }: NodePreviewProps) {
       case "free":
         return {
           label: t("machines.nodeState.free"),
-          color: "#22c55e", // green
+          color: "#22c55e",
         };
       case "partially_used":
         return {
           label: t("machines.nodeState.partiallyUsed"),
-          color: "#86efac", // light green
+          color: "#86efac",
         };
       case "used":
         return {
           label: t("machines.nodeState.used"),
-          color: "#3b82f6", // blue
+          color: "#3b82f6",
         };
       case "unknown":
       default:
         return {
           label: t("machines.nodeState.unknown"),
-          color: "#eab308", // yellow
+          color: "#eab308",
         };
     }
   };
 
-  // Parse CPU usage percentage
   const getCpuUsagePercent = (): number => {
     if (node.cpuUsagePercent === null || node.cpuUsagePercent === undefined) {
       return 0;
@@ -50,7 +48,6 @@ export function NodePreview({ node }: NodePreviewProps) {
     return Number(node.cpuUsagePercent) || 0;
   };
 
-  // Parse GPU usage percentage
   const getGpuUsagePercent = (): number | null => {
     if (node.gpuUsagePercent === null || node.gpuUsagePercent === undefined) {
       return null;
@@ -71,9 +68,6 @@ export function NodePreview({ node }: NodePreviewProps) {
       : null;
   const hasGpu = gpuUsage !== null || (gpuCount !== null && gpuCount > 0);
 
-  // Color class function for CPU/GPU
-  // Ensure Tailwind detects these classes by listing them as complete strings
-  // This comment helps Tailwind JIT scanner: bg-green-500 bg-primary bg-blue-500 border-green-500 border-primary border-blue-500 text-green-500 text-primary text-blue-500
   const getCpuGpuColorClass = (percent: number): string => {
     if (percent <= 10) {
       return "#5D7085";
