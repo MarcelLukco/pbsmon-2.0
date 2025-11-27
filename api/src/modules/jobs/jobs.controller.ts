@@ -48,6 +48,13 @@ export class JobsController {
     type: String,
     description: 'Search query (searches in job ID, name, owner, node)',
   })
+  @ApiQuery({
+    name: 'state',
+    required: false,
+    type: String,
+    description:
+      'Filter by job state (Q=Queued, R=Running, C=Completed, E=Exiting, H=Held). If not provided, returns jobs with all states.',
+  })
   @ApiOkResponseModel(JobsListDTO, 'List of jobs', MetaDto)
   getJobs(
     @Query('page') page?: string,
@@ -55,6 +62,7 @@ export class JobsController {
     @Query('sort') sort?: string,
     @Query('order') order?: 'asc' | 'desc',
     @Query('search') search?: string,
+    @Query('state') state?: string,
   ): ApiResponse<JobsListDTO, MetaDto> {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
@@ -67,6 +75,7 @@ export class JobsController {
       sortColumn,
       sortOrder,
       search,
+      state,
     );
 
     return new ApiResponse(data, {

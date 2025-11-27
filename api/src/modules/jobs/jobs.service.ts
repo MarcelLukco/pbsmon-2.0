@@ -14,6 +14,7 @@ export class JobsService {
    * @param sort Sort column
    * @param order Sort direction (asc/desc)
    * @param search Search query (searches in job ID, name, owner, node)
+   * @param state Filter by job state (Q=Queued, R=Running, C=Completed, E=Exiting, H=Held)
    */
   getJobsList(
     page: number = 1,
@@ -21,6 +22,7 @@ export class JobsService {
     sort: string = 'createdAt',
     order: 'asc' | 'desc' = 'desc',
     search?: string,
+    state?: string,
   ): { data: JobsListDTO; totalCount: number } {
     const pbsData = this.dataCollectionService.getPbsData();
 
@@ -41,6 +43,11 @@ export class JobsService {
 
     // Transform to DTOs
     let jobs = allJobs.map((job) => this.transformJobToDTO(job));
+
+    // Apply state filter
+    if (state && state.trim()) {
+      jobs = jobs.filter((job) => job.state === state.trim().toUpperCase());
+    }
 
     // Apply search filter
     if (search && search.trim()) {

@@ -64,20 +64,22 @@ export function JobsTableHeader({
           {t("jobs.machine")}
         </JobsSortableHeader>
 
-        <div className="text-center">{t("jobs.cpuReserved")}</div>
+        <div>{t("jobs.cpuReserved")}</div>
 
-        <div className="text-center">{t("jobs.gpuReserved")}</div>
+        <div>{t("jobs.gpuReserved")}</div>
 
         <div>{t("jobs.ram")}</div>
 
-        <JobsSortableHeader
-          column="createdAt"
-          currentSortColumn={sortColumn}
-          sortDirection={sortDirection}
-          onSort={onSort}
-        >
-          {t("jobs.created")}
-        </JobsSortableHeader>
+        <div className="flex justify-end">
+          <JobsSortableHeader
+            column="createdAt"
+            currentSortColumn={sortColumn}
+            sortDirection={sortDirection}
+            onSort={onSort}
+          >
+            {t("jobs.created")}
+          </JobsSortableHeader>
+        </div>
       </div>
     </div>
   );

@@ -23,26 +23,22 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
       case "Q":
         return {
           label: t("jobs.state.queued"),
-          color: "bg-green-100 text-green-800",
+          color: "bg-gray-400 text-gray-800",
         };
       case "R":
+      case "B":
         return {
           label: t("jobs.state.running"),
           color: "bg-blue-100 text-blue-800",
         };
-      case "C":
-      case "E":
+      case "F":
+      case "X":
         return {
           label: t("jobs.state.done"),
           color:
             typeof job.exitCode === "number" && job.exitCode !== 0
               ? "bg-red-100 text-red-800"
               : "bg-green-100 text-green-800",
-        };
-      case "H":
-        return {
-          label: t("jobs.state.held"),
-          color: "bg-yellow-100 text-yellow-800",
         };
       default:
         return { label: state, color: "bg-gray-100 text-gray-800" };
@@ -129,7 +125,7 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
         job.cpuUsagePercent !== undefined ? (
           <div className="mb-1">
             <ProgressBar
-              label={`${t("jobs.cpuTime")}: ${formatTimeString(String(job.cpuTimeUsed))}`}
+              label={`CPU:`}
               value={
                 typeof job.cpuReserved === "number"
                   ? job.cpuReserved
@@ -141,6 +137,10 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
                 <Icon icon="solar:cpu-bold" className="w-[14px] h-[14px]" />
               }
             />
+            <div className="text-gray-600 flex justify-between">
+              <span>{t("jobs.cpuTime")}:</span>
+              <span>{formatTimeString(String(job.cpuTimeUsed))}</span>
+            </div>
           </div>
         ) : (
           <div className="flex items-center gap-1">
@@ -226,7 +226,7 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
       </div>
 
       {/* Created Column */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-gray-600 text-right">
         {formatDate(
           typeof job.createdAt === "number"
             ? job.createdAt
