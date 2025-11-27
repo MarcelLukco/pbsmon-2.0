@@ -28,7 +28,7 @@ export function ProgressBar({
     <div className="w-full">
       {/* Label row */}
       <div className="flex items-center justify-between mb-1">
-        <span className="text-sm font-medium text-gray-900">{label}:</span>
+        <span className="text-sm font-medium text-gray-900">{label}</span>
         <div className="flex items-center gap-1">
           <span className="text-sm font-medium text-gray-900">{value}</span>
           {icon && (
