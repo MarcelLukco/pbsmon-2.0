@@ -54,26 +54,6 @@ export function MetacentrumTotal({ meta }: MetacentrumTotalProps) {
             </div>
           </div>
         )}
-        <div>
-          <div className="text-sm text-gray-600">{t("machines.freeNodes")}</div>
-          <div className="text-2xl font-bold text-green-600">
-            {meta.freeNodes}
-          </div>
-        </div>
-        <div>
-          <div className="text-sm text-gray-600">
-            {t("machines.partiallyUsedNodes")}
-          </div>
-          <div className="text-2xl font-bold text-yellow-600">
-            {meta.partiallyUsedNodes}
-          </div>
-        </div>
-        <div>
-          <div className="text-sm text-gray-600">{t("machines.usedNodes")}</div>
-          <div className="text-2xl font-bold text-red-600">
-            {meta.usedNodes}
-          </div>
-        </div>
       </div>
     </div>
   );

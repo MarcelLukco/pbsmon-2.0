@@ -47,6 +47,70 @@ export class InfrastructureNodeListDTO {
     required: false,
   })
   gpuUsagePercent?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Number of available GPUs',
+    nullable: true,
+    required: false,
+  })
+  gpuCount?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Number of assigned GPUs',
+    nullable: true,
+    required: false,
+  })
+  gpuAssigned?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'GPU capability (compute capability, e.g., sm_89, sm_86)',
+    nullable: true,
+    required: false,
+  })
+  gpuCapability?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'GPU memory per GPU (e.g., 46068mb)',
+    nullable: true,
+    required: false,
+  })
+  gpuMemory?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'CUDA version available on the node',
+    nullable: true,
+    required: false,
+  })
+  cudaVersion?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Total memory in GB',
+    nullable: true,
+    required: false,
+  })
+  memoryTotal?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Used memory in GB',
+    nullable: true,
+    required: false,
+  })
+  memoryUsed?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Memory usage percentage (0-100)',
+    nullable: true,
+    required: false,
+  })
+  memoryUsagePercent?: number | null;
 }
 
 /**

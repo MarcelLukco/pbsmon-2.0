@@ -9,11 +9,12 @@ interface ClusterPreviewProps {
 export function ClusterPreview({ cluster }: ClusterPreviewProps) {
   const { t } = useTranslation();
 
+  if (cluster.nodes.length === 0) {
+    return null;
+  }
+
   return (
-    <div
-      id={`cluster-${cluster.id}`}
-      className="mb-6 last:mb-0 border-l-2 border-primary-200 pl-4"
-    >
+    <div id={`cluster-${cluster.id}`} className="mb-6 last:mb-0">
       {/* Cluster Header */}
       <div className="mb-3">
         <h3 className="text-lg font-semibold text-primary-800 mb-2">

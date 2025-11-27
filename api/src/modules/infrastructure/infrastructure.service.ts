@@ -64,17 +64,50 @@ export class InfrastructureService {
     let unknownNodes = 0;
 
     const pbsData = this.dataCollectionService.getPbsData();
-    const pbsNodesMap = new Map<string, PbsNode>();
-    if (pbsData?.servers) {
-      // Aggregate nodes from all servers
+
+    // Helper function to find PBS node by PERUN machine name
+    const findPbsNode = (perunNodeName: string): PbsNode | undefined => {
+      if (!pbsData?.servers) {
+        return undefined;
+      }
+
+      // PERUN machine names are FQDNs (e.g., "alfrid1.meta.zcu.cz")
+      // PBS node names are short hostnames (e.g., "alfrid1")
+      // Extract hostname from PERUN name for matching
+      const perunHostname = perunNodeName.split('.')[0];
+
+      // Find node across all servers
       for (const serverData of Object.values(pbsData.servers)) {
         if (serverData.nodes?.items) {
-          serverData.nodes.items.forEach((node) => {
-            pbsNodesMap.set(node.name, node);
-          });
+          // Try exact match first
+          let pbsNode = serverData.nodes.items.find(
+            (node) => node.name === perunNodeName,
+          );
+          if (pbsNode) {
+            return pbsNode;
+          }
+          // Try hostname match (PERUN FQDN vs PBS short name)
+          pbsNode = serverData.nodes.items.find(
+            (node) => node.name === perunHostname,
+          );
+          if (pbsNode) {
+            return pbsNode;
+          }
+          // Try matching against PBS host attribute (full hostname)
+          pbsNode = serverData.nodes.items.find(
+            (node) =>
+              node.attributes['resources_available.host'] === perunNodeName ||
+              node.attributes['resources_available.vnode'] === perunNodeName ||
+              node.attributes['resources_available.host']?.split('.')[0] ===
+                perunHostname,
+          );
+          if (pbsNode) {
+            return pbsNode;
+          }
         }
       }
-    }
+      return undefined;
+    };
 
     // Calculate totals and GPU/memory from PBS
     let totalGpu = 0;
@@ -99,7 +132,7 @@ export class InfrastructureService {
           }
 
           // Get GPU and memory from PBS if available
-          const pbsNode = pbsNodesMap.get(node.name);
+          const pbsNode = findPbsNode(node.name);
           if (pbsNode) {
             const availableGpus = parseInt(
               pbsNode.attributes['resources_available.ngpus'] || '0',
@@ -379,6 +412,14 @@ export class InfrastructureService {
       actualState: pbsState.state,
       cpuUsagePercent: pbsState.cpuUsage,
       gpuUsagePercent: pbsState.gpuUsage,
+      gpuCount: pbsState.gpuCount,
+      gpuAssigned: pbsState.gpuAssigned,
+      gpuCapability: pbsState.gpuCapability,
+      gpuMemory: pbsState.gpuMemory,
+      cudaVersion: pbsState.cudaVersion,
+      memoryTotal: pbsState.memoryTotal,
+      memoryUsed: pbsState.memoryUsed,
+      memoryUsagePercent: pbsState.memoryUsagePercent,
     };
   }
 
@@ -397,6 +438,14 @@ export class InfrastructureService {
       actualState: pbsState.state,
       cpuUsagePercent: pbsState.cpuUsage,
       gpuUsagePercent: pbsState.gpuUsage,
+      gpuCount: pbsState.gpuCount,
+      gpuAssigned: pbsState.gpuAssigned,
+      gpuCapability: pbsState.gpuCapability,
+      gpuMemory: pbsState.gpuMemory,
+      cudaVersion: pbsState.cudaVersion,
+      memoryTotal: pbsState.memoryTotal,
+      memoryUsed: pbsState.memoryUsed,
+      memoryUsagePercent: pbsState.memoryUsagePercent,
     };
   }
 
@@ -408,6 +457,14 @@ export class InfrastructureService {
     state: NodeState | null;
     cpuUsage: number | null;
     gpuUsage: number | null;
+    gpuCount: number | null;
+    gpuAssigned: number | null;
+    gpuCapability: string | null;
+    gpuMemory: string | null;
+    cudaVersion: string | null;
+    memoryTotal: number | null;
+    memoryUsed: number | null;
+    memoryUsagePercent: number | null;
   } {
     const pbsData = this.dataCollectionService.getPbsData();
 
@@ -416,14 +473,46 @@ export class InfrastructureService {
         state: null,
         cpuUsage: null,
         gpuUsage: null,
+        gpuCount: null,
+        gpuAssigned: null,
+        gpuCapability: null,
+        gpuMemory: null,
+        cudaVersion: null,
+        memoryTotal: null,
+        memoryUsed: null,
+        memoryUsagePercent: null,
       };
     }
 
     // Find node across all servers
+    // PERUN machine names are FQDNs (e.g., "alfrid1.meta.zcu.cz")
+    // PBS node names are short hostnames (e.g., "alfrid1")
+    // Extract hostname from PERUN name for matching
+    const perunHostname = nodeName.split('.')[0];
+
     let pbsNode: PbsNode | undefined;
     for (const serverData of Object.values(pbsData.servers)) {
       if (serverData.nodes?.items) {
+        // Try exact match first
         pbsNode = serverData.nodes.items.find((node) => node.name === nodeName);
+        if (pbsNode) {
+          break;
+        }
+        // Try hostname match (PERUN FQDN vs PBS short name)
+        pbsNode = serverData.nodes.items.find(
+          (node) => node.name === perunHostname,
+        );
+        if (pbsNode) {
+          break;
+        }
+        // Try matching against PBS host attribute (full hostname)
+        pbsNode = serverData.nodes.items.find(
+          (node) =>
+            node.attributes['resources_available.host'] === nodeName ||
+            node.attributes['resources_available.vnode'] === nodeName ||
+            node.attributes['resources_available.host']?.split('.')[0] ===
+              perunHostname,
+        );
         if (pbsNode) {
           break;
         }
@@ -435,6 +524,14 @@ export class InfrastructureService {
         state: NodeState.UNKNOWN,
         cpuUsage: null,
         gpuUsage: null,
+        gpuCount: null,
+        gpuAssigned: null,
+        gpuCapability: null,
+        gpuMemory: null,
+        cudaVersion: null,
+        memoryTotal: null,
+        memoryUsed: null,
+        memoryUsagePercent: null,
       };
     }
 
@@ -455,6 +552,56 @@ export class InfrastructureService {
       pbsNode.attributes['resources_available.ngpus'] || '0',
       10,
     );
+
+    // Extract additional GPU information
+    const gpuCapability =
+      pbsNode.attributes['resources_available.gpu_cap'] || null;
+    const gpuMemory = pbsNode.attributes['resources_available.gpu_mem'] || null;
+    const cudaVersion =
+      pbsNode.attributes['resources_available.cuda_version'] || null;
+
+    // Extract memory information
+    const memoryTotalStr =
+      pbsNode.attributes['resources_available.mem'] || null;
+    const memoryUsedStr = pbsNode.attributes['resources_assigned.mem'] || null;
+
+    // Parse memory values (format: "515862mb", "1536 GiB", etc.)
+    const parseMemory = (memoryStr: string | null): number | null => {
+      if (!memoryStr) return null;
+      // Match patterns like "515862mb", "1536 GiB", "1024KB", etc.
+      const memoryMatch = memoryStr.match(/^(\d+)\s*([a-z]+)$/i);
+      if (memoryMatch) {
+        const value = parseInt(memoryMatch[1], 10);
+        const unit = memoryMatch[2].toLowerCase();
+        // Convert to GB for consistency
+        let gb = value;
+        if (unit === 'b' || unit === 'bytes') {
+          gb = value / (1024 * 1024 * 1024);
+        } else if (unit === 'kb' || unit === 'k') {
+          gb = value / (1024 * 1024);
+        } else if (unit === 'mb' || unit === 'm') {
+          gb = value / 1024;
+        } else if (unit === 'gb' || unit === 'g' || unit === 'gib') {
+          gb = value;
+        } else if (unit === 'tb' || unit === 't' || unit === 'tib') {
+          gb = value * 1024;
+        }
+        return Math.round(gb * 100) / 100; // Round to 2 decimal places
+      }
+      // Try to parse as just a number (assume bytes, convert to GB)
+      const numValue = parseInt(memoryStr, 10);
+      if (!isNaN(numValue)) {
+        return Math.round((numValue / (1024 * 1024 * 1024)) * 100) / 100;
+      }
+      return null;
+    };
+
+    const memoryTotal = parseMemory(memoryTotalStr);
+    const memoryUsed = parseMemory(memoryUsedStr);
+    const memoryUsagePercent =
+      memoryTotal && memoryTotal > 0 && memoryUsed !== null
+        ? (memoryUsed / memoryTotal) * 100
+        : null;
 
     // Calculate usage percentages
     const cpuUsage =
@@ -478,6 +625,17 @@ export class InfrastructureService {
       state,
       cpuUsage: cpuUsage !== null ? Math.round(cpuUsage * 100) / 100 : null,
       gpuUsage: gpuUsage !== null ? Math.round(gpuUsage * 100) / 100 : null,
+      gpuCount: availableGpus > 0 ? availableGpus : null,
+      gpuAssigned: assignedGpus > 0 ? assignedGpus : null,
+      gpuCapability,
+      gpuMemory,
+      cudaVersion,
+      memoryTotal,
+      memoryUsed,
+      memoryUsagePercent:
+        memoryUsagePercent !== null
+          ? Math.round(memoryUsagePercent * 100) / 100
+          : null,
     };
   }
 

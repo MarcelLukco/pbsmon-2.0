@@ -73,16 +73,20 @@ export function QuickLinksSidebar({
                 </div>
                 {isExpanded && (
                   <div className="pl-4 space-y-1">
-                    {organization.clusters.map((cluster) => (
-                      <button
-                        key={cluster.id}
-                        onClick={() => scrollToElement(`cluster-${cluster.id}`)}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center gap-2"
-                      >
-                        <Icon icon="mdi:server" className="w-4 h-4" />
-                        {cluster.name}
-                      </button>
-                    ))}
+                    {organization.clusters
+                      .filter((cluster) => cluster.nodes.length > 0)
+                      .map((cluster) => (
+                        <button
+                          key={cluster.id}
+                          onClick={() =>
+                            scrollToElement(`cluster-${cluster.id}`)
+                          }
+                          className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors flex items-center gap-2"
+                        >
+                          <Icon icon="mdi:server" className="w-4 h-4" />
+                          {cluster.name}
+                        </button>
+                      ))}
                   </div>
                 )}
               </div>
