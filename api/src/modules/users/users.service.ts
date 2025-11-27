@@ -43,6 +43,23 @@ export class UsersService {
       }
     }
 
+    // Build Perun users lookup map for O(1) access instead of O(n) find()
+    const perunUsersMap = new Map<string, string>();
+    if (perunData?.users?.users) {
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          perunUsersMap.set(perunUser.logname, perunUser.name);
+          if (lognameBase !== perunUser.logname) {
+            perunUsersMap.set(lognameBase, perunUser.name);
+          }
+        }
+      }
+    }
+
+    // allUsernamesWithJobs is the same as usernameSet - reuse it
+    const allUsernamesWithJobs = usernameSet;
+
     // Build user list
     const users: UserListDTO[] = [];
     const usernames = Array.from(usernameSet).sort();
@@ -61,16 +78,11 @@ export class UsersService {
       const tasks = this.calculateTaskCounts(jobs);
       const cpuTasks = this.calculateCpuTasks(jobs);
 
-      // Get nickname from Perun
-      let nickname: string | null = null;
-      if (perunData?.users?.users) {
-        const perunUser = perunData.users.users.find(
-          (u) => u.logname === username || u.logname === username.split('@')[0],
-        );
-        if (perunUser) {
-          nickname = perunUser.name;
-        }
-      }
+      // Get nickname from Perun using O(1) map lookup
+      const nickname =
+        perunUsersMap.get(username) ||
+        perunUsersMap.get(username.split('@')[0]) ||
+        null;
 
       const totalTasks =
         tasks.transit +
@@ -82,22 +94,6 @@ export class UsersService {
         tasks.begun;
 
       const doneTasks = tasks.begun + tasks.exiting;
-
-      // Collect all usernames who have jobs (for ranking calculation)
-      const allUsernamesWithJobs = new Set<string>();
-      if (pbsData?.servers) {
-        for (const serverData of Object.values(pbsData.servers)) {
-          if (serverData.jobs?.items) {
-            for (const job of serverData.jobs.items) {
-              const jobOwner = job.attributes.Job_Owner || '';
-              const ownerUsername = jobOwner.split('@')[0];
-              if (ownerUsername) {
-                allUsernamesWithJobs.add(ownerUsername);
-              }
-            }
-          }
-        }
-      }
 
       // Get fairshare rankings per server (only among users with jobs)
       const fairshareRankings = this.getFairshareRankingsForUser(
@@ -139,16 +135,25 @@ export class UsersService {
     const pbsData = this.dataCollectionService.getPbsData();
     const perunData = this.dataCollectionService.getPerunData();
 
-    // Get user nickname from Perun
-    let nickname: string | null = null;
+    // Build Perun users lookup map for O(1) access instead of O(n) find()
+    const perunUsersMap = new Map<string, string>();
     if (perunData?.users?.users) {
-      const perunUser = perunData.users.users.find(
-        (u) => u.logname === username || u.logname === username.split('@')[0],
-      );
-      if (perunUser) {
-        nickname = perunUser.name;
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          perunUsersMap.set(perunUser.logname, perunUser.name);
+          if (lognameBase !== perunUser.logname) {
+            perunUsersMap.set(lognameBase, perunUser.name);
+          }
+        }
       }
     }
+
+    // Get user nickname from Perun using O(1) map lookup
+    const nickname =
+      perunUsersMap.get(username) ||
+      perunUsersMap.get(username.split('@')[0]) ||
+      null;
 
     // Collect all jobs for this user across all servers
     const userJobs: Array<{ job: PbsJob; server: string }> = [];
