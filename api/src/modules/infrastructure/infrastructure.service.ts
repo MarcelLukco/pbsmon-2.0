@@ -18,7 +18,8 @@ import {
   InfrastructureNodeDetailDTO,
 } from './dto/infrastructure-detail.dto';
 import { InfrastructureListMetaDto } from './dto/infrastructure-list-meta.dto';
-import { PbsNode } from '@/modules/data-collection/types/pbs.types';
+import { PbsNode, PbsQueue } from '@/modules/data-collection/types/pbs.types';
+import { QueueListDTO } from '@/modules/queues/dto/queue-list.dto';
 
 @Injectable()
 export class InfrastructureService {
@@ -431,6 +432,53 @@ export class InfrastructureService {
     clusterId: string,
   ): InfrastructureNodeDetailDTO {
     const pbsState = this.getNodeStateFromPbs(machine.name);
+    const pbsNodeData = this.getPbsNodeData(machine.name);
+
+    // Parse jobs from node's jobs attribute
+    const jobs: string[] = [];
+    if (pbsNodeData?.pbsNode?.attributes?.jobs) {
+      const jobsStr = pbsNodeData.pbsNode.attributes.jobs;
+      // Jobs format: "14490844.pbs-m1.metacentrum.cz/0, 14571383[170].pbs-m1.metacentrum.cz/..."
+      const jobList = jobsStr.split(',').map((j) => j.trim());
+      jobs.push(...jobList);
+    }
+
+    // Parse queues from queue_list attribute and build QueueListDTO objects
+    const queues: QueueListDTO[] = [];
+    if (
+      pbsNodeData?.pbsNode?.attributes['resources_available.queue_list'] &&
+      pbsNodeData.serverName
+    ) {
+      const queuesStr =
+        pbsNodeData.pbsNode.attributes['resources_available.queue_list'];
+      // Queues format: "q_2h,q_4h,q_1d,q_gpu,..."
+      const queueNames = queuesStr.split(',').map((q) => q.trim());
+
+      // Get PBS data to find queue objects
+      const pbsData = this.dataCollectionService.getPbsData();
+      const serverData = pbsData?.servers?.[pbsNodeData.serverName];
+
+      if (serverData?.queues?.items) {
+        for (const queueName of queueNames) {
+          const pbsQueue = serverData.queues.items.find(
+            (q) => q.name === queueName,
+          );
+          if (pbsQueue) {
+            const queueDTO = this.mapPbsQueueToList(
+              pbsQueue,
+              pbsNodeData.serverName,
+            );
+            queues.push(queueDTO);
+          }
+        }
+      }
+    }
+
+    // Get all raw PBS attributes
+    const rawPbsAttributes = pbsNodeData?.pbsNode?.attributes || null;
+
+    // Get outages (for now empty, can be enhanced later)
+    const outages: Array<Record<string, any>> = [];
 
     return {
       name: machine.name,
@@ -446,7 +494,131 @@ export class InfrastructureService {
       memoryTotal: pbsState.memoryTotal,
       memoryUsed: pbsState.memoryUsed,
       memoryUsagePercent: pbsState.memoryUsagePercent,
+      jobs: jobs.length > 0 ? jobs : null,
+      queues: queues.length > 0 ? queues : null,
+      rawPbsAttributes,
+      outages: outages.length > 0 ? outages : null,
     };
+  }
+
+  private mapPbsQueueToList(queue: PbsQueue, serverName: string): QueueListDTO {
+    const priority = queue.attributes.Priority
+      ? parseInt(queue.attributes.Priority, 10)
+      : null;
+
+    const totalJobs = queue.attributes.total_jobs
+      ? parseInt(queue.attributes.total_jobs, 10)
+      : null;
+
+    const minWalltime = queue.attributes['resources_min.walltime'] || null;
+    const maxWalltime = queue.attributes['resources_max.walltime'] || null;
+
+    const enabled = queue.attributes.enabled === 'True';
+    const started = queue.attributes.started === 'True';
+
+    // Parse state_count
+    const stateCount = this.parseStateCount(queue.attributes.state_count);
+
+    const fairshare = queue.attributes.fairshare_tree || null;
+
+    // Parse max_run format: "[u:PBS_GENERIC=5]" -> extract 5
+    let maximumForUser: number | null = null;
+    if (queue.attributes.max_run) {
+      const match = queue.attributes.max_run.match(/=\s*(\d+)/);
+      if (match) {
+        maximumForUser = parseInt(match[1], 10);
+      }
+    }
+
+    return {
+      name: queue.name,
+      server: serverName,
+      queueType: queue.attributes.queue_type as 'Execution' | 'Route',
+      priority,
+      totalJobs,
+      stateCount,
+      fairshare,
+      maximumForUser,
+      minWalltime,
+      maxWalltime,
+      enabled,
+      started,
+      hasAccess: true, // Default to true since we don't have user context
+    };
+  }
+
+  /**
+   * Parse state_count string into QueueStateCountDTO
+   */
+  private parseStateCount(stateCountStr?: string): QueueListDTO['stateCount'] {
+    if (!stateCountStr) {
+      return null;
+    }
+
+    // Format: "Transit:0 Queued:3 Held:0 Waiting:0 Running:2 Exiting:0 Begun:12345"
+    const counts: Record<string, number> = {};
+    const parts = stateCountStr.split(/\s+/);
+    for (const part of parts) {
+      const [state, count] = part.split(':');
+      if (state && count) {
+        counts[state.toLowerCase()] = parseInt(count, 10) || 0;
+      }
+    }
+
+    return {
+      transit: counts.transit || 0,
+      queued: counts.queued || 0,
+      held: counts.held || 0,
+      waiting: counts.waiting || 0,
+      running: counts.running || 0,
+      exiting: counts.exiting || 0,
+      begun: counts.begun || 0,
+    };
+  }
+
+  private getPbsNodeData(nodeName: string): {
+    pbsNode: PbsNode | null;
+    serverName: string | null;
+  } {
+    const pbsData = this.dataCollectionService.getPbsData();
+
+    if (!pbsData?.servers) {
+      return { pbsNode: null, serverName: null };
+    }
+
+    const perunHostname = nodeName.split('.')[0];
+
+    for (const [serverName, serverData] of Object.entries(pbsData.servers)) {
+      if (serverData.nodes?.items) {
+        // Try exact match first
+        let pbsNode = serverData.nodes.items.find(
+          (node) => node.name === nodeName,
+        );
+        if (pbsNode) {
+          return { pbsNode, serverName };
+        }
+        // Try hostname match (PERUN FQDN vs PBS short name)
+        pbsNode = serverData.nodes.items.find(
+          (node) => node.name === perunHostname,
+        );
+        if (pbsNode) {
+          return { pbsNode, serverName };
+        }
+        // Try matching against PBS host attribute (full hostname)
+        pbsNode = serverData.nodes.items.find(
+          (node) =>
+            node.attributes['resources_available.host'] === nodeName ||
+            node.attributes['resources_available.vnode'] === nodeName ||
+            node.attributes['resources_available.host']?.split('.')[0] ===
+              perunHostname,
+        );
+        if (pbsNode) {
+          return { pbsNode, serverName };
+        }
+      }
+    }
+
+    return { pbsNode: null, serverName: null };
   }
 
   /**
@@ -466,58 +638,7 @@ export class InfrastructureService {
     memoryUsed: number | null;
     memoryUsagePercent: number | null;
   } {
-    const pbsData = this.dataCollectionService.getPbsData();
-
-    if (!pbsData?.servers) {
-      return {
-        state: null,
-        cpuUsage: null,
-        gpuUsage: null,
-        gpuCount: null,
-        gpuAssigned: null,
-        gpuCapability: null,
-        gpuMemory: null,
-        cudaVersion: null,
-        memoryTotal: null,
-        memoryUsed: null,
-        memoryUsagePercent: null,
-      };
-    }
-
-    // Find node across all servers
-    // PERUN machine names are FQDNs (e.g., "alfrid1.meta.zcu.cz")
-    // PBS node names are short hostnames (e.g., "alfrid1")
-    // Extract hostname from PERUN name for matching
-    const perunHostname = nodeName.split('.')[0];
-
-    let pbsNode: PbsNode | undefined;
-    for (const serverData of Object.values(pbsData.servers)) {
-      if (serverData.nodes?.items) {
-        // Try exact match first
-        pbsNode = serverData.nodes.items.find((node) => node.name === nodeName);
-        if (pbsNode) {
-          break;
-        }
-        // Try hostname match (PERUN FQDN vs PBS short name)
-        pbsNode = serverData.nodes.items.find(
-          (node) => node.name === perunHostname,
-        );
-        if (pbsNode) {
-          break;
-        }
-        // Try matching against PBS host attribute (full hostname)
-        pbsNode = serverData.nodes.items.find(
-          (node) =>
-            node.attributes['resources_available.host'] === nodeName ||
-            node.attributes['resources_available.vnode'] === nodeName ||
-            node.attributes['resources_available.host']?.split('.')[0] ===
-              perunHostname,
-        );
-        if (pbsNode) {
-          break;
-        }
-      }
-    }
+    const { pbsNode } = this.getPbsNodeData(nodeName);
 
     if (!pbsNode) {
       return {

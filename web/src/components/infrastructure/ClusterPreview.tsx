@@ -28,7 +28,7 @@ export function ClusterPreview({ cluster }: ClusterPreviewProps) {
       {/* Nodes */}
       <div className="flex flex-wrap gap-2">
         {cluster.nodes.map((node) => (
-          <NodePreview key={node.name} node={node} />
+          <NodePreview key={node.name} node={node} clusterId={cluster.id} />
         ))}
       </div>
     </div>

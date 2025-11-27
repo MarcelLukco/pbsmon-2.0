@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { NodeState } from './infrastructure-list.dto';
+import { QueueListDTO } from '@/modules/queues/dto/queue-list.dto';
 
 /**
  * Localized string DTO
@@ -115,6 +116,43 @@ export class InfrastructureNodeDetailDTO {
     required: false,
   })
   memoryUsagePercent?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Jobs running on this node',
+    type: [String],
+    nullable: true,
+    required: false,
+  })
+  jobs?: string[] | null;
+
+  @Expose()
+  @Type(() => QueueListDTO)
+  @ApiProperty({
+    description: 'Queues that can use this node',
+    type: [QueueListDTO],
+    nullable: true,
+    required: false,
+  })
+  queues?: QueueListDTO[] | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Raw PBS node attributes (all attributes from PBS)',
+    type: Object,
+    nullable: true,
+    required: false,
+  })
+  rawPbsAttributes?: Record<string, string> | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Operational restrictions/outages for this node',
+    type: [Object],
+    nullable: true,
+    required: false,
+  })
+  outages?: Array<Record<string, any>> | null;
 }
 
 /**
