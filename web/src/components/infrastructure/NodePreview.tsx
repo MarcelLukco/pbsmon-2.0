@@ -7,11 +7,41 @@ import { useNavigate } from "react-router-dom";
 interface NodePreviewProps {
   node: InfrastructureNodeListDTO;
   clusterId: string;
+  clusterName: string;
 }
 
-export function NodePreview({ node, clusterId }: NodePreviewProps) {
+export function NodePreview({
+  node,
+  clusterId,
+  clusterName,
+}: NodePreviewProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const getShortNodeName = (nodeName: string, clusterName: string): string => {
+    if (nodeName.endsWith(`.${clusterName}`)) {
+      const prefix = nodeName.slice(
+        0,
+        nodeName.length - clusterName.length - 1
+      );
+      return prefix;
+    }
+    if (nodeName === clusterName) {
+      return nodeName;
+    }
+    const nodeParts = nodeName.split(".");
+    const clusterParts = clusterName.split(".");
+
+    for (let i = 0; i < nodeParts.length; i++) {
+      if (i >= clusterParts.length || nodeParts[i] !== clusterParts[i]) {
+        return nodeParts.slice(0, i + 1).join(".");
+      }
+    }
+
+    return nodeParts[0] || nodeName;
+  };
+
+  const shortNodeName = getShortNodeName(node.name, clusterName);
 
   const handleClick = () => {
     const machineId = `node-${clusterId}-${node.name}`;
@@ -94,7 +124,7 @@ export function NodePreview({ node, clusterId }: NodePreviewProps) {
       onClick={handleClick}
     >
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">{node.name}</h3>
+        <h3 className="font-semibold text-gray-900">{shortNodeName}</h3>
         <p className="font-medium" style={{ color: stateInfo.color }}>
           ({stateInfo.label})
         </p>
