@@ -2,6 +2,7 @@ import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { loadEnv } from "vite";
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
@@ -19,9 +20,13 @@ export default function apiClientPlugin() {
       // Generate on startup
       await generateApiClient();
     },
-    configureServer(server) {
+    configureServer(server, config) {
+      // Load environment variables using Vite's loadEnv
+      const mode = config?.mode || "development";
+      const env = loadEnv(mode, config?.envDir || process.cwd(), "");
+
       // Watch for API server changes by polling the OpenAPI endpoint
-      const API_URL = process.env.API_BASE_URL || "http://localhost:4200";
+      const API_URL = env.API_BASE_URL || process.env.API_BASE_URL;
       const OPENAPI_JSON_URL = `${API_URL}/api/docs-json`;
       let lastSpecHash = null;
 
@@ -38,7 +43,9 @@ export default function apiClientPlugin() {
             if (lastSpecHash !== specHash) {
               lastSpecHash = specHash;
               console.log("🔄 API spec changed, regenerating client...");
-              await generateApiClient();
+              await generateApiClient(
+                env.API_BASE_URL || process.env.API_BASE_URL
+              );
               // Trigger HMR for the generated files
               server.moduleGraph.invalidateAll();
               server.ws.send({
@@ -65,15 +72,19 @@ export default function apiClientPlugin() {
   };
 }
 
-async function generateApiClient() {
+async function generateApiClient(apiBaseUrl) {
   if (isGenerating) return;
   isGenerating = true;
 
   try {
     const scriptPath = join(__dirname, "scripts/generate-api-client.js");
+    const envVars = { ...process.env, WATCH_MODE: "true" };
+    if (apiBaseUrl) {
+      envVars.API_BASE_URL = apiBaseUrl;
+    }
     const { stdout, stderr } = await execAsync(`node ${scriptPath}`, {
       cwd: __dirname,
-      env: { ...process.env, WATCH_MODE: "true" },
+      env: envVars,
     });
     if (stdout) console.log(stdout.trim());
     if (stderr && !stderr.includes("Error fetching OpenAPI spec")) {
