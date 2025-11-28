@@ -21,7 +21,7 @@ export default function apiClientPlugin() {
     },
     configureServer(server) {
       // Watch for API server changes by polling the OpenAPI endpoint
-      const API_URL = process.env.API_URL || "http://localhost:4200";
+      const API_URL = process.env.API_BASE_URL || "http://localhost:4200";
       const OPENAPI_JSON_URL = `${API_URL}/api/docs-json`;
       let lastSpecHash = null;
 

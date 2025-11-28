@@ -9,7 +9,7 @@ import fetch from "node-fetch";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const API_URL = process.env.API_URL || "http://localhost:4200";
+const API_URL = process.env.API_BASE_URL || "http://localhost:4200";
 const OPENAPI_JSON_URL = `${API_URL}/api/docs-json`;
 const OUTPUT_DIR = join(__dirname, "../src/lib/generated-api");
 
@@ -21,7 +21,7 @@ async function fetchOpenApiSpec() {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch OpenAPI spec: ${response.status} ${response.statusText}`
+        `Failed to fetch OpenAPI spec: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -30,7 +30,7 @@ async function fetchOpenApiSpec() {
   } catch (error) {
     console.error("Error fetching OpenAPI spec:", error.message);
     console.error(
-      "Make sure the API server is running or set API_URL environment variable"
+      "Make sure the API server is running or set API_URL environment variable",
     );
     if (process.env.WATCH_MODE !== "true") {
       process.exit(1);
