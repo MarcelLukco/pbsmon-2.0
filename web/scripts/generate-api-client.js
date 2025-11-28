@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { generate } from "openapi-typescript-codegen";
-import { writeFileSync, mkdirSync } from "fs";
+import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { loadEnv } from "vite";
@@ -15,9 +15,32 @@ const mode = process.env.NODE_ENV || "development";
 const envDir = join(__dirname, "..");
 const env = loadEnv(mode, envDir, "");
 
-const API_URL = env.API_BASE_URL || process.env.API_BASE_URL;
-const OPENAPI_JSON_URL = `${API_URL}/docs-json`;
+const API_URL =
+  env.API_BASE_URL || process.env.API_BASE_URL || "http://147.251.245.82/:4200";
 const OUTPUT_DIR = join(__dirname, "../src/lib/generated-api");
+const GENERATED_CLIENT_EXISTS = existsSync(OUTPUT_DIR);
+
+if (!API_URL) {
+  if (GENERATED_CLIENT_EXISTS) {
+    console.warn(
+      "⚠️  API_BASE_URL is not set, but generated API client exists. Skipping regeneration."
+    );
+    console.warn(
+      "   To regenerate the client, set API_BASE_URL environment variable."
+    );
+    process.exit(0);
+  } else {
+    console.error(
+      "ERROR: API_BASE_URL is not set and no generated API client exists."
+    );
+    console.error(
+      "   Please set API_BASE_URL as an environment variable or in a .env file."
+    );
+    process.exit(1);
+  }
+}
+
+const OPENAPI_JSON_URL = `${API_URL}/docs-json`;
 
 async function fetchOpenApiSpec() {
   // Fetch from API directly

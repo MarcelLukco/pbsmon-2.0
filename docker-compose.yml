@@ -40,6 +40,8 @@ services:
       context: ./web
       dockerfile: Dockerfile
       target: production
+      args:
+        API_BASE_URL: http://147.251.245.82/api
     container_name: pbsmon-web
     restart: unless-stopped
     networks:
