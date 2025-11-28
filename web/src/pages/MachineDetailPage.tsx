@@ -2,16 +2,58 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMachineDetail } from "@/hooks/useMachineDetail";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useJobs } from "@/hooks/useJobs";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { Tabs } from "@/components/common/Tabs";
 import { Icon } from "@iconify/react";
+import { JobsTable } from "@/components/jobs/JobsTable";
+import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 import type { QueueListDTO } from "@/lib/generated-api";
+
+type SortColumn =
+  | "id"
+  | "name"
+  | "state"
+  | "owner"
+  | "node"
+  | "cpuReserved"
+  | "gpuReserved"
+  | "memoryReserved"
+  | "createdAt";
 
 export function MachineDetailPage() {
   const { t } = useTranslation();
   const { machineId } = useParams<{ machineId: string }>();
   const { data, isLoading, error } = useMachineDetail(machineId || "");
+  const { data: currentUser } = useCurrentUser();
+  const isAdmin = currentUser?.role === "admin";
   const [activeTab, setActiveTab] = useState("tasks");
+
+  const [jobsPage, setJobsPage] = useState(1);
+  const [jobsLimit] = useState(20);
+  const [jobsSort, setJobsSort] = useState<SortColumn>("createdAt");
+  const [jobsOrder, setJobsOrder] = useState<"asc" | "desc">("desc");
+  const [jobsSearch, setJobsSearch] = useState("");
+
+  const nodeName =
+    data?.type === "Node" && data.node
+      ? data.node.pbsName || data.node.name
+      : null;
+
+  const {
+    data: jobsData,
+    isLoading: jobsLoading,
+    error: jobsError,
+  } = useJobs({
+    page: jobsPage,
+    limit: jobsLimit,
+    sort: jobsSort,
+    order: jobsOrder,
+    search: jobsSearch.trim() || undefined,
+    node: nodeName || undefined,
+  });
 
   if (isLoading) {
     return (
@@ -77,6 +119,7 @@ export function MachineDetailPage() {
 
   const node = data.node as {
     name: string;
+    pbsName?: string | null;
     cpu: number;
     actualState?: string | null;
     cpuUsagePercent?: number | null;
@@ -166,7 +209,6 @@ export function MachineDetailPage() {
   const stateInfo = getStateInfo(node.actualState);
 
   // Extract additional data from node
-  const nodeJobs = Array.isArray(node.jobs) ? node.jobs : [];
   const nodeQueues = Array.isArray(node.queues)
     ? (node.queues as QueueListDTO[])
     : [];
@@ -176,23 +218,80 @@ export function MachineDetailPage() {
       : null;
   const nodeOutages = Array.isArray(node.outages) ? node.outages : [];
 
+  const handleJobsSort = (column: SortColumn) => {
+    if (jobsSort === column) {
+      setJobsOrder(jobsOrder === "asc" ? "desc" : "asc");
+    } else {
+      setJobsSort(column);
+      setJobsOrder("desc");
+    }
+    setJobsPage(1);
+  };
+
+  const handleJobsPageChange = (newPage: number) => {
+    setJobsPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleJobsSearchChange = (query: string) => {
+    setJobsSearch(query);
+    setJobsPage(1);
+  };
+
+  const jobsTotalPages = jobsData?.meta?.totalCount
+    ? Math.ceil(jobsData.meta.totalCount / jobsLimit)
+    : 0;
+
   // Tab content components
   const TasksTab = () => (
-    <div className="px-6 py-4">
-      {nodeJobs.length === 0 ? (
-        <div className="text-gray-500">{t("machines.noJobs")}</div>
-      ) : (
-        <div className="space-y-2">
-          {nodeJobs.map((job, index) => (
-            <div
-              key={index}
-              className="p-3 bg-gray-50 rounded border border-gray-200 font-mono text-sm"
-            >
-              {job}
-            </div>
-          ))}
+    <div>
+      <JobsSearchBar
+        searchQuery={jobsSearch}
+        onSearchChange={handleJobsSearchChange}
+        totalJobs={jobsData?.meta?.totalCount || 0}
+      />
+
+      {jobsLoading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-gray-600">{t("common.loading")}</div>
         </div>
       )}
+
+      {jobsError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <div className="text-red-800">
+            {t("common.errorLoading")}{" "}
+            {jobsError instanceof Error
+              ? jobsError.message
+              : t("common.unknownError")}
+          </div>
+        </div>
+      )}
+
+      {jobsData && jobsData.data && (
+        <>
+          <JobsTable
+            jobs={jobsData.data.jobs}
+            sortColumn={jobsSort}
+            sortDirection={jobsOrder}
+            onSort={handleJobsSort}
+            isAdmin={isAdmin}
+            hideMachineColumn={true}
+          />
+          <JobsPagination
+            currentPage={jobsPage}
+            totalPages={jobsTotalPages}
+            onPageChange={handleJobsPageChange}
+          />
+        </>
+      )}
+
+      {!jobsLoading &&
+        !jobsError &&
+        jobsData?.data &&
+        jobsData.data.jobs.length === 0 && (
+          <div className="text-gray-500">{t("machines.noJobs")}</div>
+        )}
     </div>
   );
 

@@ -20,6 +20,7 @@ interface JobsTableProps {
   sortDirection: "asc" | "desc";
   onSort: (column: SortColumn) => void;
   isAdmin?: boolean;
+  hideMachineColumn?: boolean;
 }
 
 export function JobsTable({
@@ -28,6 +29,7 @@ export function JobsTable({
   sortDirection,
   onSort,
   isAdmin = false,
+  hideMachineColumn = false,
 }: JobsTableProps) {
   const { t } = useTranslation();
 
@@ -39,6 +41,7 @@ export function JobsTable({
           sortDirection={sortDirection}
           onSort={onSort}
           isAdmin={isAdmin}
+          hideMachineColumn={hideMachineColumn}
         />
 
         {/* Table Body */}
@@ -49,7 +52,12 @@ export function JobsTable({
             </div>
           ) : (
             jobs.map((job) => (
-              <JobsTableRow key={job.id} job={job} isAdmin={isAdmin} />
+              <JobsTableRow
+                key={job.id}
+                job={job}
+                isAdmin={isAdmin}
+                hideMachineColumn={hideMachineColumn}
+              />
             ))
           )}
         </div>

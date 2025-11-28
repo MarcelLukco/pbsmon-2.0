@@ -17,6 +17,7 @@ export class JobsService {
    * @param order Sort direction (asc/desc)
    * @param search Search query (searches in job ID, name, owner, node)
    * @param state Filter by job state (Q=Queued, R=Running, C=Completed, E=Exiting, H=Held)
+   * @param node Filter by node/machine name
    */
   getJobsList(
     userContext: UserContext,
@@ -26,6 +27,7 @@ export class JobsService {
     order: 'asc' | 'desc' = 'desc',
     search?: string,
     state?: string,
+    node?: string,
   ): { data: JobsListDTO; totalCount: number } {
     const pbsData = this.dataCollectionService.getPbsData();
 
@@ -63,6 +65,18 @@ export class JobsService {
           return true;
         }
         return false;
+      });
+    }
+
+    // Apply node filter
+    if (node && node.trim()) {
+      jobs = jobs.filter((job) => {
+        if (!job.node) return false;
+        // Match exact node name or node name with cluster suffix
+        return (
+          job.node.toLowerCase() === node.trim().toLowerCase() ||
+          job.node.toLowerCase().startsWith(node.trim().toLowerCase() + '.')
+        );
       });
     }
 

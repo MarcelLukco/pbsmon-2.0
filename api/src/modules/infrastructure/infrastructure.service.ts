@@ -482,6 +482,7 @@ export class InfrastructureService {
 
     return {
       name: machine.name,
+      pbsName: pbsNodeData?.pbsNode?.name || null,
       cpu: machine.cpu,
       actualState: pbsState.state,
       cpuUsagePercent: pbsState.cpuUsage,

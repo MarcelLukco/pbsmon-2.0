@@ -21,8 +21,16 @@ export class LocalizedStringDTO {
  */
 export class InfrastructureNodeDetailDTO {
   @Expose()
-  @ApiProperty({ description: 'Node name' })
+  @ApiProperty({ description: 'Node name (from Perun)' })
   name: string;
+
+  @Expose()
+  @ApiProperty({
+    description: 'PBS node name (may differ from Perun name)',
+    nullable: true,
+    required: false,
+  })
+  pbsName?: string | null;
 
   @Expose()
   @ApiProperty({ description: 'Number of CPUs' })

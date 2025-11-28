@@ -7,9 +7,14 @@ import { ProgressBar } from "@/components/common/ProgressBar";
 interface JobsTableRowProps {
   job: JobListDTO;
   isAdmin?: boolean;
+  hideMachineColumn?: boolean;
 }
 
-export function JobsTableRow({ job, isAdmin = false }: JobsTableRowProps) {
+export function JobsTableRow({
+  job,
+  isAdmin = false,
+  hideMachineColumn = false,
+}: JobsTableRowProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -83,8 +88,14 @@ export function JobsTableRow({ job, isAdmin = false }: JobsTableRowProps) {
     return timeStr;
   };
 
+  const gridCols = hideMachineColumn
+    ? "grid-cols-[80px_300px_150px_120px_1fr_1fr_1fr_180px]"
+    : "grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px]";
+
   return (
-    <div className="grid grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px] gap-2 items-center py-3 px-4 border-b border-gray-100 bg-white hover:bg-gray-50">
+    <div
+      className={`grid ${gridCols} gap-2 items-center py-3 px-4 border-b border-gray-100 bg-white hover:bg-gray-50`}
+    >
       {/* Status Column */}
       <div>
         <span
@@ -132,13 +143,15 @@ export function JobsTableRow({ job, isAdmin = false }: JobsTableRowProps) {
       </div>
 
       {/* Machine Column */}
-      <div className="text-sm">
-        {job.node ? (
-          <span>{String(job.node)}</span>
-        ) : (
-          <span className="text-gray-400">-</span>
-        )}
-      </div>
+      {!hideMachineColumn && (
+        <div className="text-sm">
+          {job.node ? (
+            <span>{String(job.node)}</span>
+          ) : (
+            <span className="text-gray-400">-</span>
+          )}
+        </div>
+      )}
 
       {/* CPU Column */}
       <div className="text-sm">

@@ -14,6 +14,7 @@ interface UseJobsParams {
   order?: "asc" | "desc";
   search?: string;
   state?: string;
+  node?: string;
 }
 
 export function useJobs(params: UseJobsParams = {}) {
@@ -24,10 +25,11 @@ export function useJobs(params: UseJobsParams = {}) {
     order = "desc",
     search,
     state,
+    node,
   } = params;
 
   return useQuery<JobsListResponse>({
-    queryKey: ["jobs", page, limit, sort, order, search, state],
+    queryKey: ["jobs", page, limit, sort, order, search, state, node],
     queryFn: async () => {
       const response = await apiClient.jobs.jobsControllerGetJobs({
         page,
@@ -36,6 +38,7 @@ export function useJobs(params: UseJobsParams = {}) {
         order,
         search,
         state,
+        node,
       });
       return response;
     },

@@ -57,6 +57,13 @@ export class JobsController {
     description:
       'Filter by job state (Q=Queued, R=Running, C=Completed, E=Exiting, H=Held). If not provided, returns jobs with all states.',
   })
+  @ApiQuery({
+    name: 'node',
+    required: false,
+    type: String,
+    description:
+      'Filter by node/machine name. If not provided, returns jobs from all nodes.',
+  })
   @ApiOkResponseModel(JobsListDTO, 'List of jobs', MetaDto)
   getJobs(
     @UserContextDecorator() userContext: UserContext,
@@ -66,6 +73,7 @@ export class JobsController {
     @Query('order') order?: 'asc' | 'desc',
     @Query('search') search?: string,
     @Query('state') state?: string,
+    @Query('node') node?: string,
   ): ApiResponse<JobsListDTO, MetaDto> {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
@@ -80,6 +88,7 @@ export class JobsController {
       sortOrder,
       search,
       state,
+      node,
     );
 
     return new ApiResponse(data, {
