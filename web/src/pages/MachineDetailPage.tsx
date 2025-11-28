@@ -38,8 +38,8 @@ export function MachineDetailPage() {
   const [jobsSearch, setJobsSearch] = useState("");
 
   const nodeName =
-    data?.type === "Node" && data.node
-      ? data.node.pbsName || data.node.name
+    data?.type === "Node" && data.node && data.node.pbs
+      ? data.node.pbs.name
       : null;
 
   const {
@@ -119,23 +119,25 @@ export function MachineDetailPage() {
 
   const node = data.node as {
     name: string;
-    pbsName?: string | null;
     cpu: number;
-    actualState?: string | null;
-    cpuUsagePercent?: number | null;
-    gpuUsagePercent?: number | null;
-    gpuCount?: number | null;
-    gpuAssigned?: number | null;
-    gpuCapability?: string | null;
-    gpuMemory?: string | null;
-    cudaVersion?: string | null;
-    memoryTotal?: number | null;
-    memoryUsed?: number | null;
-    memoryUsagePercent?: number | null;
-    jobs?: string[] | null;
-    queues?: QueueListDTO[] | null;
-    rawPbsAttributes?: Record<string, string> | null;
-    outages?: Array<Record<string, any>> | null;
+    pbs?: {
+      name: string;
+      actualState?: string | null;
+      cpuUsagePercent?: number | null;
+      gpuUsagePercent?: number | null;
+      gpuCount?: number | null;
+      gpuAssigned?: number | null;
+      gpuCapability?: string | null;
+      gpuMemory?: string | null;
+      cudaVersion?: string | null;
+      memoryTotal?: number | null;
+      memoryUsed?: number | null;
+      memoryUsagePercent?: number | null;
+      jobs?: string[] | null;
+      queues?: QueueListDTO[] | null;
+      rawPbsAttributes?: Record<string, string> | null;
+      outages?: Array<Record<string, any>> | null;
+    } | null;
   };
 
   const getStateInfo = (
@@ -167,32 +169,41 @@ export function MachineDetailPage() {
   };
 
   const getCpuUsagePercent = (): number => {
-    if (node.cpuUsagePercent === null || node.cpuUsagePercent === undefined) {
+    if (!node.pbs) return 0;
+    if (
+      node.pbs.cpuUsagePercent === null ||
+      node.pbs.cpuUsagePercent === undefined
+    ) {
       return 0;
     }
-    if (typeof node.cpuUsagePercent === "number") {
-      return node.cpuUsagePercent;
+    if (typeof node.pbs.cpuUsagePercent === "number") {
+      return node.pbs.cpuUsagePercent;
     }
-    return Number(node.cpuUsagePercent) || 0;
+    return Number(node.pbs.cpuUsagePercent) || 0;
   };
 
   const getGpuUsagePercent = (): number | null => {
-    if (node.gpuUsagePercent === null || node.gpuUsagePercent === undefined) {
+    if (!node.pbs) return null;
+    if (
+      node.pbs.gpuUsagePercent === null ||
+      node.pbs.gpuUsagePercent === undefined
+    ) {
       return null;
     }
-    if (typeof node.gpuUsagePercent === "number") {
-      return node.gpuUsagePercent;
+    if (typeof node.pbs.gpuUsagePercent === "number") {
+      return node.pbs.gpuUsagePercent;
     }
-    return Number(node.gpuUsagePercent) || null;
+    return Number(node.pbs.gpuUsagePercent) || null;
   };
 
   const cpuUsage = getCpuUsagePercent();
   const gpuUsage = getGpuUsagePercent();
   const gpuCount =
-    node.gpuCount !== null &&
-    node.gpuCount !== undefined &&
-    typeof node.gpuCount === "number"
-      ? node.gpuCount
+    node.pbs &&
+    node.pbs.gpuCount !== null &&
+    node.pbs.gpuCount !== undefined &&
+    typeof node.pbs.gpuCount === "number"
+      ? node.pbs.gpuCount
       : null;
   const hasGpu = gpuUsage !== null || (gpuCount !== null && gpuCount > 0);
 
@@ -206,17 +217,17 @@ export function MachineDetailPage() {
     }
   };
 
-  const stateInfo = getStateInfo(node.actualState);
+  const stateInfo = getStateInfo(node.pbs?.actualState);
 
   // Extract additional data from node
-  const nodeQueues = Array.isArray(node.queues)
-    ? (node.queues as QueueListDTO[])
+  const nodeQueues = Array.isArray(node.pbs?.queues)
+    ? (node.pbs.queues as QueueListDTO[])
     : [];
   const rawAttributes =
-    node.rawPbsAttributes && typeof node.rawPbsAttributes === "object"
-      ? (node.rawPbsAttributes as Record<string, string>)
+    node.pbs?.rawPbsAttributes && typeof node.pbs.rawPbsAttributes === "object"
+      ? (node.pbs.rawPbsAttributes as Record<string, string>)
       : null;
-  const nodeOutages = Array.isArray(node.outages) ? node.outages : [];
+  const nodeOutages = Array.isArray(node.pbs?.outages) ? node.pbs.outages : [];
 
   const handleJobsSort = (column: SortColumn) => {
     if (jobsSort === column) {
@@ -243,60 +254,79 @@ export function MachineDetailPage() {
     : 0;
 
   // Tab content components
-  const TasksTab = () => (
-    <div>
-      <JobsSearchBar
-        searchQuery={jobsSearch}
-        onSearchChange={handleJobsSearchChange}
-        totalJobs={jobsData?.meta?.totalCount || 0}
-      />
-
-      {jobsLoading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-gray-600">{t("common.loading")}</div>
+  const TasksTab = () => {
+    // If no PBS data, show message
+    if (!node.pbs) {
+      return (
+        <div className="px-6 py-4">
+          <div className="text-gray-500">{t("machines.noPbsData")}</div>
         </div>
-      )}
+      );
+    }
 
-      {jobsError && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-          <div className="text-red-800">
-            {t("common.errorLoading")}{" "}
-            {jobsError instanceof Error
-              ? jobsError.message
-              : t("common.unknownError")}
+    return (
+      <div>
+        <JobsSearchBar
+          searchQuery={jobsSearch}
+          onSearchChange={handleJobsSearchChange}
+          totalJobs={jobsData?.meta?.totalCount || 0}
+        />
+
+        {jobsLoading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-gray-600">{t("common.loading")}</div>
           </div>
-        </div>
-      )}
-
-      {jobsData && jobsData.data && (
-        <>
-          <JobsTable
-            jobs={jobsData.data.jobs}
-            sortColumn={jobsSort}
-            sortDirection={jobsOrder}
-            onSort={handleJobsSort}
-            isAdmin={isAdmin}
-            hideMachineColumn={true}
-          />
-          <JobsPagination
-            currentPage={jobsPage}
-            totalPages={jobsTotalPages}
-            onPageChange={handleJobsPageChange}
-          />
-        </>
-      )}
-
-      {!jobsLoading &&
-        !jobsError &&
-        jobsData?.data &&
-        jobsData.data.jobs.length === 0 && (
-          <div className="text-gray-500">{t("machines.noJobs")}</div>
         )}
-    </div>
-  );
+
+        {jobsError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+            <div className="text-red-800">
+              {t("common.errorLoading")}{" "}
+              {jobsError instanceof Error
+                ? jobsError.message
+                : t("common.unknownError")}
+            </div>
+          </div>
+        )}
+
+        {jobsData && jobsData.data && (
+          <>
+            <JobsTable
+              jobs={jobsData.data.jobs}
+              sortColumn={jobsSort}
+              sortDirection={jobsOrder}
+              onSort={handleJobsSort}
+              isAdmin={isAdmin}
+              hideMachineColumn={true}
+            />
+            <JobsPagination
+              currentPage={jobsPage}
+              totalPages={jobsTotalPages}
+              onPageChange={handleJobsPageChange}
+            />
+          </>
+        )}
+
+        {!jobsLoading &&
+          !jobsError &&
+          jobsData?.data &&
+          jobsData.data.jobs.length === 0 && (
+            <div className="text-gray-500">{t("machines.noJobs")}</div>
+          )}
+      </div>
+    );
+  };
 
   const QueuesTab = () => {
     const navigate = useNavigate();
+
+    if (!node.pbs) {
+      return (
+        <div className="px-6 py-4">
+          <div className="text-gray-500">{t("machines.noPbsData")}</div>
+        </div>
+      );
+    }
 
     if (nodeQueues.length === 0) {
       return (
@@ -455,63 +485,83 @@ export function MachineDetailPage() {
     );
   };
 
-  const SystemInfoTab = () => (
-    <div className="px-6 py-4">
-      {rawAttributes ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t("machines.attribute")}
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t("machines.value")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {Object.entries(rawAttributes)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([key, value]) => (
-                  <tr key={key} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-900">
-                      {key}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 break-all">
-                      {String(value)}
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+  const SystemInfoTab = () => {
+    if (!node.pbs) {
+      return (
+        <div className="px-6 py-4">
+          <div className="text-gray-500">{t("machines.noPbsData")}</div>
         </div>
-      ) : (
-        <div className="text-gray-500">{t("machines.noSystemInfo")}</div>
-      )}
-    </div>
-  );
+      );
+    }
 
-  const OutagesTab = () => (
-    <div className="px-6 py-4">
-      {nodeOutages.length === 0 ? (
-        <div className="text-gray-500">{t("machines.noOutages")}</div>
-      ) : (
-        <div className="space-y-4">
-          {nodeOutages.map((outage, index) => (
-            <div
-              key={index}
-              className="p-4 bg-yellow-50 border border-yellow-200 rounded"
-            >
-              <pre className="text-sm whitespace-pre-wrap">
-                {JSON.stringify(outage, null, 2)}
-              </pre>
-            </div>
-          ))}
+    return (
+      <div className="px-6 py-4">
+        {rawAttributes ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t("machines.attribute")}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t("machines.value")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {Object.entries(rawAttributes)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([key, value]) => (
+                    <tr key={key} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-900">
+                        {key}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600 break-all">
+                        {String(value)}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="text-gray-500">{t("machines.noSystemInfo")}</div>
+        )}
+      </div>
+    );
+  };
+
+  const OutagesTab = () => {
+    if (!node.pbs) {
+      return (
+        <div className="px-6 py-4">
+          <div className="text-gray-500">{t("machines.noPbsData")}</div>
         </div>
-      )}
-    </div>
-  );
+      );
+    }
+
+    return (
+      <div className="px-6 py-4">
+        {nodeOutages.length === 0 ? (
+          <div className="text-gray-500">{t("machines.noOutages")}</div>
+        ) : (
+          <div className="space-y-4">
+            {nodeOutages.map((outage, index) => (
+              <div
+                key={index}
+                className="p-4 bg-yellow-50 border border-yellow-200 rounded"
+              >
+                <pre className="text-sm whitespace-pre-wrap">
+                  {JSON.stringify(outage, null, 2)}
+                </pre>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const tabs = [
     {
@@ -574,85 +624,86 @@ export function MachineDetailPage() {
         </div>
 
         {/* Resource Usage from PBS (can be null) */}
-        {(cpuUsage > 0 ||
-          gpuUsage !== null ||
-          node.memoryUsagePercent !== null) && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                {t("machines.resourceUsage")}
-              </h2>
-              <div className="space-y-4">
-                {cpuUsage > 0 && (
-                  <ProgressBar
-                    label="CPU"
-                    value={node.cpu}
-                    percent={cpuUsage}
-                    color={getCpuGpuColorClass}
-                    icon={
-                      <Icon
-                        icon="solar:cpu-bold"
-                        className="w-[14px] h-[14px]"
-                      />
-                    }
-                  />
-                )}
-
-                {hasGpu && (
-                  <ProgressBar
-                    label="GPU"
-                    value={
-                      gpuCount !== null
-                        ? `${
-                            node.gpuAssigned &&
-                            typeof node.gpuAssigned === "number"
-                              ? node.gpuAssigned
-                              : 0
-                          } / ${gpuCount}`
-                        : "GPU"
-                    }
-                    percent={gpuUsage !== null ? gpuUsage : 0}
-                    color={getCpuGpuColorClass}
-                    icon={
-                      <Icon
-                        icon="solar:gpu-bold"
-                        className="w-[14px] h-[14px]"
-                      />
-                    }
-                  />
-                )}
-
-                {node.memoryUsagePercent !== null &&
-                  node.memoryUsagePercent !== undefined &&
-                  node.memoryTotal !== null &&
-                  node.memoryUsed !== null &&
-                  typeof node.memoryTotal === "number" &&
-                  typeof node.memoryUsed === "number" &&
-                  typeof node.memoryUsagePercent === "number" && (
+        {node.pbs &&
+          (cpuUsage > 0 ||
+            gpuUsage !== null ||
+            node.pbs.memoryUsagePercent !== null) && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  {t("machines.resourceUsage")}
+                </h2>
+                <div className="space-y-4">
+                  {cpuUsage > 0 && (
                     <ProgressBar
-                      label="RAM"
-                      value={`${Number(node.memoryUsed).toFixed(1)} / ${Number(node.memoryTotal).toFixed(1)} (GB)`}
-                      percent={Number(node.memoryUsagePercent)}
-                      color="#5D7085"
+                      label="CPU"
+                      value={node.cpu}
+                      percent={cpuUsage}
+                      color={getCpuGpuColorClass}
+                      icon={
+                        <Icon
+                          icon="solar:cpu-bold"
+                          className="w-[14px] h-[14px]"
+                        />
+                      }
                     />
                   )}
-              </div>
-              {node.actualState && (
-                <div className="mt-4">
-                  <div className="text-sm text-gray-500">
-                    {t("machines.state")}
-                  </div>
-                  <div
-                    className="text-lg font-medium"
-                    style={{ color: stateInfo.color }}
-                  >
-                    {stateInfo.label}
-                  </div>
+
+                  {hasGpu && (
+                    <ProgressBar
+                      label="GPU"
+                      value={
+                        gpuCount !== null
+                          ? `${
+                              node.pbs.gpuAssigned &&
+                              typeof node.pbs.gpuAssigned === "number"
+                                ? node.pbs.gpuAssigned
+                                : 0
+                            } / ${gpuCount}`
+                          : "GPU"
+                      }
+                      percent={gpuUsage !== null ? gpuUsage : 0}
+                      color={getCpuGpuColorClass}
+                      icon={
+                        <Icon
+                          icon="solar:gpu-bold"
+                          className="w-[14px] h-[14px]"
+                        />
+                      }
+                    />
+                  )}
+
+                  {node.pbs.memoryUsagePercent !== null &&
+                    node.pbs.memoryUsagePercent !== undefined &&
+                    node.pbs.memoryTotal !== null &&
+                    node.pbs.memoryUsed !== null &&
+                    typeof node.pbs.memoryTotal === "number" &&
+                    typeof node.pbs.memoryUsed === "number" &&
+                    typeof node.pbs.memoryUsagePercent === "number" && (
+                      <ProgressBar
+                        label="RAM"
+                        value={`${Number(node.pbs.memoryUsed).toFixed(1)} / ${Number(node.pbs.memoryTotal).toFixed(1)} (GB)`}
+                        percent={Number(node.pbs.memoryUsagePercent)}
+                        color="#5D7085"
+                      />
+                    )}
                 </div>
-              )}
+                {node.pbs.actualState && (
+                  <div className="mt-4">
+                    <div className="text-sm text-gray-500">
+                      {t("machines.state")}
+                    </div>
+                    <div
+                      className="text-lg font-medium"
+                      style={{ color: stateInfo.color }}
+                    >
+                      {stateInfo.label}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Tabs Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">

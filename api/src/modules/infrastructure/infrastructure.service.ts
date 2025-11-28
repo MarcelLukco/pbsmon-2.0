@@ -474,31 +474,35 @@ export class InfrastructureService {
       }
     }
 
-    // Get all raw PBS attributes
     const rawPbsAttributes = pbsNodeData?.pbsNode?.attributes || null;
 
-    // Get outages (for now empty, can be enhanced later)
     const outages: Array<Record<string, any>> = [];
+
+    const pbsData = pbsNodeData?.pbsNode
+      ? {
+          name: pbsNodeData.pbsNode.name,
+          actualState: pbsState.state,
+          cpuUsagePercent: pbsState.cpuUsage,
+          gpuUsagePercent: pbsState.gpuUsage,
+          gpuCount: pbsState.gpuCount,
+          gpuAssigned: pbsState.gpuAssigned,
+          gpuCapability: pbsState.gpuCapability,
+          gpuMemory: pbsState.gpuMemory,
+          cudaVersion: pbsState.cudaVersion,
+          memoryTotal: pbsState.memoryTotal,
+          memoryUsed: pbsState.memoryUsed,
+          memoryUsagePercent: pbsState.memoryUsagePercent,
+          jobs: jobs.length > 0 ? jobs : null,
+          queues: queues.length > 0 ? queues : null,
+          rawPbsAttributes,
+          outages: outages.length > 0 ? outages : null,
+        }
+      : null;
 
     return {
       name: machine.name,
-      pbsName: pbsNodeData?.pbsNode?.name || null,
       cpu: machine.cpu,
-      actualState: pbsState.state,
-      cpuUsagePercent: pbsState.cpuUsage,
-      gpuUsagePercent: pbsState.gpuUsage,
-      gpuCount: pbsState.gpuCount,
-      gpuAssigned: pbsState.gpuAssigned,
-      gpuCapability: pbsState.gpuCapability,
-      gpuMemory: pbsState.gpuMemory,
-      cudaVersion: pbsState.cudaVersion,
-      memoryTotal: pbsState.memoryTotal,
-      memoryUsed: pbsState.memoryUsed,
-      memoryUsagePercent: pbsState.memoryUsagePercent,
-      jobs: jobs.length > 0 ? jobs : null,
-      queues: queues.length > 0 ? queues : null,
-      rawPbsAttributes,
-      outages: outages.length > 0 ? outages : null,
+      pbs: pbsData,
     };
   }
 
@@ -548,15 +552,11 @@ export class InfrastructureService {
     };
   }
 
-  /**
-   * Parse state_count string into QueueStateCountDTO
-   */
   private parseStateCount(stateCountStr?: string): QueueListDTO['stateCount'] {
     if (!stateCountStr) {
       return null;
     }
 
-    // Format: "Transit:0 Queued:3 Held:0 Waiting:0 Running:2 Exiting:0 Begun:12345"
     const counts: Record<string, number> = {};
     const parts = stateCountStr.split(/\s+/);
     for (const part of parts) {

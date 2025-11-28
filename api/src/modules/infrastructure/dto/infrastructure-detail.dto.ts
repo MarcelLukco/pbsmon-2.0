@@ -17,24 +17,14 @@ export class LocalizedStringDTO {
 }
 
 /**
- * Node DTO for detail view (full Perun data + PBS state)
+ * PBS Node Data DTO - contains all PBS-related information
  */
-export class InfrastructureNodeDetailDTO {
-  @Expose()
-  @ApiProperty({ description: 'Node name (from Perun)' })
-  name: string;
-
+export class InfrastructureNodePbsDTO {
   @Expose()
   @ApiProperty({
     description: 'PBS node name (may differ from Perun name)',
-    nullable: true,
-    required: false,
   })
-  pbsName?: string | null;
-
-  @Expose()
-  @ApiProperty({ description: 'Number of CPUs' })
-  cpu: number;
+  name: string;
 
   @Expose()
   @ApiProperty({
@@ -161,6 +151,30 @@ export class InfrastructureNodeDetailDTO {
     required: false,
   })
   outages?: Array<Record<string, any>> | null;
+}
+
+/**
+ * Node DTO for detail view (full Perun data + optional PBS state)
+ */
+export class InfrastructureNodeDetailDTO {
+  @Expose()
+  @ApiProperty({ description: 'Node name (from Perun)' })
+  name: string;
+
+  @Expose()
+  @ApiProperty({ description: 'Number of CPUs' })
+  cpu: number;
+
+  @Expose()
+  @Type(() => InfrastructureNodePbsDTO)
+  @ApiProperty({
+    description:
+      'PBS node data (null if node is not managed by PBS, e.g., cloud nodes)',
+    type: InfrastructureNodePbsDTO,
+    nullable: true,
+    required: false,
+  })
+  pbs?: InfrastructureNodePbsDTO | null;
 }
 
 /**
