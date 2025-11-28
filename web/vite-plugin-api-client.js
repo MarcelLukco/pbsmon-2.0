@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 let isGenerating = false;
+let pluginConfig = null;
 
 /**
  * Vite plugin to automatically regenerate API client when API changes
@@ -16,9 +17,19 @@ let isGenerating = false;
 export default function apiClientPlugin() {
   return {
     name: "api-client-generator",
+    configResolved(config) {
+      // Store config for use in other hooks
+      pluginConfig = config;
+    },
     async buildStart() {
+      // Load environment variables using Vite's loadEnv
+      const mode = pluginConfig?.mode || process.env.NODE_ENV || "development";
+      const envDir = pluginConfig?.envDir || process.cwd();
+      const env = loadEnv(mode, envDir, "");
+      const apiBaseUrl = env.API_BASE_URL || process.env.API_BASE_URL;
+
       // Generate on startup
-      await generateApiClient();
+      await generateApiClient(apiBaseUrl);
     },
     configureServer(server, config) {
       // Load environment variables using Vite's loadEnv
@@ -26,8 +37,9 @@ export default function apiClientPlugin() {
       const env = loadEnv(mode, config?.envDir || process.cwd(), "");
 
       // Watch for API server changes by polling the OpenAPI endpoint
-      const API_URL = env.API_BASE_URL || process.env.API_BASE_URL;
-      const OPENAPI_JSON_URL = `${API_URL}/api/docs-json`;
+      const API_URL =
+        env.API_BASE_URL || process.env.API_BASE_URL || "http://localhost:4200";
+      const OPENAPI_JSON_URL = `${API_URL}/docs-json`;
       let lastSpecHash = null;
 
       const checkAndRegenerate = async () => {
