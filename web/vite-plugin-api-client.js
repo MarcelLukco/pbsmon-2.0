@@ -27,9 +27,13 @@ export default function apiClientPlugin() {
       const envDir = pluginConfig?.envDir || process.cwd();
       const env = loadEnv(mode, envDir, "");
       const apiBaseUrl = env.API_BASE_URL || process.env.API_BASE_URL;
+      const apiAuthUsername =
+        env.API_AUTH_USERNAME || process.env.API_AUTH_USERNAME;
+      const apiAuthPassword =
+        env.API_AUTH_PASSWORD || process.env.API_AUTH_PASSWORD;
 
       // Generate on startup
-      await generateApiClient(apiBaseUrl);
+      await generateApiClient(apiBaseUrl, apiAuthUsername, apiAuthPassword);
     },
     configureServer(server, config) {
       // Load environment variables using Vite's loadEnv
@@ -39,6 +43,10 @@ export default function apiClientPlugin() {
       // Watch for API server changes by polling the OpenAPI endpoint
       const API_URL =
         env.API_BASE_URL || process.env.API_BASE_URL || "http://localhost:4200";
+      const API_AUTH_USERNAME =
+        env.API_AUTH_USERNAME || process.env.API_AUTH_USERNAME;
+      const API_AUTH_PASSWORD =
+        env.API_AUTH_PASSWORD || process.env.API_AUTH_PASSWORD;
       const OPENAPI_JSON_URL = `${API_URL}/docs-json`;
       let lastSpecHash = null;
 
@@ -46,7 +54,16 @@ export default function apiClientPlugin() {
         if (isGenerating) return;
 
         try {
-          const response = await fetch(OPENAPI_JSON_URL);
+          // Prepare headers with basic auth if credentials are provided
+          const headers = {};
+          if (API_AUTH_USERNAME && API_AUTH_PASSWORD) {
+            const auth = Buffer.from(
+              `${API_AUTH_USERNAME}:${API_AUTH_PASSWORD}`
+            ).toString("base64");
+            headers.Authorization = `Basic ${auth}`;
+          }
+
+          const response = await fetch(OPENAPI_JSON_URL, { headers });
           if (response.ok) {
             const spec = await response.json();
             const specHash = JSON.stringify(spec);
@@ -56,7 +73,9 @@ export default function apiClientPlugin() {
               lastSpecHash = specHash;
               console.log("🔄 API spec changed, regenerating client...");
               await generateApiClient(
-                env.API_BASE_URL || process.env.API_BASE_URL
+                env.API_BASE_URL || process.env.API_BASE_URL,
+                env.API_AUTH_USERNAME || process.env.API_AUTH_USERNAME,
+                env.API_AUTH_PASSWORD || process.env.API_AUTH_PASSWORD
               );
               // Trigger HMR for the generated files
               server.moduleGraph.invalidateAll();
@@ -84,7 +103,7 @@ export default function apiClientPlugin() {
   };
 }
 
-async function generateApiClient(apiBaseUrl) {
+async function generateApiClient(apiBaseUrl, apiAuthUsername, apiAuthPassword) {
   if (isGenerating) return;
   isGenerating = true;
 
@@ -93,6 +112,12 @@ async function generateApiClient(apiBaseUrl) {
     const envVars = { ...process.env, WATCH_MODE: "true" };
     if (apiBaseUrl) {
       envVars.API_BASE_URL = apiBaseUrl;
+    }
+    if (apiAuthUsername) {
+      envVars.API_AUTH_USERNAME = apiAuthUsername;
+    }
+    if (apiAuthPassword) {
+      envVars.API_AUTH_PASSWORD = apiAuthPassword;
     }
     const { stdout, stderr } = await execAsync(`node ${scriptPath}`, {
       cwd: __dirname,

@@ -3,9 +3,13 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Accept API_BASE_URL as build argument
+# Accept API_BASE_URL and auth credentials as build arguments
 ARG API_BASE_URL
+ARG API_AUTH_USERNAME
+ARG API_AUTH_PASSWORD
 ENV API_BASE_URL=${API_BASE_URL}
+ENV API_AUTH_USERNAME=${API_AUTH_USERNAME}
+ENV API_AUTH_PASSWORD=${API_AUTH_PASSWORD}
 
 # Copy package files
 COPY package*.json ./

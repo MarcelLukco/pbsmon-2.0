@@ -17,6 +17,10 @@ const env = loadEnv(mode, envDir, "");
 
 const API_URL =
   env.API_BASE_URL || process.env.API_BASE_URL || "http://147.251.245.82/:4200";
+const API_AUTH_USERNAME =
+  env.API_AUTH_USERNAME || process.env.API_AUTH_USERNAME;
+const API_AUTH_PASSWORD =
+  env.API_AUTH_PASSWORD || process.env.API_AUTH_PASSWORD;
 const OUTPUT_DIR = join(__dirname, "../src/lib/generated-api");
 const GENERATED_CLIENT_EXISTS = existsSync(OUTPUT_DIR);
 
@@ -46,7 +50,17 @@ async function fetchOpenApiSpec() {
   // Fetch from API directly
   try {
     console.log(`Fetching OpenAPI spec from ${OPENAPI_JSON_URL}...`);
-    const response = await fetch(OPENAPI_JSON_URL);
+
+    // Prepare headers with basic auth if credentials are provided
+    const headers = {};
+    if (API_AUTH_USERNAME && API_AUTH_PASSWORD) {
+      const auth = Buffer.from(
+        `${API_AUTH_USERNAME}:${API_AUTH_PASSWORD}`
+      ).toString("base64");
+      headers.Authorization = `Basic ${auth}`;
+    }
+
+    const response = await fetch(OPENAPI_JSON_URL, { headers });
 
     if (!response.ok) {
       throw new Error(
