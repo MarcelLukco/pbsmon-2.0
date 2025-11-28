@@ -6,15 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 interface NodePreviewProps {
   node: InfrastructureNodeListDTO;
-  clusterId: string;
   clusterName: string;
 }
 
-export function NodePreview({
-  node,
-  clusterId,
-  clusterName,
-}: NodePreviewProps) {
+export function NodePreview({ node, clusterName }: NodePreviewProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -44,8 +39,7 @@ export function NodePreview({
   const shortNodeName = getShortNodeName(node.name, clusterName);
 
   const handleClick = () => {
-    const machineId = `node-${clusterId}-${node.name}`;
-    navigate(`/machines/${machineId}`);
+    navigate(`/machines/${encodeURIComponent(node.name)}`);
   };
 
   const getStateInfo = (

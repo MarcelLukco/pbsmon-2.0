@@ -1,18 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-client";
 
-export function useMachineDetail(machineId: string) {
+export function useMachineDetail(nodeName: string) {
   return useQuery({
-    queryKey: ["machine", machineId],
+    queryKey: ["machine", nodeName],
     queryFn: async () => {
-      const response =
-        await apiClient.infrastructure.infrastructureControllerGetInfrastructureDetail(
-          {
-            id: machineId,
-          }
+      // Use the new endpoint: /infrastructure/machines/:nodeName
+      const baseUrl =
+        import.meta.env.VITE_API_BASE_URL ||
+        import.meta.env.API_BASE_URL ||
+        (import.meta.env.PROD ? "/api" : "http://localhost:4200/api");
+      const normalizedBaseUrl = baseUrl.endsWith("/")
+        ? baseUrl.slice(0, -1)
+        : baseUrl;
+      const url = `${normalizedBaseUrl}/infrastructure/machines/${encodeURIComponent(nodeName)}`;
+
+      const response = await fetch(url, {
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch machine detail: ${response.statusText}`
         );
-      return response.data;
+      }
+
+      const data = await response.json();
+      return data.data;
     },
-    enabled: !!machineId,
+    enabled: !!nodeName,
   });
 }

@@ -210,8 +210,77 @@ export class InfrastructureService {
   }
 
   /**
-   * Get infrastructure detail by ID
+   * Get organization detail by ID
+   */
+  getOrganizationDetail(orgId: string): InfrastructureDetailDTO {
+    const perunData = this.dataCollectionService.getPerunData();
+
+    if (!perunData?.machines?.physical_machines) {
+      throw new NotFoundException(
+        `Organization with id '${orgId}' was not found`,
+      );
+    }
+
+    const org = perunData.machines.physical_machines.find(
+      (o) => o.id === orgId,
+    );
+    if (!org) {
+      throw new NotFoundException(
+        `Organization with id '${orgId}' was not found`,
+      );
+    }
+    return this.mapOrganizationToDetail(org);
+  }
+
+  /**
+   * Get cluster detail by ID
+   */
+  getClusterDetail(clusterId: string): InfrastructureDetailDTO {
+    const perunData = this.dataCollectionService.getPerunData();
+
+    if (!perunData?.machines?.physical_machines) {
+      throw new NotFoundException(
+        `Cluster with id '${clusterId}' was not found`,
+      );
+    }
+
+    const cluster = this.findCluster(
+      clusterId,
+      perunData.machines.physical_machines,
+    );
+    if (!cluster) {
+      throw new NotFoundException(
+        `Cluster with id '${clusterId}' was not found`,
+      );
+    }
+    return this.mapClusterToDetail(cluster);
+  }
+
+  /**
+   * Get machine (node) detail by node name
+   * @param nodeName - The node name (can be full FQDN or just hostname)
+   */
+  getMachineDetail(nodeName: string): InfrastructureDetailDTO {
+    const perunData = this.dataCollectionService.getPerunData();
+
+    if (!perunData?.machines?.physical_machines) {
+      throw new NotFoundException(`Machine '${nodeName}' was not found`);
+    }
+
+    const node = this.findNodeByName(
+      nodeName,
+      perunData.machines.physical_machines,
+    );
+    if (!node) {
+      throw new NotFoundException(`Machine '${nodeName}' was not found`);
+    }
+    return this.mapNodeToDetail(node);
+  }
+
+  /**
+   * Get infrastructure detail by ID (deprecated - use specific methods instead)
    * ID format: organization-{id}, cluster-{id}, node-{clusterId}-{nodeName}
+   * @deprecated Use getOrganizationDetail, getClusterDetail, or getMachineDetail instead
    */
   getInfrastructureDetail(id: string): InfrastructureDetailDTO {
     const perunData = this.dataCollectionService.getPerunData();
@@ -225,29 +294,12 @@ export class InfrastructureService {
     // Parse ID to determine type
     if (id.startsWith('organization-')) {
       const orgId = id.replace('organization-', '');
-      const org = perunData.machines.physical_machines.find(
-        (o) => o.id === orgId,
-      );
-      if (!org) {
-        throw new NotFoundException(
-          `Organization with id '${orgId}' was not found`,
-        );
-      }
-      return this.mapOrganizationToDetail(org);
+      return this.getOrganizationDetail(orgId);
     }
 
     if (id.startsWith('cluster-')) {
       const clusterId = id.replace('cluster-', '');
-      const cluster = this.findCluster(
-        clusterId,
-        perunData.machines.physical_machines,
-      );
-      if (!cluster) {
-        throw new NotFoundException(
-          `Cluster with id '${clusterId}' was not found`,
-        );
-      }
-      return this.mapClusterToDetail(cluster);
+      return this.getClusterDetail(clusterId);
     }
 
     if (id.startsWith('node-')) {
@@ -255,19 +307,8 @@ export class InfrastructureService {
       if (parts.length < 2) {
         throw new NotFoundException(`Invalid node ID format: '${id}'`);
       }
-      const clusterId = parts[0];
       const nodeName = parts.slice(1).join('-');
-      const node = this.findNode(
-        nodeName,
-        clusterId,
-        perunData.machines.physical_machines,
-      );
-      if (!node) {
-        throw new NotFoundException(
-          `Node '${nodeName}' in cluster '${clusterId}' was not found`,
-        );
-      }
-      return this.mapNodeToDetail(node);
+      return this.getMachineDetail(nodeName);
     }
 
     throw new NotFoundException(`Infrastructure with id '${id}' was not found`);
@@ -794,6 +835,38 @@ export class InfrastructureService {
         const machine = machines.find((m) => m.name === nodeName);
         if (machine) {
           return { machine, clusterId };
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Find node by name across all clusters
+   */
+  private findNodeByName(
+    nodeName: string,
+    organizations: PerunPhysicalMachine[],
+  ): { machine: PerunMachine; clusterId: string } | null {
+    // Extract hostname from FQDN for matching
+    const nodeHostname = nodeName.split('.')[0];
+
+    for (const org of organizations) {
+      const resources = org.resources || [];
+      for (const resource of resources) {
+        const machines = resource.machines || [];
+        // Try exact match first
+        let machine = machines.find((m) => m.name === nodeName);
+        if (machine) {
+          return { machine, clusterId: resource.id };
+        }
+        // Try hostname match (FQDN vs short name)
+        machine = machines.find((m) => {
+          const machineHostname = m.name.split('.')[0];
+          return machineHostname === nodeHostname || m.name === nodeHostname;
+        });
+        if (machine) {
+          return { machine, clusterId: resource.id };
         }
       }
     }

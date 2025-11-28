@@ -34,11 +34,54 @@ export class InfrastructureController {
     return new ApiResponse(data, meta);
   }
 
+  @Get('organizations/:id')
+  @ApiOperation({
+    summary: 'Get organization detail',
+    description: 'Returns full organization details by ID',
+  })
+  @ApiOkResponseModel(InfrastructureDetailDTO, 'Organization detail')
+  @ApiNotFoundResponse({ description: 'Organization not found' })
+  getOrganizationDetail(
+    @Param('id') id: string,
+  ): ApiResponse<InfrastructureDetailDTO> {
+    const data = this.infrastructureService.getOrganizationDetail(id);
+    return new ApiResponse(data);
+  }
+
+  @Get('clusters/:id')
+  @ApiOperation({
+    summary: 'Get cluster detail',
+    description: 'Returns full cluster details by ID',
+  })
+  @ApiOkResponseModel(InfrastructureDetailDTO, 'Cluster detail')
+  @ApiNotFoundResponse({ description: 'Cluster not found' })
+  getClusterDetail(
+    @Param('id') id: string,
+  ): ApiResponse<InfrastructureDetailDTO> {
+    const data = this.infrastructureService.getClusterDetail(id);
+    return new ApiResponse(data);
+  }
+
+  @Get('machines/:nodeName')
+  @ApiOperation({
+    summary: 'Get machine (node) detail',
+    description:
+      'Returns full machine details by node name. Node name can be FQDN or hostname. Searches across all clusters.',
+  })
+  @ApiOkResponseModel(InfrastructureDetailDTO, 'Machine detail')
+  @ApiNotFoundResponse({ description: 'Machine not found' })
+  getMachineDetail(
+    @Param('nodeName') nodeName: string,
+  ): ApiResponse<InfrastructureDetailDTO> {
+    const data = this.infrastructureService.getMachineDetail(nodeName);
+    return new ApiResponse(data);
+  }
+
   @Get(':id')
   @ApiOperation({
-    summary: 'Get infrastructure detail',
+    summary: 'Get infrastructure detail (deprecated)',
     description:
-      'Returns full infrastructure details by ID. ID formats: organization-{id}, cluster-{id}, node-{clusterId}-{nodeName}',
+      'Returns full infrastructure details by ID. ID formats: organization-{id}, cluster-{id}, node-{clusterId}-{nodeName}. Deprecated: use specific endpoints instead.',
   })
   @ApiOkResponseModel(InfrastructureDetailDTO, 'Infrastructure detail')
   @ApiNotFoundResponse({ description: 'Infrastructure not found' })

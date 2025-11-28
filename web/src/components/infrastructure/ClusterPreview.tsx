@@ -28,12 +28,7 @@ export function ClusterPreview({ cluster }: ClusterPreviewProps) {
       {/* Nodes */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
         {cluster.nodes.map((node) => (
-          <NodePreview
-            key={node.name}
-            node={node}
-            clusterId={cluster.id}
-            clusterName={cluster.name}
-          />
+          <NodePreview key={node.name} node={node} clusterName={cluster.name} />
         ))}
       </div>
     </div>
