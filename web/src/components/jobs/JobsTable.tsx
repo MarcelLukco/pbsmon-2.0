@@ -33,24 +33,26 @@ export function JobsTable({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto">
-      <JobsTableHeader
-        sortColumn={sortColumn}
-        sortDirection={sortDirection}
-        onSort={onSort}
-        isAdmin={isAdmin}
-      />
+      <div className="min-w-max">
+        <JobsTableHeader
+          sortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+          isAdmin={isAdmin}
+        />
 
-      {/* Table Body */}
-      <div>
-        {jobs.length === 0 ? (
-          <div className="px-4 py-8 text-center text-gray-500">
-            {t("jobs.noJobsFound")}
-          </div>
-        ) : (
-          jobs.map((job) => (
-            <JobsTableRow key={job.id} job={job} isAdmin={isAdmin} />
-          ))
-        )}
+        {/* Table Body */}
+        <div>
+          {jobs.length === 0 ? (
+            <div className="px-4 py-8 text-center text-gray-500">
+              {t("jobs.noJobsFound")}
+            </div>
+          ) : (
+            jobs.map((job) => (
+              <JobsTableRow key={job.id} job={job} isAdmin={isAdmin} />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

@@ -84,7 +84,7 @@ export function JobsTableRow({ job, isAdmin = false }: JobsTableRowProps) {
   };
 
   return (
-    <div className="grid grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px] gap-2 items-center py-3 px-4 border-b border-gray-100 bg-white hover:bg-gray-50 min-w-max">
+    <div className="grid grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px] gap-2 items-center py-3 px-4 border-b border-gray-100 bg-white hover:bg-gray-50">
       {/* Status Column */}
       <div>
         <span

@@ -315,13 +315,14 @@ export function SidebarLayout() {
           </div>
         </aside>
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Main Content */}
-          <main className="flex-1 bg-gray-light">
-            <Outlet />
-          </main>
-        </div>
+        <main
+          className="flex-1 bg-gray-light"
+          style={{
+            maxWidth: "calc(100vw - var(--spacing) * 64)",
+          }}
+        >
+          <Outlet />
+        </main>
       </div>
     </div>
   );
