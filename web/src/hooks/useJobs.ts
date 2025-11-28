@@ -15,6 +15,7 @@ interface UseJobsParams {
   search?: string;
   state?: string;
   node?: string;
+  enabled?: boolean;
 }
 
 export function useJobs(params: UseJobsParams = {}) {
@@ -26,6 +27,7 @@ export function useJobs(params: UseJobsParams = {}) {
     search,
     state,
     node,
+    enabled = true,
   } = params;
 
   return useQuery<JobsListResponse>({
@@ -42,5 +44,6 @@ export function useJobs(params: UseJobsParams = {}) {
       });
       return response;
     },
+    enabled,
   });
 }
