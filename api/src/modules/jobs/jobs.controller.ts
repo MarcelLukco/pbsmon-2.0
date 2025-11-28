@@ -2,6 +2,8 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/dto/api-response.dto';
 import { ApiOkResponseModel } from '@/common/swagger/api-generic-response';
+import { UserContextDecorator } from '@/common/decorators/user-context.decorator';
+import { UserContext } from '@/common/types/user-context.types';
 import { JobsService } from './jobs.service';
 import { JobsListDTO } from './dto/job-list.dto';
 import { MetaDto } from '@/common/dto/meta.dto';
@@ -57,6 +59,7 @@ export class JobsController {
   })
   @ApiOkResponseModel(JobsListDTO, 'List of jobs', MetaDto)
   getJobs(
+    @UserContextDecorator() userContext: UserContext,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
     @Query('sort') sort?: string,
@@ -70,6 +73,7 @@ export class JobsController {
     const sortOrder = order || 'desc';
 
     const { data, totalCount } = this.jobsService.getJobsList(
+      userContext,
       pageNum,
       limitNum,
       sortColumn,

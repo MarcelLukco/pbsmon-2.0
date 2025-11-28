@@ -73,6 +73,7 @@ i18n.use(initReactI18next).init({
           status: "Status",
           id: "ID",
           name: "Name",
+          username: "User",
           machine: "Machine",
           cpuReserved: "CPU (reserved)",
           gpuReserved: "GPU (reserved)",
@@ -86,6 +87,7 @@ i18n.use(initReactI18next).init({
           gpuTime: "GPU time",
           of: "of",
           gb: "GB",
+          anonym: "Anonym",
           state: {
             queued: "In queue",
             running: "Running",
@@ -239,6 +241,7 @@ i18n.use(initReactI18next).init({
           status: "Stav",
           id: "ID",
           name: "Meno",
+          username: "Uživatel",
           machine: "Stroj",
           cpuReserved: "CPU (vyhrazené)",
           gpuReserved: "GPU (vyhrazené)",
@@ -253,6 +256,7 @@ i18n.use(initReactI18next).init({
           gpuTime: "GPU čas",
           of: "z",
           gb: "GB",
+          anonym: "Anonym",
           state: {
             queued: "Ve fronte",
             running: "Beží",

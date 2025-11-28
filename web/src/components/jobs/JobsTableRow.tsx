@@ -6,14 +6,24 @@ import { ProgressBar } from "@/components/common/ProgressBar";
 
 interface JobsTableRowProps {
   job: JobListDTO;
+  isAdmin?: boolean;
 }
 
-export function JobsTableRow({ job }: JobsTableRowProps) {
+export function JobsTableRow({ job, isAdmin = false }: JobsTableRowProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleRowClick = () => {
+  const handleJobClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     navigate(`/jobs/${encodeURIComponent(job.id)}`);
+  };
+
+  const handleUserClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const username = job.username || job.owner?.split("@")[0];
+    if (username) {
+      navigate(`/users/${encodeURIComponent(username)}`);
+    }
   };
 
   // Get state label and color
@@ -23,7 +33,7 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
       case "Q":
         return {
           label: t("jobs.state.queued"),
-          color: "bg-gray-400 text-gray-800",
+          color: "bg-gray-200 text-gray-800",
         };
       case "R":
       case "B":
@@ -74,10 +84,7 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
   };
 
   return (
-    <div
-      className="grid grid-cols-[120px_200px_150px_150px_1fr_1fr_1fr_180px] gap-4 items-center py-3 px-4 border-b border-gray-100 bg-white hover:bg-gray-50 cursor-pointer"
-      onClick={handleRowClick}
-    >
+    <div className="grid grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px] gap-2 items-center py-3 px-4 border-b border-gray-100 bg-white hover:bg-gray-50 min-w-max">
       {/* Status Column */}
       <div>
         <span
@@ -93,9 +100,13 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
       </div>
 
       {/* ID Column */}
-      <div className="flex items-center gap-1">
-        <span className="text-sm text-gray-900 font-mono">{job.id}</span>
-        <Icon icon="mdi:link" className="w-4 h-4 text-gray-400" />
+      <div className="text-left">
+        <button
+          onClick={handleJobClick}
+          className="text-sm text-gray-900 font-mono hover:text-primary-600 underline cursor-pointer"
+        >
+          <span>{job.id}</span>
+        </button>
       </div>
 
       {/* Name Column */}
@@ -106,12 +117,24 @@ export function JobsTableRow({ job }: JobsTableRowProps) {
         {String(job.name || "")}
       </div>
 
+      {/* Username Column - Show username for admins, anonymized for non-admins */}
+      <div className="text-sm">
+        {isAdmin && (job.username || job.owner) ? (
+          <button
+            onClick={handleUserClick}
+            className="text-gray-900 hover:text-primary-600 underline cursor-pointer"
+          >
+            {String(job.username || job.owner?.split("@")[0] || "-")}
+          </button>
+        ) : (
+          <span className="text-gray-900">{t("jobs.anonym")}</span>
+        )}
+      </div>
+
       {/* Machine Column */}
       <div className="text-sm">
         {job.node ? (
-          <span className="text-primary-600 hover:text-primary-800 underline">
-            {String(job.node)}
-          </span>
+          <span>{String(job.node)}</span>
         ) : (
           <span className="text-gray-400">-</span>
         )}

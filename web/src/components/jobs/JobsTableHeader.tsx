@@ -16,6 +16,7 @@ interface JobsTableHeaderProps {
   sortColumn: SortColumn;
   sortDirection: "asc" | "desc";
   onSort: (column: SortColumn) => void;
+  isAdmin?: boolean;
 }
 
 export function JobsTableHeader({
@@ -26,8 +27,8 @@ export function JobsTableHeader({
   const { t } = useTranslation();
 
   return (
-    <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-      <div className="grid grid-cols-[120px_200px_150px_150px_1fr_1fr_1fr_180px] gap-4 text-sm font-medium text-gray-700">
+    <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 min-w-max">
+      <div className="grid grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px] gap-2 text-sm font-medium text-gray-700">
         <JobsSortableHeader
           column="state"
           currentSortColumn={sortColumn}
@@ -53,6 +54,15 @@ export function JobsTableHeader({
           onSort={onSort}
         >
           {t("jobs.name")}
+        </JobsSortableHeader>
+
+        <JobsSortableHeader
+          column="owner"
+          currentSortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+        >
+          {t("jobs.username")}
         </JobsSortableHeader>
 
         <JobsSortableHeader

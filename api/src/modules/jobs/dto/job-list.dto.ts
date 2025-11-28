@@ -26,6 +26,12 @@ export class JobListDTO {
   owner: string;
 
   @Expose()
+  @ApiProperty({
+    description: 'Job owner username (extracted from owner, without @realm)',
+  })
+  username: string;
+
+  @Expose()
   @ApiProperty({ description: 'Queue name', nullable: true })
   queue?: string | null;
 

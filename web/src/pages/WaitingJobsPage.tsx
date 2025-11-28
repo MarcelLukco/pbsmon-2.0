@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useJobs } from "@/hooks/useJobs";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 import { JobsTable } from "@/components/jobs/JobsTable";
 import { JobsPagination } from "@/components/jobs/JobsPagination";
@@ -23,6 +24,9 @@ export function WaitingJobsPage() {
   const [sort, setSort] = useState<SortColumn>("createdAt");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [search, setSearch] = useState("");
+
+  const { data: currentUser } = useCurrentUser();
+  const isAdmin = currentUser?.role === "admin";
 
   const { data, isLoading, error } = useJobs({
     page,
@@ -100,6 +104,7 @@ export function WaitingJobsPage() {
               sortColumn={sort}
               sortDirection={order}
               onSort={handleSort}
+              isAdmin={isAdmin}
             />
             <JobsPagination
               currentPage={page}

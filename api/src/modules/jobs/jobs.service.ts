@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataCollectionService } from '@/modules/data-collection/data-collection.service';
 import { PbsJob, PbsData } from '@/modules/data-collection/types/pbs.types';
+import { UserContext, UserRole } from '@/common/types/user-context.types';
 import { JobsListDTO, JobListDTO } from './dto/job-list.dto';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class JobsService {
 
   /**
    * Get paginated, sorted, and filtered list of jobs
+   * @param userContext User context for access control
    * @param page Page number (1-based)
    * @param limit Items per page
    * @param sort Sort column
@@ -17,6 +19,7 @@ export class JobsService {
    * @param state Filter by job state (Q=Queued, R=Running, C=Completed, E=Exiting, H=Held)
    */
   getJobsList(
+    userContext: UserContext,
     page: number = 1,
     limit: number = 20,
     sort: string = 'createdAt',
@@ -43,6 +46,25 @@ export class JobsService {
 
     // Transform to DTOs
     let jobs = allJobs.map((job) => this.transformJobToDTO(job));
+
+    // Apply access control filter (admin sees all, non-admin sees only their jobs or group jobs)
+    if (userContext.role !== UserRole.ADMIN) {
+      const userGroups = this.getUserGroups(userContext);
+      const username = userContext.username.split('@')[0];
+
+      jobs = jobs.filter((job) => {
+        const jobOwner = job.owner.split('@')[0];
+        // User can see their own jobs
+        if (jobOwner === username) {
+          return true;
+        }
+        // User can see jobs from their groups
+        if (userGroups.length > 0 && userGroups.includes(jobOwner)) {
+          return true;
+        }
+        return false;
+      });
+    }
 
     // Apply state filter
     if (state && state.trim()) {
@@ -174,11 +196,15 @@ export class JobsService {
       }
     }
 
+    const owner = attrs['Job_Owner'] || '';
+    const username = owner.split('@')[0];
+
     return {
       id: job.name,
       name: attrs['Job_Name'] || job.name,
       state: attrs['job_state'] || 'U', // U = Unknown
-      owner: attrs['Job_Owner'] || '',
+      owner: owner,
+      username: username,
       queue: attrs['queue'] || null,
       server: attrs['server'] || null,
       node: node,
@@ -317,5 +343,40 @@ export class JobsService {
     });
 
     return sorted;
+  }
+
+  /**
+   * Get user groups from Perun etc_groups data
+   * Returns list of usernames that are in the same groups as the user
+   */
+  private getUserGroups(userContext: UserContext): string[] {
+    const perunData = this.dataCollectionService.getPerunData();
+    if (
+      !perunData?.etcGroups ||
+      !userContext.groups ||
+      userContext.groups.length === 0
+    ) {
+      return [];
+    }
+
+    const userGroups = new Set<string>();
+    const username = userContext.username.split('@')[0];
+
+    // Find all groups the user belongs to across all servers
+    for (const serverGroups of perunData.etcGroups) {
+      for (const group of serverGroups.entries) {
+        // Check if user is a member of this group
+        if (group.members.includes(username)) {
+          // Add all members of this group (except the user themselves)
+          for (const member of group.members) {
+            if (member !== username) {
+              userGroups.add(member);
+            }
+          }
+        }
+      }
+    }
+
+    return Array.from(userGroups);
   }
 }
