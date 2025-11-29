@@ -2,7 +2,7 @@
 
 import { generate } from "openapi-typescript-codegen";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
-import { join, dirname } from "path";
+import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { loadEnv } from "vite";
 import fetch from "node-fetch";
@@ -10,10 +10,28 @@ import fetch from "node-fetch";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load environment variables from .env files using Vite's loadEnv
 const mode = process.env.NODE_ENV || "development";
-const envDir = join(__dirname, "..");
+
+const envDir = resolve(__dirname, "..");
 const env = loadEnv(mode, envDir, "");
+
+const envFile = join(envDir, ".env");
+const envFileExists = existsSync(envFile);
+
+if (process.env.DEBUG_ENV) {
+  console.log(`[DEBUG] Loading env from: ${envDir}`);
+  console.log(
+    `[DEBUG] .env file exists: ${envFileExists ? "✓" : "✗"} at ${envFile}`
+  );
+  console.log(`[DEBUG] Mode: ${mode}`);
+  console.log(`[DEBUG] API_BASE_URL from env: ${env.API_BASE_URL ? "✓" : "✗"}`);
+  console.log(
+    `[DEBUG] API_AUTH_USERNAME from env: ${env.API_AUTH_USERNAME ? "✓" : "✗"}`
+  );
+  console.log(
+    `[DEBUG] API_AUTH_PASSWORD from env: ${env.API_AUTH_PASSWORD ? "✓" : "✗"}`
+  );
+}
 
 const API_URL =
   env.API_BASE_URL || process.env.API_BASE_URL || "http://147.251.245.82/:4200";
@@ -24,13 +42,22 @@ const API_AUTH_PASSWORD =
 const OUTPUT_DIR = join(__dirname, "../src/lib/generated-api");
 const GENERATED_CLIENT_EXISTS = existsSync(OUTPUT_DIR);
 
+// Provide helpful message about .env file location
+if (!envFileExists && !process.env.API_BASE_URL) {
+  console.warn(`⚠️  No .env file found at ${envFile}`);
+  console.warn(`   You can create a .env file in the web/ directory with:`);
+  console.warn(`   API_BASE_URL=your_api_url`);
+  console.warn(`   API_AUTH_USERNAME=your_username`);
+  console.warn(`   API_AUTH_PASSWORD=your_password`);
+}
+
 if (!API_URL) {
   if (GENERATED_CLIENT_EXISTS) {
     console.warn(
       "⚠️  API_BASE_URL is not set, but generated API client exists. Skipping regeneration."
     );
     console.warn(
-      "   To regenerate the client, set API_BASE_URL environment variable."
+      "   To regenerate the client, set API_BASE_URL environment variable or create a .env file."
     );
     process.exit(0);
   } else {
@@ -38,7 +65,7 @@ if (!API_URL) {
       "ERROR: API_BASE_URL is not set and no generated API client exists."
     );
     console.error(
-      "   Please set API_BASE_URL as an environment variable or in a .env file."
+      `   Please set API_BASE_URL as an environment variable or in a .env file at: ${envFile}`
     );
     process.exit(1);
   }
