@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { ApiError } from "@/lib/generated-api/core/ApiError";
 
 type MenuItem = {
   id: string;
@@ -112,9 +114,124 @@ const supportLinks: SupportLink[] = [
 export function SidebarLayout() {
   const { t, i18n } = useTranslation();
   const location = useLocation();
+  const { data: currentUser, isLoading, error } = useCurrentUser();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(
     new Set(["resource-status"])
   );
+
+  const isUnauthorized =
+    error instanceof ApiError && (error.status === 401 || error.status === 403);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-primary-600">
+        <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary flex items-center justify-end px-4 gap-2">
+          <button
+            onClick={() => i18n.changeLanguage("cs")}
+            className={`p-1.5 rounded transition-opacity ${
+              i18n.language === "cs"
+                ? "opacity-100"
+                : "opacity-50 hover:opacity-75"
+            }`}
+            title={t("language.czech")}
+          >
+            <Icon icon="flag:cz-4x3" className="w-6 h-4" />
+          </button>
+          <button
+            onClick={() => i18n.changeLanguage("en")}
+            className={`p-1.5 rounded transition-opacity ${
+              i18n.language === "en"
+                ? "opacity-100"
+                : "opacity-50 hover:opacity-75"
+            }`}
+            title={t("language.english")}
+          >
+            <Icon icon="flag:gb-4x3" className="w-6 h-4" />
+          </button>
+        </nav>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-white text-lg">{t("common.loading")}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error page
+  if (error && !isUnauthorized) {
+    return (
+      <div className="flex flex-col min-h-screen bg-primary-600">
+        <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary flex items-center justify-end px-4 gap-2">
+          <button
+            onClick={() => i18n.changeLanguage("cs")}
+            className={`p-1.5 rounded transition-opacity ${
+              i18n.language === "cs"
+                ? "opacity-100"
+                : "opacity-50 hover:opacity-75"
+            }`}
+            title={t("language.czech")}
+          >
+            <Icon icon="flag:cz-4x3" className="w-6 h-4" />
+          </button>
+          <button
+            onClick={() => i18n.changeLanguage("en")}
+            className={`p-1.5 rounded transition-opacity ${
+              i18n.language === "en"
+                ? "opacity-100"
+                : "opacity-50 hover:opacity-75"
+            }`}
+            title={t("language.english")}
+          >
+            <Icon icon="flag:gb-4x3" className="w-6 h-4" />
+          </button>
+        </nav>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-4">
+            <div className="text-red-800">
+              {t("common.errorLoading")}{" "}
+              {error instanceof Error
+                ? error.message
+                : t("common.unknownError")}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isUnauthorized) {
+    // TODO: Redirect user to login page when authentication is implemented
+    return (
+      <div className="flex flex-col min-h-screen bg-primary-600">
+        <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary flex items-center justify-end px-4 gap-2">
+          <button
+            onClick={() => i18n.changeLanguage("cs")}
+            className={`p-1.5 rounded transition-opacity ${
+              i18n.language === "cs"
+                ? "opacity-100"
+                : "opacity-50 hover:opacity-75"
+            }`}
+            title={t("language.czech")}
+          >
+            <Icon icon="flag:cz-4x3" className="w-6 h-4" />
+          </button>
+          <button
+            onClick={() => i18n.changeLanguage("en")}
+            className={`p-1.5 rounded transition-opacity ${
+              i18n.language === "en"
+                ? "opacity-100"
+                : "opacity-50 hover:opacity-75"
+            }`}
+            title={t("language.english")}
+          >
+            <Icon icon="flag:gb-4x3" className="w-6 h-4" />
+          </button>
+        </nav>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-white text-lg">{t("common.notLoggedIn")}</div>
+        </div>
+      </div>
+    );
+  }
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems((prev) => {
@@ -140,12 +257,33 @@ export function SidebarLayout() {
   return (
     <div className="flex flex-col min-h-screen bg-primary-600">
       {/* Top Navbar */}
-      <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary"></nav>
+      <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary flex items-center justify-end px-4 gap-2">
+        <button
+          onClick={() => i18n.changeLanguage("cs")}
+          className={`p-1.5 rounded transition-opacity ${
+            i18n.language === "cs"
+              ? "opacity-100"
+              : "opacity-50 hover:opacity-75"
+          }`}
+          title={t("language.czech")}
+        >
+          <Icon icon="flag:cz-4x3" className="w-6 h-4" />
+        </button>
+        <button
+          onClick={() => i18n.changeLanguage("en")}
+          className={`p-1.5 rounded transition-opacity ${
+            i18n.language === "en"
+              ? "opacity-100"
+              : "opacity-50 hover:opacity-75"
+          }`}
+          title={t("language.english")}
+        >
+          <Icon icon="flag:gb-4x3" className="w-6 h-4" />
+        </button>
+      </nav>
 
       <div className="flex flex-1">
-        {/* Sidebar */}
         <aside className="w-64 bg-primary-600 text-white flex flex-col shadow-[1px_1px_5px_rgba(0,0,0,0.25),inset_0_0_8px_rgba(0,0,0,0.25)]">
-          {/* Logo Section */}
           <div className="pl-[29px] pr-4 pt-10 pb-6 border-b border-primary-700">
             <img
               src="/images/logo-white.png"
@@ -154,7 +292,6 @@ export function SidebarLayout() {
             />
           </div>
 
-          {/* User Section */}
           <div className="pl-[30px] pr-4 py-4 border-b border-primary-700">
             <div className="flex items-center gap-[10px]">
               <div className="w-[30px] h-[30px] flex items-center justify-center">
@@ -163,11 +300,10 @@ export function SidebarLayout() {
                   className="w-[30px] h-[30px] text-white"
                 />
               </div>
-              <span className="text-sm">xlukco</span>
+              <span className="text-sm">{currentUser?.username || "---"}</span>
             </div>
           </div>
 
-          {/* Main Navigation */}
           <nav>
             <ul className="space-y-0">
               {menuItems.map((item) => (
@@ -208,7 +344,7 @@ export function SidebarLayout() {
                                   className={[
                                     "flex items-center h-[48px] pl-[53px] pr-4 relative transition-colors",
                                     isActive
-                                      ? "bg-secondary text-white"
+                                      ? "bg-[#6B7A8A] text-white font-bold"
                                       : "text-white hover:bg-primary-500",
                                   ].join(" ")}
                                 >
@@ -251,7 +387,6 @@ export function SidebarLayout() {
             </ul>
           </nav>
 
-          {/* Support Links */}
           <div className="border-t border-primary-700">
             <ul className="space-y-0">
               {supportLinks.map((link) => (
@@ -279,42 +414,7 @@ export function SidebarLayout() {
               ))}
             </ul>
           </div>
-
-          {/* Language Switcher */}
-          <div className="border-t border-primary-700 mt-auto">
-            <div className="pl-[14px] pr-4 py-3">
-              <div className="flex items-center gap-2">
-                <Icon icon="mdi:translate" className="w-5 h-5 text-white" />
-                <span className="text-sm text-white flex-1">
-                  {t("language.switchLanguage")}
-                </span>
-              </div>
-              <div className="flex gap-2 mt-2">
-                <button
-                  onClick={() => i18n.changeLanguage("cs")}
-                  className={`flex-1 px-3 py-1.5 text-sm rounded transition-colors ${
-                    i18n.language === "cs"
-                      ? "bg-secondary text-white"
-                      : "bg-primary-700 text-white hover:bg-primary-500"
-                  }`}
-                >
-                  {t("language.czech")}
-                </button>
-                <button
-                  onClick={() => i18n.changeLanguage("en")}
-                  className={`flex-1 px-3 py-1.5 text-sm rounded transition-colors ${
-                    i18n.language === "en"
-                      ? "bg-secondary text-white"
-                      : "bg-primary-700 text-white hover:bg-primary-500"
-                  }`}
-                >
-                  {t("language.english")}
-                </button>
-              </div>
-            </div>
-          </div>
         </aside>
-
         <main
           className="flex-1 bg-gray-light"
           style={{

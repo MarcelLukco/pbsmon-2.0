@@ -68,6 +68,7 @@ i18n.use(initReactI18next).init({
           unknownError: "Unknown error",
           previous: "Previous",
           next: "Next",
+          notLoggedIn: "You are not logged in",
         },
         jobs: {
           status: "Status",
@@ -236,6 +237,7 @@ i18n.use(initReactI18next).init({
           unknownError: "Neznámá chyba",
           previous: "Předchozí",
           next: "Další",
+          notLoggedIn: "Nejste přihlášeni",
         },
         jobs: {
           status: "Stav",
