@@ -85,6 +85,14 @@ export class QueueListDTO {
   hasAccess?: boolean;
 
   @Expose()
+  @ApiProperty({
+    description:
+      'Whether this queue can accept direct job submissions (false if from_route_only=True)',
+    required: false,
+  })
+  canBeDirectlySubmitted?: boolean;
+
+  @Expose()
   @Type(() => QueueListDTO)
   @ApiProperty({
     description: 'Child queues (queues that this queue routes to)',

@@ -25,6 +25,7 @@
     "react-hook-form": "^7.58.1",
     "react-i18next": "^15.5.3",
     "react-router-dom": "^7.6.2",
+    "react-tooltip": "^5.30.0",
     "tailwind": "^4.0.0",
     "zod": "^3.25.67"
   },

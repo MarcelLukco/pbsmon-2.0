@@ -34,6 +34,8 @@ i18n.use(initReactI18next).init({
         queues: {
           routeQueue: "Route Queue",
           noAccess: "Access to this queue is reserved for authorized users",
+          noDirectSubmission:
+            "Jobs cannot be submitted directly to this queue. Please use the route queue instead.",
           min: "Min",
           max: "Max",
           enabled: "Enabled",
@@ -204,6 +206,8 @@ i18n.use(initReactI18next).init({
           routeQueue: "Směrovací fronta",
           noAccess:
             "Přístup k této frontě je vyhrazen autorizovaným uživatelům",
+          noDirectSubmission:
+            "Úlohy nelze odeslat přímo do této fronty. Použijte prosím směrovací frontu.",
           min: "Min",
           max: "Max",
           enabled: "Povoleno",

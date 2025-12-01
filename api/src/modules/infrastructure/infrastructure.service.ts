@@ -619,6 +619,8 @@ export class InfrastructureService {
       }
     }
 
+    const canBeDirectlySubmitted = queue.attributes.from_route_only !== 'True';
+
     return {
       name: queue.name,
       server: serverName,
@@ -632,7 +634,8 @@ export class InfrastructureService {
       maxWalltime,
       enabled,
       started,
-      hasAccess: true, // Default to true since we don't have user context
+      hasAccess: true,
+      canBeDirectlySubmitted,
     };
   }
 

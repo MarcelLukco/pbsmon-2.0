@@ -361,6 +361,8 @@ export class QueuesService {
 
     const hasAccess = this.checkQueueAccess(queue, userContext);
 
+    const canBeDirectlySubmitted = queue.attributes.from_route_only !== 'True';
+
     const stateCount = this.parseStateCount(queue.attributes.state_count);
 
     const fairshare = queue.attributes.fairshare_tree || null;
@@ -388,6 +390,7 @@ export class QueuesService {
       enabled,
       started,
       hasAccess,
+      canBeDirectlySubmitted,
       children: children.length > 0 ? children : undefined,
     };
   }
@@ -589,7 +592,6 @@ export class QueuesService {
    * Admin role has access to everything
    */
   private checkQueueAccess(queue: PbsQueue, userContext: UserContext): boolean {
-    // Admin has access to everything
     if (userContext.role === UserRole.ADMIN) {
       return true;
     }

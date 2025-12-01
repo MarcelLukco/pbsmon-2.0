@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import { Tooltip } from "react-tooltip";
 import type { QueueListDTO } from "@/lib/generated-api";
 
 interface QueueTreeNodeProps {
@@ -15,19 +16,17 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
   const hasChildren = queue.children && queue.children.length > 0;
 
   const handleRowClick = () => {
-    navigate(`/queues/${queue.name}.${queue.server}.metacentrum.cz`);
+    navigate(`/queues/${queue.name}@${queue.server}.metacentrum.cz`);
   };
 
   const indentWidth = level * 40;
 
-  // Calculate job statistics
   const queuedJobs = queue.stateCount?.queued ?? 0;
   const runningJobs = queue.stateCount?.running ?? 0;
   const doneJobs =
     (queue.stateCount?.begun ?? 0) + (queue.stateCount?.exiting ?? 0);
   const totalJobs = queue.totalJobs ?? 0;
 
-  // Background color based on level
   const bgColorClass =
     level === 0
       ? "bg-white hover:bg-gray-50"
@@ -42,50 +41,60 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
       <div
         className={`grid grid-cols-12 gap-2 items-center py-2 px-0 border-b border-gray-100 relative ${bgColorClass}`}
       >
-        {/* Tree connector lines */}
         {level > 0 && (
           <>
             <div
               className="absolute left-0 top-0 bottom-0 flex items-center pointer-events-none"
               style={{ left: `${indentWidth - 20}px` }}
             >
-              {/* Vertical line */}
               <div className={`w-px h-full`} style={{ marginLeft: "19px" }}>
                 <div
                   className={`w-px bg-gray-400 ${isLast ? "h-1/2" : "h-full"}`}
                 ></div>
               </div>
-              {/* Horizontal line */}
               <div className="h-px bg-gray-400" style={{ width: "20px" }} />
             </div>
           </>
         )}
 
-        {/* Queue Name Column */}
         <div
           className="col-span-3 flex items-center gap-2 min-w-0"
           style={{ paddingLeft: `${indentWidth}px` }}
         >
-          {/* Spacer for alignment */}
           <div className="w-5 flex-shrink-0" />
 
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {/* Route icon next to name */}
             {queue.queueType === "Route" && (
-              <div className="relative group flex-shrink-0 text-blue-600">
-                <Icon icon="material-symbols:alt-route" className="w-6 h-6" />
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                  {t("queues.routeQueue")}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
-                </div>
+              <div className="flex-shrink-0 text-blue-600">
+                <Icon
+                  icon="material-symbols:alt-route"
+                  className="w-6 h-6"
+                  data-tooltip-id={`route-${queue.name}-${queue.server}`}
+                  data-tooltip-content={t("queues.routeQueue")}
+                />
+                <Tooltip id={`route-${queue.name}-${queue.server}`} />
+              </div>
+            )}
+            {!queue.canBeDirectlySubmitted && (
+              <div className="flex-shrink-0 text-red-600">
+                <Icon
+                  icon="mdi:do-not-enter-outline"
+                  className="w-4 h-4"
+                  data-tooltip-id={`no-direct-${queue.name}-${queue.server}`}
+                  data-tooltip-content={t("queues.noDirectSubmission")}
+                />
+                <Tooltip
+                  id={`no-direct-${queue.name}-${queue.server}`}
+                  style={{ maxWidth: "300px", whiteSpace: "normal" }}
+                />
               </div>
             )}
             <span
               className="font-medium text-gray-900 cursor-pointer hover:text-primary-600 truncate"
               onClick={handleRowClick}
             >
-              {`${queue.name}.${queue.server}.metacentrum.cz`}
+              {`${queue.name}@${queue.server}.metacentrum.cz`}
             </span>
             {queue.hasAccess === false && (
               <span
