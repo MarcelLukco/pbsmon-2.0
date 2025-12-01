@@ -500,18 +500,61 @@ export class InfrastructureService {
       const serverData = pbsData?.servers?.[pbsNodeData.serverName];
 
       if (serverData?.queues?.items) {
-        for (const queueName of queueNames) {
-          const pbsQueue = serverData.queues.items.find(
-            (q) => q.name === queueName,
-          );
-          if (pbsQueue) {
-            const queueDTO = this.mapPbsQueueToList(
-              pbsQueue,
-              pbsNodeData.serverName,
-            );
-            queues.push(queueDTO);
+        // Build parent-child relationships (child -> parents)
+        const parentMap = new Map<string, string[]>();
+        const allQueuesMap = new Map<string, PbsQueue>();
+        const queueMap = new Map<string, QueueListDTO>(); // Track queues by name to avoid duplicates
+
+        for (const q of serverData.queues.items) {
+          allQueuesMap.set(q.name, q);
+
+          if (q.attributes.queue_type === 'Route') {
+            const destinations = this.parseRouteDestinations(q);
+            for (const destination of destinations) {
+              if (!parentMap.has(destination)) {
+                parentMap.set(destination, []);
+              }
+              parentMap.get(destination)!.push(q.name);
+            }
           }
         }
+
+        // Process Execution queues from node's queue_list
+        for (const queueName of queueNames) {
+          const pbsQueue = allQueuesMap.get(queueName);
+
+          // Only process Execution queues
+          if (pbsQueue && pbsQueue.attributes.queue_type === 'Execution') {
+            // Add the Execution queue itself
+            if (!queueMap.has(pbsQueue.name)) {
+              const queueDTO = this.mapPbsQueueToList(
+                pbsQueue,
+                pbsNodeData.serverName,
+              );
+              queueMap.set(pbsQueue.name, queueDTO);
+            }
+
+            // Find parent Route queues and add them too
+            const parentRouteQueues = parentMap.get(queueName) || [];
+            for (const parentQueueName of parentRouteQueues) {
+              const parentQueue = allQueuesMap.get(parentQueueName);
+              if (
+                parentQueue &&
+                parentQueue.attributes.queue_type === 'Route' &&
+                !queueMap.has(parentQueueName)
+              ) {
+                const parentQueueDTO = this.mapPbsQueueToList(
+                  parentQueue,
+                  pbsNodeData.serverName,
+                );
+                queueMap.set(parentQueueName, parentQueueDTO);
+              }
+            }
+          }
+        }
+
+        // Convert map to array
+        queues.push(...Array.from(queueMap.values()));
       }
     }
 
@@ -591,6 +634,20 @@ export class InfrastructureService {
       started,
       hasAccess: true, // Default to true since we don't have user context
     };
+  }
+
+  /**
+   * Parse route destinations from a Route queue
+   */
+  private parseRouteDestinations(queue: PbsQueue): string[] {
+    const destinations = queue.attributes.route_destinations;
+    if (!destinations) {
+      return [];
+    }
+    return destinations
+      .split(',')
+      .map((d) => d.trim())
+      .filter(Boolean);
   }
 
   private parseStateCount(stateCountStr?: string): QueueListDTO['stateCount'] {
@@ -684,7 +741,7 @@ export class InfrastructureService {
 
     if (!pbsNode) {
       return {
-        state: NodeState.UNKNOWN,
+        state: null, // No PBS detected - return null instead of UNKNOWN
         cpuUsage: null,
         gpuUsage: null,
         gpuCount: null,
@@ -765,6 +822,31 @@ export class InfrastructureService {
       memoryTotal && memoryTotal > 0 && memoryUsed !== null
         ? (memoryUsed / memoryTotal) * 100
         : null;
+
+    // Check PBS node state attribute first (for maintenance, down, offline, etc.)
+    const pbsState = pbsNode.attributes.state || '';
+    const pbsStateLower = pbsState.toLowerCase();
+
+    if (
+      pbsStateLower.includes('maintenance') ||
+      pbsStateLower.includes('down') ||
+      pbsStateLower.includes('offline') ||
+      pbsStateLower.includes('state-unknown')
+    ) {
+      return {
+        state: NodeState.MAINTENANCE,
+        cpuUsage: null, // Don't show usage during maintenance
+        gpuUsage: null,
+        gpuCount: availableGpus > 0 ? availableGpus : null,
+        gpuAssigned: null,
+        gpuCapability,
+        gpuMemory,
+        cudaVersion,
+        memoryTotal,
+        memoryUsed: null, // Don't show usage during maintenance
+        memoryUsagePercent: null,
+      };
+    }
 
     // Calculate usage percentages
     const cpuUsage =

@@ -54,17 +54,17 @@ class PrometheusClient {
   async queryPrometheus(query: string): Promise<PrometheusResponse> {
     const url = `${this.baseUrl}${this.apiEndpoint}`;
     const endTime = Math.floor(Date.now() / 1000);
-    const startTime = endTime - this.rangeHours * 3600;
 
     try {
+      // For /api/v1/query (instant query), we only need query and time parameters
+      // start, end, and step are for /api/v1/query_range (range query)
+      const params: Record<string, string> = {
+        query: query,
+        time: endTime.toString(),
+      };
+
       const response = await axios.get(url, {
-        params: {
-          query: query,
-          time: endTime.toString(),
-          start: startTime.toString(),
-          end: endTime.toString(),
-          step: '60s',
-        },
+        params,
         headers: {
           'Content-Type': 'application/json',
           ...(process.env.PROMETHEUS_TOKEN && {
@@ -170,6 +170,55 @@ const queries: QueryConfig[] = [
     description: 'Number of VMs per hypervisor',
     query: 'count by(hostname)(libvirtd_domain_domain_state)',
     outputFile: 'vm_count.json',
+  },
+  {
+    name: 'OpenStack Projects',
+    description: 'List of OpenStack projects (id + name)',
+    query: 'openstack_identity_project_info',
+    outputFile: 'openstack_projects.json',
+  },
+  {
+    name: 'OpenStack Users',
+    description: 'List of OpenStack users (id + name)',
+    query: 'openstack_identity_user_info',
+    outputFile: 'openstack_users.json',
+  },
+  {
+    name: 'OpenStack Servers',
+    description: 'List of OpenStack servers/VMs (id, name, project_id)',
+    query: 'custom_openstack_server_info',
+    outputFile: 'openstack_servers.json',
+  },
+  {
+    name: 'VM VCPU Count',
+    description: 'VCPU count per VM (by uuid)',
+    query: 'count by (uuid) (libvirtd_domain_vcpu_time)',
+    outputFile: 'vm_vcpu_count.json',
+  },
+  {
+    name: 'VM Memory Allocation',
+    description: 'Memory allocation per VM in GB (balloon_current)',
+    query: '(libvirtd_domain_balloon_current * 1024) / (1024 * 1024 * 1024)',
+    outputFile: 'vm_memory_allocation.json',
+  },
+  {
+    name: 'VM CPU Utilization',
+    description: 'Current CPU utilization per VM (rate of vcpu_time)',
+    query: 'sum by (uuid) (rate(libvirtd_domain_vcpu_time[1h])) / 1e9',
+    outputFile: 'vm_cpu_utilization.json',
+  },
+  {
+    name: 'VM Memory Usage',
+    description: 'Memory usage per VM in GB (current - available)',
+    query:
+      '(libvirtd_domain_balloon_current - libvirtd_domain_balloon_available) / (1024*1024)',
+    outputFile: 'vm_memory_usage.json',
+  },
+  {
+    name: 'VM Domain State',
+    description: 'VM domain state information (includes hypervisor info)',
+    query: 'libvirtd_domain_domain_state',
+    outputFile: 'vm_domain_state.json',
   },
 ];
 
@@ -283,6 +332,153 @@ async function main() {
         }
       } catch (error) {
         console.error(`Error executing custom query: ${error}`);
+        process.exit(1);
+      }
+    });
+
+  program
+    .command('project-personal <oidcSub>')
+    .description(
+      'Query personal project by OIDC sub (e.g., user@einfra.cesnet.cz)',
+    )
+    .option('-o, --output <file>', 'Output file path')
+    .option('--no-save', 'Do not save results to file')
+    .action(async (oidcSub: string, options) => {
+      try {
+        // Personal project query: openstack_identity_project_info{description=~".*oidcSub.*"}
+        const query = `openstack_identity_project_info{description=~".*${oidcSub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*"}`;
+        console.log(`Querying personal project for OIDC sub: ${oidcSub}\n`);
+        console.log(`Query: ${query}\n`);
+
+        const result = await client.queryPrometheus(query);
+        const formattedResult = client.formatResult(result, 'Personal Project');
+
+        console.log(formattedResult);
+
+        if (options.save !== false) {
+          const outputFile =
+            options.output ||
+            `project_personal_${oidcSub.replace(/[@.]/g, '_')}.json`;
+          await client.saveToFile(JSON.stringify(result, null, 2), outputFile);
+        }
+      } catch (error) {
+        console.error(`Error querying personal project: ${error}`);
+        process.exit(1);
+      }
+    });
+
+  program
+    .command('project-by-name <projectName>')
+    .description('Query project by name')
+    .option('-o, --output <file>', 'Output file path')
+    .option('--no-save', 'Do not save results to file')
+    .action(async (projectName: string, options) => {
+      try {
+        const query = `openstack_identity_project_info{name="${projectName}"}`;
+        console.log(`Querying project by name: ${projectName}\n`);
+        console.log(`Query: ${query}\n`);
+
+        const result = await client.queryPrometheus(query);
+        const formattedResult = client.formatResult(result, 'Project by Name');
+
+        console.log(formattedResult);
+
+        if (options.save !== false) {
+          const outputFile =
+            options.output ||
+            `project_${projectName.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+          await client.saveToFile(JSON.stringify(result, null, 2), outputFile);
+        }
+      } catch (error) {
+        console.error(`Error querying project: ${error}`);
+        process.exit(1);
+      }
+    });
+
+  program
+    .command('servers-by-project <projectId>')
+    .description('Query VMs/servers by project ID')
+    .option('-o, --output <file>', 'Output file path')
+    .option('--no-save', 'Do not save results to file')
+    .action(async (projectId: string, options) => {
+      try {
+        const query = `custom_openstack_server_info{project_id="${projectId}"}`;
+        console.log(`Querying servers for project ID: ${projectId}\n`);
+        console.log(`Query: ${query}\n`);
+
+        const result = await client.queryPrometheus(query);
+        const formattedResult = client.formatResult(
+          result,
+          'Servers by Project',
+        );
+
+        console.log(formattedResult);
+
+        if (options.save !== false) {
+          const outputFile =
+            options.output || `servers_project_${projectId}.json`;
+          await client.saveToFile(JSON.stringify(result, null, 2), outputFile);
+        }
+      } catch (error) {
+        console.error(`Error querying servers: ${error}`);
+        process.exit(1);
+      }
+    });
+
+  program
+    .command('vm-utilization <vmUuid>')
+    .description('Query VM utilization (CPU and Memory) by UUID')
+    .option('-o, --output <file>', 'Output file path')
+    .option('--no-save', 'Do not save results to file')
+    .action(async (vmUuid: string, options) => {
+      try {
+        console.log(`Querying VM utilization for UUID: ${vmUuid}\n`);
+
+        // VCPU count
+        const vcpuCountQuery = `count by (uuid) (libvirtd_domain_vcpu_time{uuid="${vmUuid}"})`;
+        console.log(`Query 1 - VCPU Count: ${vcpuCountQuery}`);
+        const vcpuCount = await client.queryPrometheus(vcpuCountQuery);
+
+        // Memory allocation (GB)
+        const memAllocQuery = `(libvirtd_domain_balloon_current{uuid="${vmUuid}"} * 1024) / (1024 * 1024 * 1024)`;
+        console.log(`Query 2 - Memory Allocation: ${memAllocQuery}`);
+        const memAlloc = await client.queryPrometheus(memAllocQuery);
+
+        // CPU utilization (rate)
+        const cpuUtilQuery = `sum by (uuid) (rate(libvirtd_domain_vcpu_time{uuid="${vmUuid}"}[1h])) / 1e9`;
+        console.log(`Query 3 - CPU Utilization: ${cpuUtilQuery}`);
+        const cpuUtil = await client.queryPrometheus(cpuUtilQuery);
+
+        // Memory usage (GB)
+        const memUsageQuery = `(libvirtd_domain_balloon_current{uuid="${vmUuid}"} - libvirtd_domain_balloon_available{uuid="${vmUuid}"}) / (1024*1024)`;
+        console.log(`Query 4 - Memory Usage: ${memUsageQuery}`);
+        const memUsage = await client.queryPrometheus(memUsageQuery);
+
+        const combinedResult = {
+          status: 'success',
+          data: {
+            vcpuCount: vcpuCount.data,
+            memoryAllocation: memAlloc.data,
+            cpuUtilization: cpuUtil.data,
+            memoryUsage: memUsage.data,
+          },
+        };
+
+        console.log('\n=== VM Utilization Summary ===\n');
+        console.log(client.formatResult(vcpuCount, 'VCPU Count'));
+        console.log(client.formatResult(memAlloc, 'Memory Allocation (GB)'));
+        console.log(client.formatResult(cpuUtil, 'CPU Utilization'));
+        console.log(client.formatResult(memUsage, 'Memory Usage (GB)'));
+
+        if (options.save !== false) {
+          const outputFile = options.output || `vm_utilization_${vmUuid}.json`;
+          await client.saveToFile(
+            JSON.stringify(combinedResult, null, 2),
+            outputFile,
+          );
+        }
+      } catch (error) {
+        console.error(`Error querying VM utilization: ${error}`);
         process.exit(1);
       }
     });

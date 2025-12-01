@@ -9,6 +9,7 @@ export enum NodeState {
   PARTIALLY_USED = 'partially_used',
   USED = 'used',
   UNKNOWN = 'unknown',
+  MAINTENANCE = 'maintenance',
 }
 
 /**

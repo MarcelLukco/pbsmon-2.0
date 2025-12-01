@@ -79,6 +79,11 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
           label: t("machines.nodeState.used"),
           color: "#3b82f6",
         };
+      case "maintenance":
+        return {
+          label: t("machines.nodeState.maintenance") || "Maintenance",
+          color: "#f59e0b",
+        };
       case "unknown":
       default:
         return {
@@ -138,6 +143,7 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
   };
 
   const stateInfo = getStateInfo(node.pbs?.actualState);
+  const isMaintenance = node.pbs?.actualState === "maintenance";
 
   // Extract additional data from node
   const nodeQueues = Array.isArray(node.pbs?.queues)
@@ -246,6 +252,7 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
 
         {/* Resource Usage from PBS (can be null) */}
         {node.pbs &&
+          !isMaintenance &&
           (cpuUsage > 0 ||
             gpuUsage !== null ||
             node.pbs.memoryUsagePercent !== null) && (
@@ -325,6 +332,30 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
               </div>
             </div>
           )}
+
+        {/* Show state only (no progress bars) when in maintenance */}
+        {node.pbs && isMaintenance && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                {t("machines.resourceUsage")}
+              </h2>
+              {node.pbs.actualState && (
+                <div>
+                  <div className="text-sm text-gray-500">
+                    {t("machines.state")}
+                  </div>
+                  <div
+                    className="text-lg font-medium"
+                    style={{ color: stateInfo.color }}
+                  >
+                    {stateInfo.label}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Tabs Section - Only show if PBS data exists */}
         {node.pbs && tabs.length > 0 && (

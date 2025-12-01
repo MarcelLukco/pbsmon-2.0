@@ -44,7 +44,10 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
 
   const getStateInfo = (
     state?: string | null
-  ): { label: string; color: string } => {
+  ): { label: string; color: string } | null => {
+    if (!state) {
+      return null; // No PBS detected - no state to show
+    }
     switch (state) {
       case "free":
         return {
@@ -60,6 +63,11 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
         return {
           label: t("machines.nodeState.used"),
           color: "#3b82f6",
+        };
+      case "maintenance":
+        return {
+          label: t("machines.nodeState.maintenance") || "Maintenance",
+          color: "#f59e0b",
         };
       case "unknown":
       default:
@@ -111,6 +119,9 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
   };
 
   const stateInfo = getStateInfo(node.actualState);
+  const isMaintenance = node.actualState === "maintenance";
+  const hasPbs = node.actualState !== null && node.actualState !== undefined;
+  const shouldShowProgressBars = hasPbs && !isMaintenance;
 
   return (
     <div
@@ -119,57 +130,61 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
     >
       <div className="mb-4">
         <h3 className="font-semibold text-gray-900">{shortNodeName}</h3>
-        <p className="font-medium" style={{ color: stateInfo.color }}>
-          ({stateInfo.label})
-        </p>
-      </div>
-
-      <div className="space-y-3">
-        <ProgressBar
-          label="CPU"
-          value={node.cpu}
-          percent={cpuUsage}
-          color={getCpuGpuColorClass}
-          icon={<Icon icon="solar:cpu-bold" className="w-[14px] h-[14px]" />}
-        />
-
-        {hasGpu && (
-          <div>
-            <ProgressBar
-              label="GPU"
-              value={
-                gpuCount !== null
-                  ? `${
-                      node.gpuAssigned && typeof node.gpuAssigned === "number"
-                        ? node.gpuAssigned
-                        : 0
-                    } / ${gpuCount}`
-                  : "GPU"
-              }
-              percent={gpuUsage !== null ? gpuUsage : 0}
-              color={getCpuGpuColorClass}
-              icon={
-                <Icon icon="solar:gpu-bold" className="w-[14px] h-[14px]" />
-              }
-            />
-          </div>
+        {stateInfo && (
+          <p className="font-medium" style={{ color: stateInfo.color }}>
+            ({stateInfo.label})
+          </p>
         )}
-
-        {node.memoryUsagePercent !== null &&
-          node.memoryUsagePercent !== undefined &&
-          node.memoryTotal !== null &&
-          node.memoryUsed !== null &&
-          typeof node.memoryTotal === "number" &&
-          typeof node.memoryUsed === "number" &&
-          typeof node.memoryUsagePercent === "number" && (
-            <ProgressBar
-              label="RAM"
-              value={`${Number(node.memoryUsed).toFixed(1)} / ${Number(node.memoryTotal).toFixed(1)} (GB)`}
-              percent={Number(node.memoryUsagePercent)}
-              color="#5D7085"
-            />
-          )}
       </div>
+
+      {shouldShowProgressBars && (
+        <div className="space-y-3">
+          <ProgressBar
+            label="CPU"
+            value={node.cpu}
+            percent={cpuUsage}
+            color={getCpuGpuColorClass}
+            icon={<Icon icon="solar:cpu-bold" className="w-[14px] h-[14px]" />}
+          />
+
+          {hasGpu && (
+            <div>
+              <ProgressBar
+                label="GPU"
+                value={
+                  gpuCount !== null
+                    ? `${
+                        node.gpuAssigned && typeof node.gpuAssigned === "number"
+                          ? node.gpuAssigned
+                          : 0
+                      } / ${gpuCount}`
+                    : "GPU"
+                }
+                percent={gpuUsage !== null ? gpuUsage : 0}
+                color={getCpuGpuColorClass}
+                icon={
+                  <Icon icon="solar:gpu-bold" className="w-[14px] h-[14px]" />
+                }
+              />
+            </div>
+          )}
+
+          {node.memoryUsagePercent !== null &&
+            node.memoryUsagePercent !== undefined &&
+            node.memoryTotal !== null &&
+            node.memoryUsed !== null &&
+            typeof node.memoryTotal === "number" &&
+            typeof node.memoryUsed === "number" &&
+            typeof node.memoryUsagePercent === "number" && (
+              <ProgressBar
+                label="RAM"
+                value={`${Number(node.memoryUsed).toFixed(1)} / ${Number(node.memoryTotal).toFixed(1)} (GB)`}
+                percent={Number(node.memoryUsagePercent)}
+                color="#5D7085"
+              />
+            )}
+        </div>
+      )}
     </div>
   );
 }
