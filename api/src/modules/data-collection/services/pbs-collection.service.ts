@@ -41,6 +41,25 @@ export class PbsCollectionService {
       const serversData: Record<string, PbsServerData> = {};
       const basePath = this.config.dataPath;
 
+      // Check if the base directory exists
+      try {
+        await fs.access(basePath);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes('ENOENT')) {
+          this.logger.warn(
+            `PBS data directory does not exist: ${basePath}. Creating empty data structure.`,
+          );
+          this.pbsData = {
+            timestamp: new Date().toISOString(),
+            servers: {},
+          };
+          return;
+        }
+        throw error;
+      }
+
       // Scan for server subdirectories
       const entries = await fs.readdir(basePath, { withFileTypes: true });
       const serverDirs = entries

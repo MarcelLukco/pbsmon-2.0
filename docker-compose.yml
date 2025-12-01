@@ -10,13 +10,13 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - FRONTEND_URL=http://localhost
+      - PBS_DATA_PATH=/app/data/pbs
+      - PERUN_DATA_PATH=/app/data/perun
       # Add other environment variables as needed
       # - PROMETHEUS_BASE_URL=
       # - PROMETHEUS_USERNAME=
       # - PROMETHEUS_PASSWORD=
       # - PROMETHEUS_TOKEN=
-      # - PERUN_DATA_PATH=/app/data/perun
-      # - PBS_DATA_PATH=/app/data/pbs
     volumes:
       # Mount data directories if needed
       - ./api/data:/app/data

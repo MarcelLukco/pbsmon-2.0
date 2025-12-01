@@ -69,8 +69,8 @@ export class UserContextGuard implements CanActivate {
    * In production: extracts from access token
    */
   private extractUserContext(request: any): UserContext | null {
-    // Development mode: return admin context
-    if (this.isDevelopment) {
+    // TODO: Remove this once authentication is implemented
+    if (this.isDevelopment || true) {
       return {
         username: 'admin',
         role: UserRole.ADMIN,
