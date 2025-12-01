@@ -9,6 +9,8 @@ import {
   PerunUsers,
   EtcGroupEntry,
   PerunEtcGroups,
+  StorageSpaces,
+  StorageSpace,
 } from '../types/perun.types';
 
 @Injectable()
@@ -98,15 +100,37 @@ export class PerunCollectionService {
         }
       }
 
+      // Load storage spaces file
+      let storageSpaces: StorageSpaces | null = null;
+      try {
+        const storagePath = path.join(this.config.dataPath, 'motd.storage');
+        const storageContent = await fs.readFile(storagePath, 'utf-8');
+        storageSpaces = this.parseStorageSpaces(storageContent);
+        this.logger.debug(`Loaded storage spaces data from ${storagePath}`);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes('ENOENT')) {
+          this.logger.warn(
+            `Storage spaces file not found: ${path.join(this.config.dataPath, 'motd.storage')}`,
+          );
+        } else {
+          this.logger.warn(
+            `Failed to load storage spaces file: ${errorMessage}`,
+          );
+        }
+      }
+
       this.perunData = {
         timestamp: new Date().toISOString(),
         machines,
         users,
         etcGroups,
+        storageSpaces,
       };
 
       this.logger.log(
-        `PERUN data collected - Machines: ${machines ? '✓' : '✗'}, Users: ${users ? '✓' : '✗'}, Etc Groups: ${etcGroups.length} servers`,
+        `PERUN data collected - Machines: ${machines ? '✓' : '✗'}, Users: ${users ? '✓' : '✗'}, Etc Groups: ${etcGroups.length} servers, Storage Spaces: ${storageSpaces ? '✓' : '✗'}`,
       );
     } catch (error) {
       this.logger.error(
@@ -118,6 +142,105 @@ export class PerunCollectionService {
 
   getData(): PerunData | null {
     return this.perunData;
+  }
+
+  /**
+   * Convert storage size to TiB
+   * @param value - Size value (e.g., "524", "9.3")
+   * @param unit - Unit ("T" for TiB, "P" for PiB)
+   * @returns Size in TiB
+   */
+  private convertToTiB(value: string, unit: string): number {
+    const numValue = parseFloat(value);
+    if (unit === 'P') {
+      return numValue * 1024; // 1 PiB = 1024 TiB
+    } else if (unit === 'T') {
+      return numValue;
+    }
+    return 0;
+  }
+
+  /**
+   * Format size in TiB to human-readable format
+   * @param sizeTiB - Size in TiB
+   * @returns Formatted string (e.g., "524 TiB" or "9.3 PiB")
+   */
+  private formatSize(sizeTiB: number): string {
+    if (sizeTiB >= 1024) {
+      const piB = sizeTiB / 1024;
+      // Round to 1 decimal place if needed
+      const rounded = Math.round(piB * 10) / 10;
+      return `${rounded} PiB`;
+    }
+    return `${Math.round(sizeTiB)} TiB`;
+  }
+
+  /**
+   * Parse a line from motd.storage file
+   * Format: "[used][unit] [free][unit] [path]"
+   * Example: "524T 121T /storage/brno11-elixir/home"
+   */
+  private parseStorageLine(line: string): StorageSpace | null {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    // Match: number (with optional decimal), unit (T or P), space, number, unit, space, path
+    const match = trimmed.match(/^([\d.]+)([TP])\s+([\d.]+)([TP])\s+(.+)$/);
+    if (!match) {
+      this.logger.warn(`Failed to parse storage line: ${trimmed}`);
+      return null;
+    }
+
+    const [, usedValue, usedUnit, freeValue, freeUnit, directory] = match;
+
+    const usedTiB = this.convertToTiB(usedValue, usedUnit);
+    const freeTiB = this.convertToTiB(freeValue, freeUnit);
+    const totalTiB = usedTiB + freeTiB;
+    const usagePercent =
+      totalTiB > 0 ? Math.round((usedTiB / totalTiB) * 100) : 0;
+
+    return {
+      directory,
+      usedTiB,
+      freeTiB,
+      totalTiB,
+      usagePercent,
+      formattedSize: this.formatSize(totalTiB),
+    };
+  }
+
+  /**
+   * Parse storage spaces from motd.storage file content
+   */
+  private parseStorageSpaces(content: string): StorageSpaces {
+    const lines = content.split('\n');
+
+    const storageSpaces: StorageSpace[] = [];
+    let totalTiB = 0;
+    let totalUsedTiB = 0;
+    let totalFreeTiB = 0;
+
+    for (const line of lines) {
+      const storageSpace = this.parseStorageLine(line);
+      if (storageSpace) {
+        storageSpaces.push(storageSpace);
+        totalTiB += storageSpace.totalTiB;
+        totalUsedTiB += storageSpace.usedTiB;
+        totalFreeTiB += storageSpace.freeTiB;
+      }
+    }
+
+    return {
+      storageSpaces,
+      totalTiB,
+      totalUsedTiB,
+      totalFreeTiB,
+      formattedTotal: this.formatSize(totalTiB),
+      formattedTotalUsed: this.formatSize(totalUsedTiB),
+      formattedTotalFree: this.formatSize(totalFreeTiB),
+    };
   }
 
   private parseEtcGroup(content: string): EtcGroupEntry[] {

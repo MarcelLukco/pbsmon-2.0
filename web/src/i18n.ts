@@ -191,6 +191,31 @@ i18n.use(initReactI18next).init({
             maintenance: "Maintenance",
           },
         },
+        storageSpaces: {
+          scratchStorage: {
+            title: "Scratch Storage",
+            description:
+              "Each compute node is equipped with fast local data storage. You can find the free space in the detail of each node.",
+            warning:
+              "Use scratch storage only during computation. After the job ends, data from scratch is deleted after 14 days.",
+          },
+          diskArrays: {
+            title: "Disk Arrays",
+            description:
+              "Disk arrays are made up of many connected disks. One file can be stored on multiple disks, and data is stored multiple times. Compared to a single disk, the array is faster for both reading and writing, and has greater resistance to data loss. Use disk arrays to store data used between jobs.",
+          },
+          table: {
+            directory: "Directory",
+            usage: "Usage - Used Free",
+            size: "Size",
+            freeSpace: "Free space",
+          },
+          totals: {
+            total: "Total storage space in MetaCentrum",
+            used: "Total used",
+            free: "Total free space",
+          },
+        },
       },
     },
     cs: {
@@ -379,6 +404,31 @@ i18n.use(initReactI18next).init({
             used: "Obsazený",
             unknown: "Údržba",
             maintenance: "Údržba",
+          },
+        },
+        storageSpaces: {
+          scratchStorage: {
+            title: "Úložiště scratch",
+            description:
+              "Každý výpočetní uzel je vybaven rychlým lokálním úložištěm dat, velikost volného místa zjistíte v detailu každého uzlu.",
+            warning:
+              "Úložiště scratch používejte pouze po dobu výpočtu. Po skončení úlohy jsou data ze scratche po 14 dnech smazána.",
+          },
+          diskArrays: {
+            title: "Disková pole",
+            description:
+              "Disková pole jsou tvořena mnoha spojenými disky. Jeden soubor může být uložen na více discích, navíc data jsou ukládána vícenásobně. Ve srovnání s jednotlivým diskem je proto pole rychlejší při čtení i zápisu, a má větší odolnost proti ztrátě dat. Disková pole používejte k ukládání používaných dat v době mezi úlohami.",
+          },
+          table: {
+            directory: "adresář",
+            usage: "využití - využito volné",
+            size: "velikost",
+            freeSpace: "volné místo",
+          },
+          totals: {
+            total: "Celkem úložného místa v MetaCentru",
+            used: "Celkem využito",
+            free: "Celkem volného místa",
           },
         },
       },

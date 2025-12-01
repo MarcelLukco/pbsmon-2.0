@@ -1,7 +1,11 @@
 import { useTranslation } from "react-i18next";
+import { useStorageSpaces } from "@/hooks/useStorageSpaces";
+import { StorageSpacesContent } from "@/components/storage-spaces/StorageSpacesContent";
 
 export function StorageSpacesPage() {
   const { t } = useTranslation();
+  const { data, isLoading, error } = useStorageSpaces();
+
   return (
     <>
       <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -11,9 +15,29 @@ export function StorageSpacesPage() {
           </h1>
         </div>
       </header>
-      <div className="p-6">
-        <h1>{t("pages.storageSpaces")}</h1>
-      </div>
+
+      {isLoading && (
+        <div className="p-6">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-gray-600">{t("common.loading")}</div>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="text-red-800">
+              {t("common.errorLoading")}{" "}
+              {error instanceof Error
+                ? error.message
+                : t("common.unknownError")}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {data && <StorageSpacesContent data={data} />}
     </>
   );
 }

@@ -119,6 +119,31 @@ export interface PerunEtcGroupServer {
 export type PerunEtcGroups = PerunEtcGroupServer[];
 
 /**
+ * Storage space entry
+ */
+export interface StorageSpace {
+  directory: string;
+  usedTiB: number;
+  freeTiB: number;
+  totalTiB: number;
+  usagePercent: number;
+  formattedSize: string;
+}
+
+/**
+ * Storage spaces data
+ */
+export interface StorageSpaces {
+  storageSpaces: StorageSpace[];
+  totalTiB: number;
+  totalUsedTiB: number;
+  totalFreeTiB: number;
+  formattedTotal: string;
+  formattedTotalUsed: string;
+  formattedTotalFree: string;
+}
+
+/**
  * Combined Perun data structure
  */
 export interface PerunData {
@@ -126,4 +151,5 @@ export interface PerunData {
   machines: PerunMachines | null;
   users: PerunUsers | null;
   etcGroups: PerunEtcGroups;
+  storageSpaces: StorageSpaces | null;
 }
