@@ -57,15 +57,10 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-
-  // Set global prefix for all routes (after Swagger document creation)
-  app.setGlobalPrefix('api');
-
-  // Swagger at /api/docs (global prefix + docs path)
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   await app.listen(port);
-  console.log(`🚀 Application is running on: http://localhost:${port}/api`);
-  console.log(`📚 Swagger UI available at: http://localhost:${port}/api/docs`);
+  console.log(`🚀 Application is running on: http://localhost:${port}`);
+  console.log(`📚 Swagger UI available at: http://localhost:${port}/docs`);
 }
 bootstrap();
