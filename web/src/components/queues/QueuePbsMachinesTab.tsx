@@ -1,0 +1,121 @@
+import { useTranslation } from "react-i18next";
+import { useInfrastructure } from "@/hooks/useInfrastructure";
+import { NodePreview } from "@/components/infrastructure/NodePreview";
+import type { InfrastructureNodeListDTO } from "@/lib/generated-api";
+
+interface QueuePbsMachinesTabProps {
+  queueName: string;
+}
+
+interface MachineWithCluster {
+  node: InfrastructureNodeListDTO;
+  clusterName: string;
+}
+
+function filterMachinesByQueue(
+  infrastructure: any,
+  queueName: string
+): MachineWithCluster[] {
+  const machines: MachineWithCluster[] = [];
+
+  if (!infrastructure?.data) {
+    return machines;
+  }
+
+  // Extract just the queue name without server suffix for comparison
+  const queueNameOnly = queueName.split("@")[0];
+
+  for (const org of infrastructure.data) {
+    for (const cluster of org.clusters || []) {
+      for (const node of cluster.nodes || []) {
+        // Check if node has the queue in its queueNames list
+        if (node.queueNames && node.queueNames.length > 0) {
+          const hasQueue = node.queueNames.some(
+            (q: string) =>
+              q === queueNameOnly ||
+              q === queueName ||
+              q.startsWith(queueNameOnly + "@")
+          );
+          if (hasQueue) {
+            machines.push({
+              node,
+              clusterName: cluster.name,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return machines;
+}
+
+export function QueuePbsMachinesTab({ queueName }: QueuePbsMachinesTabProps) {
+  const { t } = useTranslation();
+  const { data: infrastructureData, isLoading, error } = useInfrastructure();
+
+  const machines = infrastructureData
+    ? filterMachinesByQueue(infrastructureData, queueName)
+    : [];
+
+  if (isLoading) {
+    return (
+      <div className="px-6 py-4">
+        <div className="text-gray-500">{t("common.loading")}</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-6 py-4">
+        <div className="text-red-600">
+          {t("common.errorLoading")}{" "}
+          {error instanceof Error ? error.message : t("common.unknownError")}
+        </div>
+      </div>
+    );
+  }
+
+  if (machines.length === 0) {
+    return (
+      <div className="px-6 py-4">
+        <div className="text-gray-500">{t("queues.noMachines")}</div>
+      </div>
+    );
+  }
+
+  // Group machines by cluster
+  const machinesByCluster = new Map<string, MachineWithCluster[]>();
+  for (const machine of machines) {
+    if (!machinesByCluster.has(machine.clusterName)) {
+      machinesByCluster.set(machine.clusterName, []);
+    }
+    machinesByCluster.get(machine.clusterName)!.push(machine);
+  }
+
+  return (
+    <div className="px-6 py-4 space-y-6">
+      {Array.from(machinesByCluster.entries()).map(
+        ([clusterName, clusterMachines]) => (
+          <div key={clusterName} className="mb-6 last:mb-0">
+            <div className="mb-3">
+              <h3 className="text-lg font-semibold text-primary-800 mb-2">
+                {clusterName}
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
+              {clusterMachines.map((machine) => (
+                <NodePreview
+                  key={machine.node.name}
+                  node={machine.node}
+                  clusterName={machine.clusterName}
+                />
+              ))}
+            </div>
+          </div>
+        )
+      )}
+    </div>
+  );
+}

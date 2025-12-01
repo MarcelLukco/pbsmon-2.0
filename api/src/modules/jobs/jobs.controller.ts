@@ -64,6 +64,13 @@ export class JobsController {
     description:
       'Filter by node/machine name. If not provided, returns jobs from all nodes.',
   })
+  @ApiQuery({
+    name: 'queue',
+    required: false,
+    type: String,
+    description:
+      'Filter by queue name. If not provided, returns jobs from all queues.',
+  })
   @ApiOkResponseModel(JobsListDTO, 'List of jobs', MetaDto)
   getJobs(
     @UserContextDecorator() userContext: UserContext,
@@ -74,6 +81,7 @@ export class JobsController {
     @Query('search') search?: string,
     @Query('state') state?: string,
     @Query('node') node?: string,
+    @Query('queue') queue?: string,
   ): ApiResponse<JobsListDTO, MetaDto> {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
@@ -89,6 +97,7 @@ export class JobsController {
       search,
       state,
       node,
+      queue,
     );
 
     return new ApiResponse(data, {

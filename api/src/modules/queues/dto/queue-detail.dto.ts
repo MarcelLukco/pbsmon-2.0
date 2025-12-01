@@ -176,6 +176,13 @@ export class QueueDetailDTO {
 
   @Expose()
   @ApiProperty({
+    description: 'Server name this queue belongs to',
+    nullable: true,
+  })
+  server?: string | null;
+
+  @Expose()
+  @ApiProperty({
     description: 'Queue type',
     enum: ['Execution', 'Route'],
   })
@@ -242,11 +249,12 @@ export class QueueDetailDTO {
 
   @Expose()
   @ApiProperty({
-    description: 'Parent queues (Route queues that route to this queue)',
-    type: [String],
+    description:
+      'Parent queue (Route queue that routes to this queue). A queue can have only one parent.',
+    type: String,
     nullable: true,
   })
-  parents?: string[] | null;
+  parent?: string | null;
 
   @Expose()
   @ApiProperty({

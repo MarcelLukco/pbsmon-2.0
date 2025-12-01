@@ -112,6 +112,15 @@ export class InfrastructureNodeListDTO {
     required: false,
   })
   memoryUsagePercent?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Queue names assigned to this node (from PBS queue_list)',
+    type: [String],
+    nullable: true,
+    required: false,
+  })
+  queueNames?: string[] | null;
 }
 
 /**

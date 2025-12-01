@@ -16,7 +16,10 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
   const hasChildren = queue.children && queue.children.length > 0;
 
   const handleRowClick = () => {
-    navigate(`/queues/${queue.name}@${queue.server}.metacentrum.cz`);
+    const queueId = queue.server
+      ? `${queue.name}@${queue.server}.metacentrum.cz`
+      : queue.name;
+    navigate(`/queues/${queueId}`);
   };
 
   const indentWidth = level * 40;
@@ -94,7 +97,9 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
               className="font-medium text-gray-900 cursor-pointer hover:text-primary-600 truncate"
               onClick={handleRowClick}
             >
-              {`${queue.name}@${queue.server}.metacentrum.cz`}
+              {queue.server
+                ? `${queue.name}@${queue.server}.metacentrum.cz`
+                : queue.name}
             </span>
             {queue.hasAccess === false && (
               <span

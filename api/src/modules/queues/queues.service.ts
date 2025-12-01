@@ -212,18 +212,21 @@ export class QueuesService {
         queue,
         serverData.queues.items,
         userContext,
+        serverName,
       );
     }
 
     // Search across all servers
     let queue: PbsQueue | undefined;
     let queues: PbsQueue[] = [];
-    for (const serverData of Object.values(pbsData.servers)) {
+    let foundServerName: string | undefined;
+    for (const [serverKey, serverData] of Object.entries(pbsData.servers)) {
       if (serverData.queues?.items) {
         const foundQueue = serverData.queues.items.find((q) => q.name === name);
         if (foundQueue) {
           queue = foundQueue;
           queues = serverData.queues.items;
+          foundServerName = serverKey;
           break;
         }
       }
@@ -233,7 +236,12 @@ export class QueuesService {
       throw new NotFoundException(`Queue '${name}' was not found`);
     }
 
-    return this.buildQueueDetailFromQueues(queue, queues, userContext);
+    return this.buildQueueDetailFromQueues(
+      queue,
+      queues,
+      userContext,
+      foundServerName,
+    );
   }
 
   /**
@@ -243,6 +251,7 @@ export class QueuesService {
     queue: PbsQueue,
     queues: PbsQueue[],
     userContext: UserContext,
+    serverName?: string,
   ): QueueDetailDTO {
     // Build parent-child relationships
     const queueMap = new Map<string, PbsQueue>();
@@ -269,6 +278,8 @@ export class QueuesService {
     }
 
     const parents = parentMap.get(queue.name) || [];
+    // A queue can have only one parent, take the first one
+    const parent = parents.length > 0 ? parents[0] : null;
     const childNames = childMap.get(queue.name) || [];
 
     // Build children recursively
@@ -278,6 +289,7 @@ export class QueuesService {
         throw new NotFoundException(`Child queue '${childName}' was not found`);
       }
       const childParents = parentMap.get(childName) || [];
+      const childParent = childParents.length > 0 ? childParents[0] : null;
       const childChildNames = childMap.get(childName) || [];
       const childChildren = childChildNames
         .map((name) => queueMap.get(name))
@@ -287,10 +299,11 @@ export class QueuesService {
       return this.mapQueueToDetail(
         childQueue,
         userContext,
-        childParents,
+        childParent,
         childChildNames,
         queueMap,
         childChildren,
+        serverName,
       );
     };
 
@@ -315,10 +328,11 @@ export class QueuesService {
     return this.mapQueueToDetail(
       queue,
       userContext,
-      parents,
+      parent,
       childNames,
       queueMap,
       children,
+      serverName,
     );
   }
 
@@ -396,15 +410,16 @@ export class QueuesService {
   }
 
   /**
-   * Map PBS queue to detail DTO with children and parents
+   * Map PBS queue to detail DTO with children and parent
    */
   private mapQueueToDetail(
     queue: PbsQueue,
     userContext: UserContext,
-    parents: string[] = [],
+    parent: string | null = null,
     childNames: string[] = [],
     queueMap?: Map<string, PbsQueue>,
     children?: QueueDetailDTO[],
+    serverName?: string,
   ): QueueDetailDTO {
     const priority = queue.attributes.Priority
       ? parseInt(queue.attributes.Priority, 10)
@@ -461,6 +476,7 @@ export class QueuesService {
 
     return {
       name: queue.name,
+      server: serverName || null,
       queueType: queue.attributes.queue_type as 'Execution' | 'Route',
       priority,
       totalJobs,
@@ -471,7 +487,7 @@ export class QueuesService {
       acl,
       resources,
       children: children && children.length > 0 ? children : null,
-      parents: parents.length > 0 ? parents : null,
+      parent: parent,
       additionalAttributes:
         Object.keys(additionalAttributes).length > 0
           ? additionalAttributes

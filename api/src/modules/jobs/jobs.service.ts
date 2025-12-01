@@ -18,6 +18,7 @@ export class JobsService {
    * @param search Search query (searches in job ID, name, owner, node)
    * @param state Filter by job state (Q=Queued, R=Running, C=Completed, E=Exiting, H=Held)
    * @param node Filter by node/machine name
+   * @param queue Filter by queue name
    */
   getJobsList(
     userContext: UserContext,
@@ -28,6 +29,7 @@ export class JobsService {
     search?: string,
     state?: string,
     node?: string,
+    queue?: string,
   ): { data: JobsListDTO; totalCount: number } {
     const pbsData = this.dataCollectionService.getPbsData();
 
@@ -83,6 +85,19 @@ export class JobsService {
     // Apply state filter
     if (state && state.trim()) {
       jobs = jobs.filter((job) => job.state === state.trim().toUpperCase());
+    }
+
+    // Apply queue filter
+    if (queue && queue.trim()) {
+      jobs = jobs.filter((job) => {
+        if (!job.queue) return false;
+        // Match exact queue name or queue name with server suffix
+        const queueName = queue.trim();
+        return (
+          job.queue.toLowerCase() === queueName.toLowerCase() ||
+          job.queue.toLowerCase().startsWith(queueName.toLowerCase() + '@')
+        );
+      });
     }
 
     // Apply search filter

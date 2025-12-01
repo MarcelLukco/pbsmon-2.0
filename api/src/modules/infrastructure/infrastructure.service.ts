@@ -447,6 +447,19 @@ export class InfrastructureService {
     clusterId: string,
   ): InfrastructureNodeListDTO {
     const pbsState = this.getNodeStateFromPbs(machine.name);
+    const pbsNodeData = this.getPbsNodeData(machine.name);
+
+    // Extract queue names from PBS node attributes
+    let queueNames: string[] | null = null;
+    if (pbsNodeData?.pbsNode?.attributes['resources_available.queue_list']) {
+      const queuesStr =
+        pbsNodeData.pbsNode.attributes['resources_available.queue_list'];
+      // Queues format: "q_2h,q_4h,q_1d,q_gpu,..."
+      queueNames = queuesStr
+        .split(',')
+        .map((q) => q.trim())
+        .filter(Boolean);
+    }
 
     return {
       name: machine.name,
@@ -462,6 +475,7 @@ export class InfrastructureService {
       memoryTotal: pbsState.memoryTotal,
       memoryUsed: pbsState.memoryUsed,
       memoryUsagePercent: pbsState.memoryUsagePercent,
+      queueNames,
     };
   }
 
