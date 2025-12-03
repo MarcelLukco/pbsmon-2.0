@@ -1,14 +1,5 @@
 import { SortIcon } from "./SortIcon";
-
-type SortColumn =
-  | "username"
-  | "nickname"
-  | "totalTasks"
-  | "queuedTasks"
-  | "runningTasks"
-  | "doneTasks"
-  | "cpuTasks"
-  | `fairshare-${string}`;
+import type { SortColumn } from "./types";
 
 interface SortableHeaderProps {
   column: SortColumn;

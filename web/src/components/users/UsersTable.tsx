@@ -2,16 +2,7 @@ import { useTranslation } from "react-i18next";
 import type { UserListDTO } from "@/lib/generated-api";
 import { UsersTableHeader } from "./UsersTableHeader";
 import { UsersTableRow } from "./UsersTableRow";
-
-type SortColumn =
-  | "username"
-  | "nickname"
-  | "totalTasks"
-  | "queuedTasks"
-  | "runningTasks"
-  | "doneTasks"
-  | "cpuTasks"
-  | `fairshare-${string}`;
+import type { SortColumn } from "./types";
 
 interface UsersTableProps {
   users: UserListDTO[];

@@ -110,6 +110,7 @@ export class UsersService {
       const jobs = userJobsMap.get(username) || [];
       const tasks = this.calculateTaskCounts(jobs);
       const cpuTasks = this.calculateCpuTasks(jobs);
+      const resources = this.calculateResourceUsage(jobs);
 
       const nickname =
         perunUsersMap.get(username) ||
@@ -157,6 +158,14 @@ export class UsersService {
         runningTasks: tasks.running,
         doneTasks,
         cpuTasks,
+        queuedCPU: resources.queuedCPU,
+        runningCPU: resources.runningCPU,
+        doneCPU: resources.doneCPU,
+        totalCPU: resources.totalCPU,
+        queuedGPU: resources.queuedGPU,
+        runningGPU: resources.runningGPU,
+        doneGPU: resources.doneGPU,
+        totalGPU: resources.totalGPU,
         fairshareRankings,
       });
     }
@@ -255,6 +264,38 @@ export class UsersService {
           case 'cpuTasks':
             aValue = a.cpuTasks;
             bValue = b.cpuTasks;
+            break;
+          case 'queuedCPU':
+            aValue = a.queuedCPU;
+            bValue = b.queuedCPU;
+            break;
+          case 'runningCPU':
+            aValue = a.runningCPU;
+            bValue = b.runningCPU;
+            break;
+          case 'doneCPU':
+            aValue = a.doneCPU;
+            bValue = b.doneCPU;
+            break;
+          case 'totalCPU':
+            aValue = a.totalCPU;
+            bValue = b.totalCPU;
+            break;
+          case 'queuedGPU':
+            aValue = a.queuedGPU;
+            bValue = b.queuedGPU;
+            break;
+          case 'runningGPU':
+            aValue = a.runningGPU;
+            bValue = b.runningGPU;
+            break;
+          case 'doneGPU':
+            aValue = a.doneGPU;
+            bValue = b.doneGPU;
+            break;
+          case 'totalGPU':
+            aValue = a.totalGPU;
+            bValue = b.totalGPU;
             break;
           default:
             // Default to username
@@ -433,6 +474,81 @@ export class UsersService {
       }
     }
     return cpuTasks;
+  }
+
+  /**
+   * Calculate resource usage (CPU and GPU) by job state
+   */
+  private calculateResourceUsage(jobs: PbsJob[]): {
+    queuedCPU: number;
+    runningCPU: number;
+    doneCPU: number;
+    totalCPU: number;
+    queuedGPU: number;
+    runningGPU: number;
+    doneGPU: number;
+    totalGPU: number;
+  } {
+    const resources = {
+      queuedCPU: 0,
+      runningCPU: 0,
+      doneCPU: 0,
+      totalCPU: 0,
+      queuedGPU: 0,
+      runningGPU: 0,
+      doneGPU: 0,
+      totalGPU: 0,
+    };
+
+    for (const job of jobs) {
+      const state = job.attributes.job_state || '';
+      const attrs = job.attributes;
+
+      // Parse CPU resources
+      const cpuValue = this.parseResourceValue(
+        attrs['Resource_List.ncpus'] || attrs['Resource_List.NCPUS'] || '0',
+      );
+
+      // Parse GPU resources
+      const gpuValue = this.parseResourceValue(
+        attrs['Resource_List.ngpus'] || attrs['Resource_List.NGPUS'] || '0',
+      );
+
+      // Categorize by state
+      switch (state) {
+        case 'Q':
+        case 'Queued':
+          resources.queuedCPU += cpuValue;
+          resources.queuedGPU += gpuValue;
+          break;
+        case 'R':
+        case 'Running':
+          resources.runningCPU += cpuValue;
+          resources.runningGPU += gpuValue;
+          break;
+        case 'B':
+        case 'Begun':
+        case 'E':
+        case 'Exiting':
+          resources.doneCPU += cpuValue;
+          resources.doneGPU += gpuValue;
+          break;
+      }
+
+      // Add to totals
+      resources.totalCPU += cpuValue;
+      resources.totalGPU += gpuValue;
+    }
+
+    return resources;
+  }
+
+  /**
+   * Parse resource value (e.g., "8" -> 8)
+   */
+  private parseResourceValue(value: string): number {
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? 0 : parsed;
   }
 
   /**

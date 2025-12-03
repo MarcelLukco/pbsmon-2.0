@@ -49,6 +49,94 @@ export function UsersTableRow({
     }
   };
 
+  // Render resource usage with appropriate messages
+  const renderResourceUsage = () => {
+    const totalCPU = user.totalCPU || 0;
+    const totalGPU = user.totalGPU || 0;
+
+    // No resources at all
+    if (totalCPU === 0 && totalGPU === 0) {
+      return (
+        <span className="text-gray-400 italic">{t("users.noResources")}</span>
+      );
+    }
+
+    return (
+      <div className="space-y-1">
+        {/* CPU */}
+        {totalCPU === 0 ? (
+          <div className="flex gap-2 flex-wrap items-center">
+            <span className="text-gray-500 font-medium">CPU:</span>
+            <span className="text-gray-400 italic">
+              {t("users.noCpuResources")}
+            </span>
+          </div>
+        ) : (
+          <div className="flex gap-2 flex-wrap items-center">
+            <span className="text-gray-500 font-medium">CPU:</span>
+            <div className="flex gap-2 flex-wrap">
+              <div>
+                <span className="text-gray-500">{t("queues.queued")}</span>
+                <span className="font-medium ml-1">{user.queuedCPU || 0}</span>
+              </div>
+              <div>
+                <span className="text-gray-500">{t("queues.running")}</span>
+                <span className="font-medium text-blue-600 ml-1">
+                  {user.runningCPU || 0}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">{t("queues.done")}</span>
+                <span className="font-medium text-green-600 ml-1">
+                  {user.doneCPU || 0}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">{t("queues.total")}</span>
+                <span className="font-medium ml-1">{user.totalCPU || 0}</span>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* GPU */}
+        {totalGPU === 0 ? (
+          <div className="flex gap-2 flex-wrap items-center">
+            <span className="text-gray-500 font-medium">GPU:</span>
+            <span className="text-gray-400 italic">
+              {t("users.noGpuResources")}
+            </span>
+          </div>
+        ) : (
+          <div className="flex gap-2 flex-wrap items-center">
+            <span className="text-gray-500 font-medium">GPU:</span>
+            <div className="flex gap-2 flex-wrap">
+              <div>
+                <span className="text-gray-500">{t("queues.queued")}</span>
+                <span className="font-medium ml-1">{user.queuedGPU || 0}</span>
+              </div>
+              <div>
+                <span className="text-gray-500">{t("queues.running")}</span>
+                <span className="font-medium text-blue-600 ml-1">
+                  {user.runningGPU || 0}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">{t("queues.done")}</span>
+                <span className="font-medium text-green-600 ml-1">
+                  {user.doneGPU || 0}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">{t("queues.total")}</span>
+                <span className="font-medium ml-1">{user.totalGPU || 0}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
       className="flex gap-4 items-center py-2 px-4 border-b border-gray-100 bg-white hover:bg-gray-50 cursor-pointer min-w-max"
@@ -89,29 +177,52 @@ export function UsersTableRow({
       })}
 
       {/* Tasks Column - Same format as queues */}
+      <div className="pl-4 w-60 text-sm text-gray-600">
+        {(() => {
+          const totalTasks = user.totalTasks || 0;
+
+          // No jobs at all
+          if (totalTasks === 0) {
+            return (
+              <span className="text-gray-400 italic">{t("users.noJobs")}</span>
+            );
+          }
+
+          return (
+            <>
+              <div className="flex gap-2 flex-wrap">
+                <div>
+                  <span className="text-gray-500">{t("queues.queued")}</span>
+                  <span className="font-medium ml-2">{user.queuedTasks}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">{t("queues.running")}</span>
+                  <span className="font-medium text-blue-600 ml-2">
+                    {user.runningTasks}
+                  </span>
+                </div>{" "}
+              </div>
+
+              <div className="flex gap-2 flex-wrap">
+                <div>
+                  <span className="text-gray-500">{t("queues.done")}</span>
+                  <span className="font-medium text-green-600 ml-2">
+                    {user.doneTasks}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-500">{t("queues.total")}</span>
+                  <span className="font-medium ml-2">{user.totalTasks}</span>
+                </div>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+
+      {/* Resource Usage Column - CPU and GPU */}
       <div className="pl-4 flex-1 text-sm text-gray-600">
-        <div className="flex gap-2 flex-wrap">
-          <div>
-            <span className="text-gray-500">{t("queues.queued")}</span>
-            <span className="font-medium ml-2">{user.queuedTasks}</span>
-          </div>
-          <div>
-            <span className="text-gray-500">{t("queues.running")}</span>
-            <span className="font-medium text-blue-600 ml-2">
-              {user.runningTasks}
-            </span>
-          </div>
-          <div>
-            <span className="text-gray-500">{t("queues.done")}</span>
-            <span className="font-medium text-green-600 ml-2">
-              {user.doneTasks}
-            </span>
-          </div>
-          <div>
-            <span className="text-gray-500">{t("queues.total")}</span>
-            <span className="font-medium ml-2">{user.totalTasks}</span>
-          </div>
-        </div>
+        {renderResourceUsage()}
       </div>
 
       {/* Actions Column - Only for admins */}

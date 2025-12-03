@@ -1,14 +1,5 @@
 import { Icon } from "@iconify/react";
-
-type SortColumn =
-  | "username"
-  | "nickname"
-  | "totalTasks"
-  | "queuedTasks"
-  | "runningTasks"
-  | "doneTasks"
-  | "cpuTasks"
-  | `fairshare-${string}`;
+import type { SortColumn } from "./types";
 
 interface SortIconProps {
   column: SortColumn;

@@ -1,0 +1,17 @@
+export type SortColumn =
+  | "username"
+  | "nickname"
+  | "totalTasks"
+  | "queuedTasks"
+  | "runningTasks"
+  | "doneTasks"
+  | "cpuTasks"
+  | "queuedCPU"
+  | "runningCPU"
+  | "doneCPU"
+  | "totalCPU"
+  | "queuedGPU"
+  | "runningGPU"
+  | "doneGPU"
+  | "totalGPU"
+  | `fairshare-${string}`;

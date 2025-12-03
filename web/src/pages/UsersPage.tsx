@@ -5,16 +5,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { UsersSearchBar } from "@/components/users/UsersSearchBar";
 import { UsersTable } from "@/components/users/UsersTable";
 import { JobsPagination } from "@/components/jobs/JobsPagination";
-
-type SortColumn =
-  | "username"
-  | "nickname"
-  | "totalTasks"
-  | "queuedTasks"
-  | "runningTasks"
-  | "doneTasks"
-  | "cpuTasks"
-  | `fairshare-${string}`;
+import type { SortColumn } from "@/components/users/types";
 
 export function UsersPage() {
   const { t } = useTranslation();

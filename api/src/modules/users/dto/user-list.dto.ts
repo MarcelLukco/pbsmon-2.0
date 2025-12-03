@@ -40,6 +40,54 @@ export class UserListDTO {
 
   @Expose()
   @ApiProperty({
+    description: 'CPU resources in queued jobs',
+  })
+  queuedCPU: number;
+
+  @Expose()
+  @ApiProperty({
+    description: 'CPU resources in running jobs',
+  })
+  runningCPU: number;
+
+  @Expose()
+  @ApiProperty({
+    description: 'CPU resources in done jobs (begun + exiting)',
+  })
+  doneCPU: number;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Total CPU resources across all jobs',
+  })
+  totalCPU: number;
+
+  @Expose()
+  @ApiProperty({
+    description: 'GPU resources in queued jobs',
+  })
+  queuedGPU: number;
+
+  @Expose()
+  @ApiProperty({
+    description: 'GPU resources in running jobs',
+  })
+  runningGPU: number;
+
+  @Expose()
+  @ApiProperty({
+    description: 'GPU resources in done jobs (begun + exiting)',
+  })
+  doneGPU: number;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Total GPU resources across all jobs',
+  })
+  totalGPU: number;
+
+  @Expose()
+  @ApiProperty({
     description:
       'Fairshare rankings per server (higher number = better, opposite ranking). Only for users with jobs.',
     type: 'object',

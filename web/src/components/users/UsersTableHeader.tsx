@@ -1,16 +1,7 @@
 import { Icon } from "@iconify/react";
 import { useTranslation } from "react-i18next";
 import { SortableHeader } from "./SortableHeader";
-
-type SortColumn =
-  | "username"
-  | "nickname"
-  | "totalTasks"
-  | "queuedTasks"
-  | "runningTasks"
-  | "doneTasks"
-  | "cpuTasks"
-  | `fairshare-${string}`;
+import type { SortColumn } from "./types";
 
 interface UsersTableHeaderProps {
   fairshareServers: string[];
@@ -72,7 +63,7 @@ export function UsersTableHeader({
               </div>
             </div>
           )}
-          <div className="pl-4 flex-1">
+          <div className="pl-4 w-60">
             <div className="flex items-center gap-2 flex-wrap">
               <SortableHeader
                 column="totalTasks"
@@ -81,6 +72,20 @@ export function UsersTableHeader({
                 onSort={onSort}
               >
                 <span className="text-gray-500">{t("users.totalTasks")}</span>
+              </SortableHeader>
+            </div>
+          </div>
+          <div className="pl-4 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <SortableHeader
+                column="totalCPU"
+                currentSortColumn={sortColumn}
+                sortDirection={sortDirection}
+                onSort={onSort}
+              >
+                <span className="text-sm font-medium text-gray-700">
+                  {t("users.resourceUsage")}
+                </span>
               </SortableHeader>
             </div>
           </div>
@@ -106,7 +111,7 @@ export function UsersTableHeader({
               ))}
             </div>
             <div className="w-80"></div>
-            <div className="w-28"></div>
+            <div className="w-80"></div>
             {isAdmin && <div className="w-32"></div>}
           </div>
         )}
