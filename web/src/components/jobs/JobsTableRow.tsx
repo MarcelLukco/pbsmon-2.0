@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { JobListDTO } from "@/lib/generated-api";
 import { ProgressBar } from "@/components/common/ProgressBar";
 
@@ -16,20 +16,8 @@ export function JobsTableRow({
   hideMachineColumn = false,
 }: JobsTableRowProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
-  const handleJobClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/jobs/${encodeURIComponent(job.id)}`);
-  };
-
-  const handleUserClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const username = job.username || job.owner?.split("@")[0];
-    if (username) {
-      navigate(`/users/${encodeURIComponent(username)}`);
-    }
-  };
+  const username = job.username || job.owner?.split("@")[0];
 
   // Get state label and color
   const getStateInfo = () => {
@@ -112,12 +100,12 @@ export function JobsTableRow({
 
       {/* ID Column */}
       <div className="text-left">
-        <button
-          onClick={handleJobClick}
+        <Link
+          to={`/jobs/${encodeURIComponent(job.id)}`}
           className="text-sm text-gray-900 font-mono hover:text-primary-600 underline cursor-pointer"
         >
           <span>{job.id}</span>
-        </button>
+        </Link>
       </div>
 
       {/* Name Column */}
@@ -130,13 +118,13 @@ export function JobsTableRow({
 
       {/* Username Column - Show username for admins, anonymized for non-admins */}
       <div className="text-sm">
-        {isAdmin && (job.username || job.owner) ? (
-          <button
-            onClick={handleUserClick}
+        {isAdmin && username ? (
+          <Link
+            to={`/users/${encodeURIComponent(username)}`}
             className="text-gray-900 hover:text-primary-600 underline cursor-pointer"
           >
-            {String(job.username || job.owner?.split("@")[0] || "-")}
-          </button>
+            {String(username)}
+          </Link>
         ) : (
           <span className="text-gray-900">{t("jobs.anonym")}</span>
         )}

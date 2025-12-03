@@ -293,7 +293,12 @@ export function SidebarLayout() {
           </div>
 
           <div className="pl-[30px] pr-4 py-4 border-b border-primary-700">
-            <div className="flex items-center gap-[10px]">
+            <a
+              href="https://profile.e-infra.cz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-[10px] hover:opacity-80 transition-opacity"
+            >
               <div className="w-[30px] h-[30px] flex items-center justify-center">
                 <Icon
                   icon="mdi:account"
@@ -301,7 +306,7 @@ export function SidebarLayout() {
                 />
               </div>
               <span className="text-sm">{currentUser?.username || "---"}</span>
-            </div>
+            </a>
           </div>
 
           <nav>

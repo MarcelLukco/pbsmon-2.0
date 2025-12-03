@@ -2,7 +2,7 @@ import type { InfrastructureNodeListDTO } from "@/lib/generated-api";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { Icon } from "@iconify/react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface NodePreviewProps {
   node: InfrastructureNodeListDTO;
@@ -11,7 +11,6 @@ interface NodePreviewProps {
 
 export function NodePreview({ node, clusterName }: NodePreviewProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const getShortNodeName = (nodeName: string, clusterName: string): string => {
     if (nodeName.endsWith(`.${clusterName}`)) {
@@ -37,10 +36,6 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
   };
 
   const shortNodeName = getShortNodeName(node.name, clusterName);
-
-  const handleClick = () => {
-    navigate(`/machines/${encodeURIComponent(node.name)}`);
-  };
 
   const getStateInfo = (
     state?: string | null
@@ -124,9 +119,9 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
   const shouldShowProgressBars = hasPbs && !isMaintenance;
 
   return (
-    <div
-      className="px-4 py-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:border-primary-500 hover:shadow-md transition-all"
-      onClick={handleClick}
+    <Link
+      to={`/machines/${encodeURIComponent(node.name)}`}
+      className="px-4 py-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:border-primary-500 hover:shadow-md transition-all block"
     >
       <div className="mb-4">
         <h3 className="font-semibold text-gray-900">{shortNodeName}</h3>
@@ -185,6 +180,6 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
             )}
         </div>
       )}
-    </div>
+    </Link>
   );
 }

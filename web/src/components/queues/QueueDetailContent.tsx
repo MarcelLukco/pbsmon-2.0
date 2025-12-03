@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { Tabs } from "@/components/common/Tabs";
 import { QueueTreeNode } from "@/components/common/QueueTreeNode";
@@ -31,7 +31,6 @@ export function QueueDetailContent({
   queueId,
 }: QueueDetailContentProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { data: currentUser } = useCurrentUser();
   const isAdmin = currentUser?.role === "admin";
   const [activeTab, setActiveTab] = useState("jobs");
@@ -208,19 +207,19 @@ export function QueueDetailContent({
               {t("queues.parentQueue")}
             </h2>
             <div>
-              <button
-                onClick={() => {
+              <Link
+                to={(() => {
                   // Use the current queue's server for the parent link
                   const server = queue.server || queueId.match(/@(.+)$/)?.[1];
                   const parentId = server
                     ? `${queue.parent}@${server}.metacentrum.cz`
                     : queue.parent;
-                  navigate(`/queues/${parentId}`);
-                }}
+                  return `/queues/${parentId}`;
+                })()}
                 className="text-primary-600 hover:text-primary-800 font-medium"
               >
                 {queue.parent}
-              </button>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { Tooltip } from "react-tooltip";
 import type { QueueListDTO } from "@/lib/generated-api";
@@ -11,16 +11,12 @@ interface QueueTreeNodeProps {
 }
 
 export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const hasChildren = queue.children && queue.children.length > 0;
 
-  const handleRowClick = () => {
-    const queueId = queue.server
-      ? `${queue.name}@${queue.server}.metacentrum.cz`
-      : queue.name;
-    navigate(`/queues/${queueId}`);
-  };
+  const queueId = queue.server
+    ? `${queue.name}@${queue.server}.metacentrum.cz`
+    : queue.name;
 
   const indentWidth = level * 40;
 
@@ -93,14 +89,14 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
                 />
               </div>
             )}
-            <span
+            <Link
+              to={`/queues/${queueId}`}
               className="font-medium text-gray-900 cursor-pointer hover:text-primary-600 truncate"
-              onClick={handleRowClick}
             >
               {queue.server
                 ? `${queue.name}@${queue.server}.metacentrum.cz`
                 : queue.name}
-            </span>
+            </Link>
             {queue.hasAccess === false && (
               <span
                 className="flex items-center px-2 py-0.5 text-xs rounded bg-red-100 text-red-800 flex-shrink-0"

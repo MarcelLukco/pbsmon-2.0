@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { UserListDTO } from "@/lib/generated-api";
 
 interface UsersTableRowProps {
@@ -19,17 +19,9 @@ export function UsersTableRow({
   onImpersonate,
 }: UsersTableRowProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const handleRowClick = (e?: React.MouseEvent) => {
-    // Don't navigate if clicking on the impersonate button
-    if (e && (e.target as HTMLElement).closest("button")) {
-      return;
-    }
-    navigate(`/users/${user.username}`);
-  };
 
   const handleImpersonate = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onImpersonate(user.username);
   };
@@ -138,15 +130,15 @@ export function UsersTableRow({
   };
 
   return (
-    <div
-      className="flex gap-4 items-center py-2 px-4 border-b border-gray-100 bg-white hover:bg-gray-50 cursor-pointer min-w-max"
-      onClick={handleRowClick}
-    >
+    <div className="flex gap-4 items-center py-2 px-4 border-b border-gray-100 bg-white hover:bg-gray-50 min-w-max">
       {/* Username Column */}
       <div className="w-40">
-        <span className="font-medium text-gray-900 hover:text-primary-600">
+        <Link
+          to={`/users/${user.username}`}
+          className="font-medium text-gray-900 hover:text-primary-600"
+        >
           {user.username}
-        </span>
+        </Link>
       </div>
 
       {/* Nickname Column */}
