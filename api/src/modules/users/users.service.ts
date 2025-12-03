@@ -109,7 +109,6 @@ export class UsersService {
 
       const jobs = userJobsMap.get(username) || [];
       const tasks = this.calculateTaskCounts(jobs);
-      const cpuTasks = this.calculateCpuTasks(jobs);
       const resources = this.calculateResourceUsage(jobs);
 
       const nickname =
@@ -117,15 +116,7 @@ export class UsersService {
         perunUsersMap.get(username.split('@')[0]) ||
         null;
 
-      const totalTasks =
-        tasks.transit +
-        tasks.queued +
-        tasks.held +
-        tasks.waiting +
-        tasks.running +
-        tasks.exiting +
-        tasks.begun;
-
+      const totalTasks = tasks.total;
       const doneTasks = tasks.begun + tasks.exiting;
 
       // Get fairshare rankings (only for users with jobs)
@@ -157,7 +148,6 @@ export class UsersService {
         queuedTasks: tasks.queued,
         runningTasks: tasks.running,
         doneTasks,
-        cpuTasks,
         queuedCPU: resources.queuedCPU,
         runningCPU: resources.runningCPU,
         doneCPU: resources.doneCPU,
@@ -260,10 +250,6 @@ export class UsersService {
           case 'doneTasks':
             aValue = a.doneTasks;
             bValue = b.doneTasks;
-            break;
-          case 'cpuTasks':
-            aValue = a.cpuTasks;
-            bValue = b.cpuTasks;
             break;
           case 'queuedCPU':
             aValue = a.queuedCPU;
@@ -383,9 +369,6 @@ export class UsersService {
     // Calculate task counts (same as queue state counts)
     const tasks = this.calculateTaskCounts(userJobs.map(({ job }) => job));
 
-    // Calculate CPU tasks (running jobs with CPU resources)
-    const cpuTasks = this.calculateCpuTasks(userJobs.map(({ job }) => job));
-
     // Get fairshare per server
     const fairsharePerServer = this.getFairsharePerServer(
       userJobs,
@@ -396,7 +379,6 @@ export class UsersService {
       username,
       nickname: nickname || null,
       tasks,
-      cpuTasks,
       fairsharePerServer,
     };
   }
@@ -413,6 +395,7 @@ export class UsersService {
       running: 0,
       exiting: 0,
       begun: 0,
+      total: 0,
     };
 
     for (const job of jobs) {
@@ -447,6 +430,7 @@ export class UsersService {
           counts.begun++;
           break;
       }
+      counts.total++;
     }
 
     return counts;

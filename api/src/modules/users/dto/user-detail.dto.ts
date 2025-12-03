@@ -32,6 +32,10 @@ export class UserTaskCountDTO {
   @Expose()
   @ApiProperty({ description: 'Number of jobs in Begun state' })
   begun: number;
+
+  @Expose()
+  @ApiProperty({ description: 'Total number of jobs' })
+  total: number;
 }
 
 /**
@@ -72,12 +76,6 @@ export class UserDetailDTO {
     type: UserTaskCountDTO,
   })
   tasks: UserTaskCountDTO;
-
-  @Expose()
-  @ApiProperty({
-    description: 'Number of CPU tasks (running jobs with CPU resources)',
-  })
-  cpuTasks: number;
 
   @Expose()
   @Type(() => UserFairshareDTO)

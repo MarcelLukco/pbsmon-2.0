@@ -34,12 +34,6 @@ export class UserListDTO {
 
   @Expose()
   @ApiProperty({
-    description: 'Number of CPU tasks (running jobs with CPU resources)',
-  })
-  cpuTasks: number;
-
-  @Expose()
-  @ApiProperty({
     description: 'CPU resources in queued jobs',
   })
   queuedCPU: number;
