@@ -223,7 +223,7 @@ export class UsersService {
         if (!aHasValue) return 1; // a goes to end
         if (!bHasValue) return -1; // b goes to end
 
-        // Lower ranking is better (1 is best), so normal comparison
+        // Higher ranking is better (opposite ranking), so reverse comparison
         aValue = a.fairshareRankings![serverName];
         bValue = b.fairshareRankings![serverName];
       } else {
@@ -264,7 +264,15 @@ export class UsersService {
         }
       }
 
-      // For fairshare, lower ranking is better (1 is best), normal comparison
+      // For fairshare, higher ranking is better (opposite ranking), reverse comparison
+      // For other columns, normal comparison
+      if (sort.startsWith('fairshare-')) {
+        // Higher ranking number = better, so reverse the comparison
+        if (aValue < bValue) return order === 'asc' ? 1 : -1; // Higher is better
+        if (aValue > bValue) return order === 'asc' ? -1 : 1; // Higher is better
+        return 0;
+      }
+
       // For other columns, normal comparison
       if (aValue < bValue) return order === 'asc' ? -1 : 1;
       if (aValue > bValue) return order === 'asc' ? 1 : -1;
@@ -484,8 +492,10 @@ export class UsersService {
       relevantEntries.sort((a, b) => b.value2 - a.value2);
 
       // Calculate rankings: same value2 = same rank
+      // Higher fairshare value = higher (better) ranking number (opposite ranking)
       const rankings = new Map<string, number>();
-      let currentRank = 1;
+      const totalUsers = relevantEntries.length;
+      let currentRank = totalUsers; // Start from highest rank (worst position = best rank)
 
       for (let i = 0; i < relevantEntries.length; i++) {
         const entry = relevantEntries[i];
@@ -500,8 +510,9 @@ export class UsersService {
             currentRank = prevRank;
           }
         } else {
-          // New rank (position in sorted array + 1)
-          currentRank = i + 1;
+          // New rank: reverse order (highest value gets highest rank number)
+          // Position 0 (best) gets rank = totalUsers, position 1 gets rank = totalUsers - 1, etc.
+          currentRank = totalUsers - i;
         }
 
         // Store ranking for both full username and base username

@@ -41,7 +41,7 @@ export class UserListDTO {
   @Expose()
   @ApiProperty({
     description:
-      'Fairshare rankings per server (1 = best, higher = worse). Only for users with jobs.',
+      'Fairshare rankings per server (higher number = better, opposite ranking). Only for users with jobs.',
     type: 'object',
     additionalProperties: { type: 'number' },
     nullable: true,

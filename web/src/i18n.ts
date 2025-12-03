@@ -142,7 +142,7 @@ i18n.use(initReactI18next).init({
           noData: "No fairshare data available",
           noEntries: "No entries found",
           infoTooltip:
-            "Fairshare ranking indicates your priority in the queue. Rankings are calculated per scheduler server based on your fairshare value.",
+            "Fairshare value indicates your priority in the queue. The higher the value, the better the priority. The ranking is calculated per scheduler server based on your fairshare value.",
         },
         machines: {
           metacentrumTotal: "Metacentrum Total",
@@ -357,7 +357,7 @@ i18n.use(initReactI18next).init({
           noData: "Nejsou k dispozici žádná fairshare data",
           noEntries: "Nebyly nalezeny žádné záznamy",
           infoTooltip:
-            "Fairshare pořadí ukazuje prioritu vašich úloh ve frontě. Pořadí se počítá pro každý server zvlášť na základě vaší fairshare hodnoty.",
+            "Fairshare hodnota ukazuje prioritu vašich úloh ve frontě. Čím vyšší hodnota, tím lepší priorita. Pořadí se počítá pro každý plánovač zvlášť na základě vaší fairshare hodnoty.",
         },
         machines: {
           metacentrumTotal: "Celkem Metacentrum",

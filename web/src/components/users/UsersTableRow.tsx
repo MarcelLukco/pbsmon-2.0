@@ -6,6 +6,7 @@ import type { UserListDTO } from "@/lib/generated-api";
 interface UsersTableRowProps {
   user: UserListDTO;
   fairshareServers: string[];
+  maxFairshare: Record<string, number>;
   isAdmin: boolean;
   onImpersonate: (username: string) => void;
 }
@@ -13,6 +14,7 @@ interface UsersTableRowProps {
 export function UsersTableRow({
   user,
   fairshareServers,
+  maxFairshare,
   isAdmin,
   onImpersonate,
 }: UsersTableRowProps) {
@@ -33,13 +35,14 @@ export function UsersTableRow({
   };
 
   // Helper function to get ranking icon based on ranking value
-  // Lower ranking = better (1 is best, higher numbers are worse)
-  const getRankingIcon = (ranking: number) => {
-    if (ranking <= 10) {
+  // Higher ranking = better (opposite ranking: higher numbers are better)
+  const getRankingIcon = (ranking: number, maxRanking: number) => {
+    const percentage = (ranking / maxRanking) * 100;
+    if (percentage >= 80) {
       return (
         <Icon icon="mdi:check-circle" className="w-4 h-4 text-green-600" />
       );
-    } else if (ranking <= 50) {
+    } else if (percentage >= 50) {
       return <Icon icon="mdi:alert" className="w-4 h-4 text-yellow-600" />;
     } else {
       return <Icon icon="mdi:alert-circle" className="w-4 h-4 text-red-600" />;
@@ -70,11 +73,12 @@ export function UsersTableRow({
       {/* Fairshare Columns - one per server */}
       {fairshareServers.map((server) => {
         const ranking = user.fairshareRankings?.[server];
+        const maxRanking = maxFairshare[server];
         return (
           <div key={server} className="w-20 text-sm text-gray-600">
-            {ranking !== undefined && ranking !== null ? (
+            {ranking !== undefined && ranking !== null && maxRanking ? (
               <div className="flex items-center gap-1">
-                {getRankingIcon(ranking)}
+                {getRankingIcon(ranking, maxRanking)}
                 <span className="font-medium">{ranking}</span>
               </div>
             ) : (

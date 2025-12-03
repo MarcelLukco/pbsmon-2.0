@@ -65,8 +65,9 @@ export function UsersPage() {
     console.log("Impersonate user:", username);
   };
 
-  // Get fairshare servers from server response
+  // Get fairshare servers and maxFairshare from server response
   const fairshareServers = data?.data?.fairshareServers || [];
+  const maxFairshare = data?.meta?.maxFairshare || {};
 
   const totalPages = data?.meta?.totalCount
     ? Math.ceil(data.meta.totalCount / limit)
@@ -110,6 +111,7 @@ export function UsersPage() {
             <UsersTable
               users={data.data.users}
               fairshareServers={fairshareServers}
+              maxFairshare={maxFairshare}
               sortColumn={sort as SortColumn}
               sortDirection={order}
               onSort={handleSort}
