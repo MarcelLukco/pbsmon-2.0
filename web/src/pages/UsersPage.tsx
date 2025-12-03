@@ -1,31 +1,76 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUsers } from "@/hooks/useUsers";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useUsersSorting } from "@/hooks/useUsersSorting";
 import { UsersSearchBar } from "@/components/users/UsersSearchBar";
 import { UsersTable } from "@/components/users/UsersTable";
+import { JobsPagination } from "@/components/jobs/JobsPagination";
+
+type SortColumn =
+  | "username"
+  | "nickname"
+  | "totalTasks"
+  | "queuedTasks"
+  | "runningTasks"
+  | "doneTasks"
+  | "cpuTasks"
+  | `fairshare-${string}`;
 
 export function UsersPage() {
   const { t } = useTranslation();
-  const { data, isLoading, error } = useUsers();
-  const { data: currentUser } = useCurrentUser();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [sort, setSort] = useState<string>("username");
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [search, setSearch] = useState("");
 
+  const { data: currentUser } = useCurrentUser();
   const isAdmin = currentUser?.role === "admin";
 
-  const {
-    sortColumn,
-    sortDirection,
-    searchQuery,
-    setSearchQuery,
-    handleSort,
-    fairshareServers,
-    sortedUsers,
-  } = useUsersSorting(data?.users);
+  const { data, isLoading, error } = useUsers({
+    page,
+    limit,
+    sort,
+    order,
+    search: search.trim() || undefined,
+  });
+
+  const handleSort = (column: SortColumn) => {
+    if (sort === column) {
+      // Toggle order if same column
+      setOrder(order === "asc" ? "desc" : "asc");
+    } else {
+      // Set new column with default order
+      // Default to desc for fairshare, asc for others
+      const defaultOrder = column.startsWith("fairshare-") ? "desc" : "asc";
+      setSort(column);
+      setOrder(defaultOrder);
+    }
+    setPage(1); // Reset to first page on sort
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearch(query);
+    setPage(1); // Reset to first page on search
+  };
 
   const handleImpersonate = (username: string) => {
     // TODO: Implement impersonate functionality
     console.log("Impersonate user:", username);
   };
+
+  // Get fairshare servers from server response
+  const fairshareServers = data?.data?.fairshareServers || [];
+
+  const totalPages = data?.meta?.totalCount
+    ? Math.ceil(data.meta.totalCount / limit)
+    : 0;
 
   return (
     <>
@@ -37,14 +82,11 @@ export function UsersPage() {
         </div>
       </header>
       <div className="p-6">
-        {data && (
-          <UsersSearchBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            totalUsers={data.users.length}
-            filteredCount={searchQuery ? sortedUsers.length : undefined}
-          />
-        )}
+        <UsersSearchBar
+          searchQuery={search}
+          onSearchChange={handleSearchChange}
+          totalUsers={data?.meta?.totalCount || 0}
+        />
 
         {isLoading && (
           <div className="flex items-center justify-center py-12">
@@ -63,17 +105,23 @@ export function UsersPage() {
           </div>
         )}
 
-        {data && (
-          <UsersTable
-            users={sortedUsers}
-            totalUsers={data.users.length}
-            fairshareServers={fairshareServers}
-            sortColumn={sortColumn}
-            sortDirection={sortDirection}
-            onSort={handleSort}
-            isAdmin={isAdmin}
-            onImpersonate={handleImpersonate}
-          />
+        {data && data.data && (
+          <>
+            <UsersTable
+              users={data.data.users}
+              fairshareServers={fairshareServers}
+              sortColumn={sort as SortColumn}
+              sortDirection={order}
+              onSort={handleSort}
+              isAdmin={isAdmin}
+              onImpersonate={handleImpersonate}
+            />
+            <JobsPagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </>
         )}
       </div>
     </>

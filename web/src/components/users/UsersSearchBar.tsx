@@ -5,14 +5,12 @@ interface UsersSearchBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   totalUsers: number;
-  filteredCount?: number;
 }
 
 export function UsersSearchBar({
   searchQuery,
   onSearchChange,
   totalUsers,
-  filteredCount,
 }: UsersSearchBarProps) {
   const { t } = useTranslation();
 
@@ -42,16 +40,7 @@ export function UsersSearchBar({
         )}
       </div>
       <div className="text-sm text-gray-600 whitespace-nowrap">
-        {searchQuery && filteredCount !== undefined ? (
-          <>
-            {t("users.totalUsersFiltered", {
-              filtered: filteredCount,
-              total: totalUsers,
-            })}
-          </>
-        ) : (
-          <>{t("users.totalUsers", { count: totalUsers })}</>
-        )}
+        {t("users.totalUsers", { count: totalUsers })}
       </div>
     </div>
   );

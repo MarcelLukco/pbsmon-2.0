@@ -15,7 +15,6 @@ type SortColumn =
 
 interface UsersTableProps {
   users: UserListDTO[];
-  totalUsers: number;
   fairshareServers: string[];
   sortColumn: SortColumn;
   sortDirection: "asc" | "desc";
@@ -26,7 +25,6 @@ interface UsersTableProps {
 
 export function UsersTable({
   users,
-  totalUsers,
   fairshareServers,
   sortColumn,
   sortDirection,
@@ -59,7 +57,6 @@ export function UsersTable({
               user={user}
               fairshareServers={fairshareServers}
               isAdmin={isAdmin}
-              totalUsers={totalUsers}
               onImpersonate={onImpersonate}
             />
           ))

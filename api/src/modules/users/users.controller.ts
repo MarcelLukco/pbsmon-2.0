@@ -1,5 +1,11 @@
-import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Param,
+  NotFoundException,
+  Query,
+} from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiResponse as ApiResponseDto } from '@/common/dto/api-response.dto';
 import { UserContextDecorator } from '@/common/decorators/user-context.decorator';
 import { UserContext, UserRole } from '@/common/types/user-context.types';
@@ -8,6 +14,7 @@ import { UserDetailDTO } from './dto/user-detail.dto';
 import { UsersListDTO } from './dto/user-list.dto';
 import { CurrentUserDTO } from './dto/current-user.dto';
 import { ApiOkResponseModel } from '@/common/swagger/api-generic-response';
+import { MetaDto } from '@/common/dto/meta.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -18,14 +25,65 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get list of users',
     description:
-      'Returns list of users with summary statistics. Admin sees all users, non-admin sees only themselves.',
+      'Returns paginated, sorted, and filtered list of users with summary statistics. Admin sees all users, non-admin sees only themselves. Returns ALL Perun users, including those without jobs.',
   })
-  @ApiOkResponseModel(UsersListDTO, 'List of users')
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (1-based). Default: 1',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page. Default: 20',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    description:
+      'Sort column (username, nickname, totalTasks, queuedTasks, runningTasks, doneTasks, cpuTasks, fairshare-{serverName}). Default: username',
+  })
+  @ApiQuery({
+    name: 'order',
+    required: false,
+    enum: ['asc', 'desc'],
+    description: 'Sort direction. Default: asc',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search query (searches in username and nickname)',
+  })
+  @ApiOkResponseModel(UsersListDTO, 'List of users', MetaDto)
   getUsers(
     @UserContextDecorator() userContext: UserContext,
-  ): ApiResponseDto<UsersListDTO> {
-    const data = this.usersService.getUsers(userContext);
-    return new ApiResponseDto(data, { totalCount: data.users.length });
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('sort') sort?: string,
+    @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
+  ): ApiResponseDto<UsersListDTO, MetaDto> {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 20;
+    const sortColumn = sort || 'username';
+    // Default to desc for fairshare sorting, asc for others
+    const sortOrder =
+      order || (sortColumn.startsWith('fairshare-') ? 'desc' : 'asc');
+
+    const { data, totalCount, maxFairshare } = this.usersService.getUsers(
+      userContext,
+      pageNum,
+      limitNum,
+      sortColumn,
+      sortOrder,
+      search,
+    );
+
+    return new ApiResponseDto(data, { totalCount, maxFairshare });
   }
 
   @Get('current-user')

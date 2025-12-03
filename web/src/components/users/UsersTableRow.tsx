@@ -7,7 +7,6 @@ interface UsersTableRowProps {
   user: UserListDTO;
   fairshareServers: string[];
   isAdmin: boolean;
-  totalUsers: number;
   onImpersonate: (username: string) => void;
 }
 
@@ -15,7 +14,6 @@ export function UsersTableRow({
   user,
   fairshareServers,
   isAdmin,
-  totalUsers,
   onImpersonate,
 }: UsersTableRowProps) {
   const { t } = useTranslation();
@@ -35,15 +33,13 @@ export function UsersTableRow({
   };
 
   // Helper function to get ranking icon based on ranking value
-  // Lower number = better ranking (1 is best, higher numbers are worse)
+  // Lower ranking = better (1 is best, higher numbers are worse)
   const getRankingIcon = (ranking: number) => {
-    const rankingMiddle = totalUsers / 2;
-    const rankingRange = totalUsers / 3;
-    if (ranking <= rankingMiddle - rankingRange) {
+    if (ranking <= 10) {
       return (
         <Icon icon="mdi:check-circle" className="w-4 h-4 text-green-600" />
       );
-    } else if (ranking <= rankingMiddle + rankingRange) {
+    } else if (ranking <= 50) {
       return <Icon icon="mdi:alert" className="w-4 h-4 text-yellow-600" />;
     } else {
       return <Icon icon="mdi:alert-circle" className="w-4 h-4 text-red-600" />;

@@ -40,7 +40,8 @@ export class UserListDTO {
 
   @Expose()
   @ApiProperty({
-    description: 'Fairshare rankings per server',
+    description:
+      'Fairshare rankings per server (1 = best, higher = worse). Only for users with jobs.',
     type: 'object',
     additionalProperties: { type: 'number' },
     nullable: true,
@@ -58,4 +59,11 @@ export class UsersListDTO {
     type: [UserListDTO],
   })
   users: UserListDTO[];
+
+  @Expose()
+  @ApiProperty({
+    description: 'List of fairshare server names',
+    type: [String],
+  })
+  fairshareServers: string[];
 }
