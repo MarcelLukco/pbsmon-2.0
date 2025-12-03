@@ -238,6 +238,12 @@ export class UsersService {
           case 'totalTasks':
             aValue = a.totalTasks;
             bValue = b.totalTasks;
+            // Users with no tasks go to the end
+            aHasValue = a.totalTasks > 0;
+            bHasValue = b.totalTasks > 0;
+            if (!aHasValue && !bHasValue) return 0;
+            if (!aHasValue) return 1; // a goes to end
+            if (!bHasValue) return -1; // b goes to end
             break;
           case 'queuedTasks':
             aValue = a.queuedTasks;
@@ -266,6 +272,12 @@ export class UsersService {
           case 'totalCPU':
             aValue = a.totalCPU;
             bValue = b.totalCPU;
+            // Users with no CPU resources go to the end
+            aHasValue = a.totalCPU > 0;
+            bHasValue = b.totalCPU > 0;
+            if (!aHasValue && !bHasValue) return 0;
+            if (!aHasValue) return 1; // a goes to end
+            if (!bHasValue) return -1; // b goes to end
             break;
           case 'queuedGPU':
             aValue = a.queuedGPU;
@@ -282,6 +294,12 @@ export class UsersService {
           case 'totalGPU':
             aValue = a.totalGPU;
             bValue = b.totalGPU;
+            // Users with no GPU resources go to the end
+            aHasValue = a.totalGPU > 0;
+            bHasValue = b.totalGPU > 0;
+            if (!aHasValue && !bHasValue) return 0;
+            if (!aHasValue) return 1; // a goes to end
+            if (!bHasValue) return -1; // b goes to end
             break;
           default:
             // Default to username
@@ -300,6 +318,7 @@ export class UsersService {
         return 0;
       }
 
+      // For totalTasks, totalCPU, totalGPU - check if values are zero (already handled above)
       // For other columns, normal comparison
       if (aValue < bValue) return order === 'asc' ? -1 : 1;
       if (aValue > bValue) return order === 'asc' ? 1 : -1;
