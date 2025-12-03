@@ -173,19 +173,24 @@ export class UsersService {
       });
     }
 
+    // Get fairshare server names for sorting
+    const fairshareServers = pbsData?.servers
+      ? Object.keys(pbsData.servers).sort()
+      : [];
+
     // Apply sorting
-    filteredUsers = this.sortUsers(filteredUsers, sort, order);
+    filteredUsers = this.sortUsers(
+      filteredUsers,
+      sort,
+      order,
+      fairshareServers,
+    );
 
     // Apply pagination
     const totalCount = filteredUsers.length;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
-
-    // Get fairshare server names from PBS data
-    const fairshareServers = pbsData?.servers
-      ? Object.keys(pbsData.servers).sort()
-      : [];
 
     // maxRankings is already calculated in buildFairshareRankingsLookup
     const maxFairshare = maxRankings;
@@ -200,11 +205,13 @@ export class UsersService {
   /**
    * Sort users by column and direction
    * For fairshare sorting, users without fairshare are always at the end
+   * For default (username) sorting, first by best fairshare value, then by username
    */
   private sortUsers(
     users: UserListDTO[],
     sort: string,
     order: 'asc' | 'desc',
+    fairshareServers: string[] = [],
   ): UserListDTO[] {
     const sorted = [...users].sort((a, b) => {
       let aValue: string | number;
@@ -319,6 +326,7 @@ export class UsersService {
       }
 
       // For totalTasks, totalCPU, totalGPU - check if values are zero (already handled above)
+      // For username - if both have fairshare and values are equal, or neither has fairshare, sort by username
       // For other columns, normal comparison
       if (aValue < bValue) return order === 'asc' ? -1 : 1;
       if (aValue > bValue) return order === 'asc' ? 1 : -1;
@@ -326,6 +334,31 @@ export class UsersService {
     });
 
     return sorted;
+  }
+
+  /**
+   * Get the best (highest) fairshare value from user's rankings across all servers
+   * Returns null if user has no fairshare rankings
+   */
+  private getBestFairshareValue(
+    fairshareRankings: Record<string, number> | null | undefined,
+    fairshareServers: string[],
+  ): number | null {
+    if (!fairshareRankings || Object.keys(fairshareRankings).length === 0) {
+      return null;
+    }
+
+    let bestValue: number | null = null;
+    for (const server of fairshareServers) {
+      const value = fairshareRankings[server];
+      if (value !== undefined && value !== null) {
+        if (bestValue === null || value > bestValue) {
+          bestValue = value;
+        }
+      }
+    }
+
+    return bestValue;
   }
 
   /**

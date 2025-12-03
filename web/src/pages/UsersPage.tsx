@@ -11,7 +11,7 @@ export function UsersPage() {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [limit] = useState(20);
-  const [sort, setSort] = useState<string>("username");
+  const [sort, setSort] = useState<string>("fairshare-pbs-m1");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [search, setSearch] = useState("");
 
