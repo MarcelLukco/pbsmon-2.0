@@ -70,6 +70,22 @@ export class UserDetailDTO {
   nickname?: string | null;
 
   @Expose()
+  @ApiProperty({
+    description: 'User organization from Perun',
+    nullable: true,
+  })
+  organization?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'User publications from Perun',
+    type: 'object',
+    additionalProperties: { type: 'string' },
+    nullable: true,
+  })
+  publications?: Record<string, string> | null;
+
+  @Expose()
   @Type(() => UserTaskCountDTO)
   @ApiProperty({
     description: 'Task counts (job state counts)',

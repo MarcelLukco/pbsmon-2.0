@@ -25,8 +25,13 @@ export class QueuesService {
    * Get list of all queues in hierarchical structure
    * @param userContext User context for access control
    * @param serverName Optional server name filter. If not provided, returns queues from all servers.
+   * @param targetUsername Optional username to check access for. If provided, checks access for this user instead of the current user context.
    */
-  getQueuesList(userContext: UserContext, serverName?: string): QueuesListDTO {
+  getQueuesList(
+    userContext: UserContext,
+    serverName?: string,
+    targetUsername?: string,
+  ): QueuesListDTO {
     const pbsData = this.dataCollectionService.getPbsData();
 
     if (!pbsData?.servers) {
@@ -47,6 +52,8 @@ export class QueuesService {
         serverData.queues.items,
         userContext,
         serverName,
+        undefined,
+        targetUsername,
       );
     }
 
@@ -74,6 +81,7 @@ export class QueuesService {
       userContext,
       undefined,
       queueToServerMap,
+      targetUsername,
     );
   }
 
@@ -85,6 +93,7 @@ export class QueuesService {
     userContext: UserContext,
     serverName?: string,
     queueToServerMap?: Map<string, string>,
+    targetUsername?: string,
   ): QueuesListDTO {
     // Build queue map and parent-child relationships
     const queueMap = new Map<string, PbsQueue>();
@@ -130,12 +139,25 @@ export class QueuesService {
     }
 
     // Build hierarchical structure recursively
-    const buildQueueTree = (queue: PbsQueue): QueueListDTO => {
+    const buildQueueTree = (queue: PbsQueue): QueueListDTO | null => {
+      // Check if target user has access to this queue
+      const hasAccess = this.checkQueueAccess(
+        queue,
+        userContext,
+        targetUsername,
+      );
+
+      // If filtering by target user and they don't have access, exclude this queue and its children
+      if (targetUsername && !hasAccess) {
+        return null;
+      }
+
       const children = childMap.get(queue.name) || [];
       const childQueues = children
         .map((childName) => queueMap.get(childName))
         .filter((q): q is PbsQueue => q !== undefined)
-        .map((q) => buildQueueTree(q));
+        .map((q) => buildQueueTree(q))
+        .filter((q): q is QueueListDTO => q !== null); // Filter out null children
 
       // Sort children: Route queues first, then by priority (higher first), then by name
       childQueues.sort((a, b) => {
@@ -159,11 +181,14 @@ export class QueuesService {
         userContext,
         childQueues,
         queueServerName,
+        targetUsername,
       );
     };
 
-    // Build tree for each root queue
-    const rootQueueDTOs = rootQueues.map((queue) => buildQueueTree(queue));
+    // Build tree for each root queue and filter out null results
+    const rootQueueDTOs = rootQueues
+      .map((queue) => buildQueueTree(queue))
+      .filter((q): q is QueueListDTO => q !== null);
 
     // Sort root queues: Route queues first, then by priority (higher first), then by name
     rootQueueDTOs.sort((a, b) => {
@@ -362,6 +387,7 @@ export class QueuesService {
     userContext: UserContext,
     children: QueueListDTO[] = [],
     serverName?: string | null,
+    targetUsername?: string,
   ): QueueListDTO {
     const priority = queue.attributes.Priority
       ? parseInt(queue.attributes.Priority, 10)
@@ -377,7 +403,7 @@ export class QueuesService {
     const enabled = queue.attributes.enabled === 'True';
     const started = queue.attributes.started === 'True';
 
-    const hasAccess = this.checkQueueAccess(queue, userContext);
+    const hasAccess = this.checkQueueAccess(queue, userContext, targetUsername);
 
     const canBeDirectlySubmitted = queue.attributes.from_route_only !== 'True';
 
@@ -628,9 +654,27 @@ export class QueuesService {
   /**
    * Check if user has access to the queue based on ACLs
    * Admin role has access to everything
+   * @param targetUsername If provided, checks access for this user instead of userContext.username
    */
-  private checkQueueAccess(queue: PbsQueue, userContext: UserContext): boolean {
-    if (userContext.role === UserRole.ADMIN) {
+  private checkQueueAccess(
+    queue: PbsQueue,
+    userContext: UserContext,
+    targetUsername?: string,
+  ): boolean {
+    // If checking access for a specific user, only allow if current user is admin or viewing themselves
+    if (targetUsername) {
+      const currentUsername = userContext.username.split('@')[0];
+      const targetUsernameBase = targetUsername.split('@')[0];
+      if (
+        userContext.role !== UserRole.ADMIN &&
+        currentUsername !== targetUsernameBase
+      ) {
+        // Non-admin users can only check access for themselves
+        return false;
+      }
+    }
+
+    if (!targetUsername && userContext.role === UserRole.ADMIN) {
       return true;
     }
 
@@ -643,6 +687,10 @@ export class QueuesService {
       return true;
     }
 
+    // Use targetUsername if provided, otherwise use userContext.username
+    const usernameToCheck = targetUsername || userContext.username;
+    const usernameBase = usernameToCheck.split('@')[0];
+
     // Check user ACL
     if (userEnable) {
       const allowedUsers = queue.attributes.acl_users
@@ -650,11 +698,10 @@ export class QueuesService {
         : [];
 
       // Check if username matches (handle @domain format)
-      const username = userContext.username.split('@')[0];
       if (
         allowedUsers.some((u) => {
           const allowedUser = u.split('@')[0];
-          return allowedUser === username;
+          return allowedUser === usernameBase;
         })
       ) {
         return true;
@@ -668,14 +715,14 @@ export class QueuesService {
         : [];
 
       // Get user's groups from Perun data
-      const userGroups = this.getUserGroups(userContext.username);
+      const userGroups = this.getUserGroups(usernameToCheck);
       if (userGroups.some((group) => allowedGroups.includes(group))) {
         return true;
       }
     }
 
-    // Check host ACL
-    if (hostEnable && userContext.hostname) {
+    // Check host ACL (only for current user context, not target user)
+    if (hostEnable && userContext.hostname && !targetUsername) {
       const allowedHosts = queue.attributes.acl_hosts
         ? queue.attributes.acl_hosts.split(',').map((h) => h.trim())
         : [];

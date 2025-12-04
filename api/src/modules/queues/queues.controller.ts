@@ -25,7 +25,7 @@ export class QueuesController {
   @ApiOperation({
     summary: 'Get list of all queues',
     description:
-      'Returns hierarchical list of queues with routing relationships and user access information. User context is extracted from access token via middleware. Optionally filter by server name.',
+      'Returns hierarchical list of queues with routing relationships and user access information. User context is extracted from access token via middleware. Optionally filter by server name or check access for a specific user.',
   })
   @ApiQuery({
     name: 'server',
@@ -33,12 +33,19 @@ export class QueuesController {
     description:
       'Filter queues by server name (e.g., "pbs-m1"). If not provided, returns queues from all servers.',
   })
+  @ApiQuery({
+    name: 'user',
+    required: false,
+    description:
+      'Check queue access for a specific user (username). If not provided, uses the current user context. Admin users can check access for any user.',
+  })
   @ApiOkResponseModel(QueuesListDTO, 'Hierarchical list of queues')
   getQueues(
     @UserContextDecorator() userContext: UserContext,
     @Query('server') server?: string,
+    @Query('user') user?: string,
   ): ApiResponse<QueuesListDTO> {
-    const data = this.queuesService.getQueuesList(userContext, server);
+    const data = this.queuesService.getQueuesList(userContext, server, user);
     return new ApiResponse(data, {
       totalCount: this.countQueues(data.queues),
     });

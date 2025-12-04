@@ -1,12 +1,91 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useUserDetail } from "@/hooks/useUserDetail";
+import { useJobs } from "@/hooks/useJobs";
+import { useQueues } from "@/hooks/useQueues";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { Tabs } from "@/components/common/Tabs";
+import { JobsTable } from "@/components/jobs/JobsTable";
+import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
+import { QueueTreeNode } from "@/components/common/QueueTreeNode";
 import type { UserFairshareDTO } from "@/lib/generated-api";
+
+type SortColumn =
+  | "id"
+  | "name"
+  | "state"
+  | "owner"
+  | "node"
+  | "cpuReserved"
+  | "gpuReserved"
+  | "memoryReserved"
+  | "createdAt";
 
 export function UserDetailPage() {
   const { t } = useTranslation();
   const { userId } = useParams<{ userId: string }>();
   const { data, isLoading, error } = useUserDetail(userId || "");
+  const { data: currentUser } = useCurrentUser();
+  const isAdmin = currentUser?.role === "admin";
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState("jobs");
+
+  // Jobs tab state
+  const [jobsPage, setJobsPage] = useState(1);
+  const [jobsLimit] = useState(20);
+  const [jobsSort, setJobsSort] = useState<SortColumn>("createdAt");
+  const [jobsOrder, setJobsOrder] = useState<"asc" | "desc">("desc");
+  const [jobsSearch, setJobsSearch] = useState("");
+
+  // Fetch jobs filtered by user
+  const {
+    data: jobsData,
+    isLoading: jobsLoading,
+    error: jobsError,
+  } = useJobs({
+    page: jobsPage,
+    limit: jobsLimit,
+    sort: jobsSort,
+    order: jobsOrder,
+    search: userId || undefined, // Filter by username
+    enabled: activeTab === "jobs" && !!userId,
+  });
+
+  // Fetch queues filtered by the viewed user (backend returns only queues the user has access to)
+  const {
+    data: queuesData,
+    isLoading: queuesLoading,
+    error: queuesError,
+  } = useQueues({
+    user: userId || undefined,
+    enabled: activeTab === "queues" && !!userId,
+  });
+
+  // Backend already filters queues, so use them directly
+  const filteredQueues = queuesData?.queues || [];
+
+  const handleJobsSort = (column: SortColumn) => {
+    if (jobsSort === column) {
+      setJobsOrder(jobsOrder === "asc" ? "desc" : "asc");
+    } else {
+      setJobsSort(column);
+      setJobsOrder("desc");
+    }
+    setJobsPage(1);
+  };
+
+  const handleJobsPageChange = (newPage: number) => {
+    setJobsPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleJobsSearchChange = (query: string) => {
+    setJobsSearch(query);
+    setJobsPage(1);
+  };
 
   if (isLoading) {
     return (
@@ -70,16 +149,125 @@ export function UserDetailPage() {
     );
   }
 
-  const totalTasks =
-    data.tasks.transit +
-    data.tasks.queued +
-    data.tasks.held +
-    data.tasks.waiting +
-    data.tasks.running +
-    data.tasks.exiting +
-    data.tasks.begun;
+  const jobsTotalPages = jobsData?.meta?.totalCount
+    ? Math.ceil(jobsData.meta.totalCount / jobsLimit)
+    : 0;
 
-  const doneTasks = data.tasks.begun + data.tasks.exiting;
+  const tabs = [
+    {
+      id: "jobs",
+      label: t("users.tabs.jobs"),
+      content: (
+        <div>
+          <JobsSearchBar
+            searchQuery={jobsSearch}
+            onSearchChange={handleJobsSearchChange}
+            totalJobs={jobsData?.meta?.totalCount || 0}
+          />
+
+          {jobsLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-600">{t("common.loading")}</div>
+            </div>
+          )}
+
+          {jobsError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+              <div className="text-red-800">
+                {t("common.errorLoading")}{" "}
+                {jobsError instanceof Error
+                  ? jobsError.message
+                  : t("common.unknownError")}
+              </div>
+            </div>
+          )}
+
+          {jobsData && jobsData.data && (
+            <>
+              <JobsTable
+                jobs={jobsData.data.jobs}
+                sortColumn={jobsSort}
+                sortDirection={jobsOrder}
+                onSort={handleJobsSort}
+                isAdmin={isAdmin}
+              />
+              <JobsPagination
+                currentPage={jobsPage}
+                totalPages={jobsTotalPages}
+                onPageChange={handleJobsPageChange}
+              />
+            </>
+          )}
+
+          {!jobsLoading &&
+            !jobsError &&
+            jobsData?.data &&
+            jobsData.data.jobs.length === 0 && (
+              <div className="text-gray-500 py-8 text-center">
+                {t("jobs.noJobsFound")}
+              </div>
+            )}
+        </div>
+      ),
+    },
+    {
+      id: "queues",
+      label: t("users.tabs.queues"),
+      content: (
+        <div>
+          {queuesLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-600">{t("common.loading")}</div>
+            </div>
+          )}
+
+          {queuesError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+              <div className="text-red-800">
+                {t("common.errorLoading")}{" "}
+                {queuesError instanceof Error
+                  ? queuesError.message
+                  : t("common.unknownError")}
+              </div>
+            </div>
+          )}
+
+          {filteredQueues.length === 0 && !queuesLoading && !queuesError && (
+            <div className="text-gray-500 py-8 text-center">
+              {t("queues.noQueuesFound")}
+            </div>
+          )}
+
+          {filteredQueues.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto">
+              <div className="min-w-max">
+                <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                  <div className="grid grid-cols-12 gap-2 text-sm font-medium text-gray-700">
+                    <div className="col-span-3">{t("queues.queueName")}</div>
+                    <div className="col-span-1">{t("queues.priority")}</div>
+                    <div className="col-span-2">{t("queues.timeLimits")}</div>
+                    <div className="col-span-5">{t("queues.jobs")}</div>
+                    <div className="col-span-1">{t("queues.fairshare")}</div>
+                  </div>
+                </div>
+
+                <div>
+                  {filteredQueues.map((queue, index) => (
+                    <QueueTreeNode
+                      key={queue.name}
+                      queue={queue}
+                      level={0}
+                      isLast={index === filteredQueues.length - 1}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -91,10 +279,13 @@ export function UserDetailPage() {
         </div>
       </header>
       <div className="p-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          {/* User Info Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+          {/* Basic Info Section */}
           <div className="px-6 py-4 border-b border-gray-200">
-            <div className="grid grid-cols-2 gap-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              {t("users.basicInfo")}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <div className="text-sm text-gray-500">
                   {t("users.username")}
@@ -106,7 +297,7 @@ export function UserDetailPage() {
               {data.nickname && (
                 <div>
                   <div className="text-sm text-gray-500">
-                    {t("users.nickname")}
+                    {t("users.fullName")}
                   </div>
                   <div className="text-lg font-medium text-gray-900">
                     {typeof data.nickname === "string"
@@ -115,89 +306,41 @@ export function UserDetailPage() {
                   </div>
                 </div>
               )}
+              {data.organization && (
+                <div>
+                  <div className="text-sm text-gray-500">
+                    {t("users.organization")}
+                  </div>
+                  <div className="text-lg font-medium text-gray-900">
+                    {typeof data.organization === "string"
+                      ? data.organization
+                      : String(data.organization)}
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Publications */}
+            {data.publications && Object.keys(data.publications).length > 0 && (
+              <div className="mt-4">
+                <div className="text-sm text-gray-500 mb-2">
+                  {t("users.publications")}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(data.publications).map(([key, value]) => (
+                    <span
+                      key={key}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                    >
+                      {key}: {String(value)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Tasks Section */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {t("users.tasks")}
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <div className="text-sm text-gray-500">
-                  {t("queues.queued")}
-                </div>
-                <div className="text-xl font-medium text-gray-900">
-                  {data.tasks.queued}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">
-                  {t("queues.running")}
-                </div>
-                <div className="text-xl font-medium text-blue-600">
-                  {data.tasks.running}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">{t("queues.done")}</div>
-                <div className="text-xl font-medium text-green-600">
-                  {doneTasks}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">{t("queues.total")}</div>
-                <div className="text-xl font-medium text-gray-900">
-                  {totalTasks}
-                </div>
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <div className="text-sm text-gray-500">
-                  {t("users.transit")}
-                </div>
-                <div className="text-lg font-medium text-gray-700">
-                  {data.tasks.transit}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">{t("users.held")}</div>
-                <div className="text-lg font-medium text-gray-700">
-                  {data.tasks.held}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">
-                  {t("users.waiting")}
-                </div>
-                <div className="text-lg font-medium text-gray-700">
-                  {data.tasks.waiting}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">
-                  {t("users.exiting")}
-                </div>
-                <div className="text-lg font-medium text-gray-700">
-                  {data.tasks.exiting}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CPU Tasks Section */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {t("users.cpuTasks")}
-            </h2>
-            <div className="text-2xl font-medium text-blue-600">
-              {data.cpuTasks}
-            </div>
-          </div>
-
-          {/* Fairshare Per Server Section */}
+          {/* Fairshare Section */}
           <div className="px-6 py-4">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-lg font-semibold text-gray-900">
@@ -330,6 +473,17 @@ export function UserDetailPage() {
                 </table>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Tabs Section */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="px-6 py-4">
+            <Tabs
+              tabs={tabs}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
           </div>
         </div>
       </div>

@@ -133,6 +133,7 @@ i18n.use(initReactI18next).init({
         users: {
           username: "Username",
           nickname: "Nickname",
+          fullName: "Full Name",
           tasks: "Tasks",
           cpuTasks: "CPU Tasks",
           fairsharePerServer: "Fairshare per Server",
@@ -156,6 +157,13 @@ i18n.use(initReactI18next).init({
           impersonating: "Impersonating: {{username}}",
           cancelImpersonation: "Cancel",
           searchPlaceholder: "Search by username or nickname...",
+          basicInfo: "Basic Information",
+          organization: "Organization",
+          publications: "Publications",
+          tabs: {
+            jobs: "Jobs",
+            queues: "Queues",
+          },
           totalUsers: "Total {{count}} users",
           totalUsersFiltered: "{{filtered}} of {{total}} users",
         },
@@ -378,6 +386,7 @@ i18n.use(initReactI18next).init({
         users: {
           username: "Uživatelské jméno",
           nickname: "Přezdívka",
+          fullName: "Celé jméno",
           tasks: "Úlohy",
           cpuTasks: "CPU úlohy",
           fairsharePerServer: "Fairshare podle serveru",
@@ -402,6 +411,13 @@ i18n.use(initReactI18next).init({
           cancelImpersonation: "Zrušit",
           searchPlaceholder:
             "Hledat podle uživatelského jména nebo přezdívky...",
+          basicInfo: "Základní informace",
+          organization: "Organizace",
+          publications: "Publikace",
+          tabs: {
+            jobs: "Úlohy",
+            queues: "Fronty",
+          },
           totalUsers: "Celkem {{count}} uživatelů",
           totalUsersFiltered: "{{filtered}} z {{total}} uživatelů",
         },

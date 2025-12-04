@@ -423,6 +423,10 @@ export class UsersService {
 
     // Build Perun users lookup map for O(1) access instead of O(n) find()
     const perunUsersMap = new Map<string, string>();
+    const perunUserDataMap = new Map<
+      string,
+      { name: string; org: string; publications: Record<string, string> | null }
+    >();
     if (perunData?.users?.users) {
       for (const perunUser of perunData.users.users) {
         if (perunUser.logname) {
@@ -431,15 +435,32 @@ export class UsersService {
           if (lognameBase !== perunUser.logname) {
             perunUsersMap.set(lognameBase, perunUser.name);
           }
+          // Store full user data
+          perunUserDataMap.set(perunUser.logname, {
+            name: perunUser.name,
+            org: perunUser.org,
+            publications: perunUser.publications || null,
+          });
+          if (lognameBase !== perunUser.logname) {
+            perunUserDataMap.set(lognameBase, {
+              name: perunUser.name,
+              org: perunUser.org,
+              publications: perunUser.publications || null,
+            });
+          }
         }
       }
     }
 
-    // Get user nickname from Perun using O(1) map lookup
-    const nickname =
-      perunUsersMap.get(username) ||
-      perunUsersMap.get(username.split('@')[0]) ||
+    // Get user data from Perun using O(1) map lookup
+    const usernameBase = username.split('@')[0];
+    const perunUserData =
+      perunUserDataMap.get(username) ||
+      perunUserDataMap.get(usernameBase) ||
       null;
+    const nickname = perunUserData?.name || null;
+    const organization = perunUserData?.org || null;
+    const publications = perunUserData?.publications || null;
 
     // Collect all jobs for this user across all servers
     const userJobs: Array<{ job: PbsJob; server: string }> = [];
@@ -473,6 +494,8 @@ export class UsersService {
     return {
       username,
       nickname: nickname || null,
+      organization: organization || null,
+      publications: publications || null,
       tasks,
       fairsharePerServer,
     };
