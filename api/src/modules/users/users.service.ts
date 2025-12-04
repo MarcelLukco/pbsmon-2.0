@@ -96,15 +96,32 @@ export class UsersService {
     const { lookup: fairshareRankingsLookup, maxRankings } =
       this.buildFairshareRankingsLookup(pbsData?.servers, usernamesWithJobs);
 
+    // For non-admin users, get allowed usernames from their groups
+    // (excluding system-wide groups that contain 80%+ of all users)
+    const allowedUsernames = new Set<string>();
+    if (userContext.role !== UserRole.ADMIN) {
+      const usernameBase = userContext.username.split('@')[0];
+      // Always include the user themselves
+      allowedUsernames.add(userContext.username);
+      allowedUsernames.add(usernameBase);
+
+      // Get users from groups the user belongs to (excluding system-wide groups)
+      const groupMembers = this.getUsersFromUserGroups(
+        perunData,
+        userContext.username,
+      );
+      for (const member of groupMembers) {
+        allowedUsernames.add(member);
+      }
+    }
+
     // Build user list for all users
     for (const username of allPerunUsernames) {
-      // Filter: admin sees all, non-admin sees only themselves
-      if (
-        userContext.role !== UserRole.ADMIN &&
-        userContext.username !== username &&
-        userContext.username.split('@')[0] !== username
-      ) {
-        continue;
+      // Filter: admin sees all, non-admin sees only themselves and users from their groups
+      if (userContext.role !== UserRole.ADMIN) {
+        if (!allowedUsernames.has(username)) {
+          continue;
+        }
       }
 
       const jobs = userJobsMap.get(username) || [];
@@ -773,6 +790,88 @@ export class UsersService {
         server,
         ranking: value !== undefined ? value : null,
       });
+    }
+
+    return result;
+  }
+
+  /**
+   * Get all users from groups that the user belongs to
+   * Excludes system-wide groups that contain 80%+ of all Metacentrum users
+   * @param perunData Perun data
+   * @param username Username to find groups for
+   * @returns Set of usernames from relevant groups
+   */
+  private getUsersFromUserGroups(
+    perunData: any,
+    username: string,
+  ): Set<string> {
+    const result = new Set<string>();
+    const usernameBase = username.split('@')[0];
+
+    if (!perunData?.etcGroups || perunData.etcGroups.length === 0) {
+      return result;
+    }
+
+    // Calculate total unique users in the system
+    const allUsersSet = new Set<string>();
+    if (perunData?.users?.users) {
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          allUsersSet.add(lognameBase);
+          allUsersSet.add(perunUser.logname);
+        }
+      }
+    }
+    const totalUsers = allUsersSet.size;
+
+    // Collect all groups the user belongs to across all servers
+    const userGroupsMap = new Map<
+      string,
+      { gid: string; members: Set<string> }
+    >();
+
+    for (const serverGroups of perunData.etcGroups) {
+      for (const group of serverGroups.entries) {
+        // Check if user is a member of this group
+        const isMember =
+          group.members.includes(usernameBase) ||
+          group.members.includes(username);
+        if (!isMember) {
+          continue;
+        }
+
+        // Merge group members across all servers
+        if (!userGroupsMap.has(group.groupname)) {
+          userGroupsMap.set(group.groupname, {
+            gid: group.gid,
+            members: new Set(group.members),
+          });
+        } else {
+          const existing = userGroupsMap.get(group.groupname)!;
+          for (const member of group.members) {
+            existing.members.add(member);
+          }
+        }
+      }
+    }
+
+    // Filter out system-wide groups (80%+ of all users) and collect members
+    const MAX_PERCENTAGE_OF_ALL_USERS = 0.8; // 80%
+    for (const [groupName, groupData] of userGroupsMap.entries()) {
+      if (totalUsers > 0) {
+        const percentage = groupData.members.size / totalUsers;
+        // Skip groups that contain too many users (system-wide groups)
+        if (percentage > MAX_PERCENTAGE_OF_ALL_USERS) {
+          continue;
+        }
+      }
+
+      // Add all members from this group
+      for (const member of groupData.members) {
+        result.add(member);
+      }
     }
 
     return result;

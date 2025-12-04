@@ -69,6 +69,7 @@ const menuItems: MenuItem[] = [
         translationKey: "pages.waitingJobs",
       },
       { id: "users", path: "/users", translationKey: "pages.users" },
+      { id: "groups", path: "/groups", translationKey: "pages.groups" },
       /*  { id: "outages", path: "/outages", translationKey: "pages.outages" },
       { id: "status", path: "/status", translationKey: "pages.currentStatus" }, */
     ],

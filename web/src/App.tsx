@@ -14,6 +14,8 @@ import { JobsQueuesPage } from "@/pages/JobsQueuesPage";
 import { QueueDetailPage } from "@/pages/QueueDetailPage";
 import { UsersPage } from "@/pages/UsersPage";
 import { UserDetailPage } from "@/pages/UserDetailPage";
+import { GroupsPage } from "@/pages/GroupsPage";
+import { GroupDetailPage } from "@/pages/GroupDetailPage";
 import { ImpersonationProvider } from "@/contexts/ImpersonationContext";
 import "@/i18n";
 import "@/app.css";
@@ -40,6 +42,8 @@ export default function App() {
             <Route path="queues/:queueId" element={<QueueDetailPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="users/:userId" element={<UserDetailPage />} />
+            <Route path="groups" element={<GroupsPage />} />
+            <Route path="groups/:groupName" element={<GroupDetailPage />} />
           </Route>
         </Routes>
       </Router>

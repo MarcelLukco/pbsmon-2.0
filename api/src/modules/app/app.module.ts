@@ -5,6 +5,7 @@ import { QueuesModule } from '@/modules/queues/queues.module';
 import { StorageSpacesModule } from '@/modules/storage-spaces/storage-spaces.module';
 import { InfrastructureModule } from '@/modules/infrastructure/infrastructure.module';
 import { UsersModule } from '@/modules/users/users.module';
+import { GroupsModule } from '@/modules/groups/groups.module';
 import { JobsModule } from '@/modules/jobs/jobs.module';
 import { OutagesModule } from '@/modules/outages/outages.module';
 import { NewsModule } from '@/modules/news/news.module';
@@ -28,6 +29,7 @@ import configuration, {
     StorageSpacesModule,
     InfrastructureModule,
     UsersModule,
+    GroupsModule,
     JobsModule,
     OutagesModule,
     NewsModule,

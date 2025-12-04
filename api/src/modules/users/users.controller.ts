@@ -25,7 +25,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get list of users',
     description:
-      'Returns paginated, sorted, and filtered list of users with summary statistics. Admin sees all users, non-admin sees only themselves. Returns ALL Perun users, including those without jobs.',
+      'Returns paginated, sorted, and filtered list of users with summary statistics. Admin sees all users. Non-admin sees themselves and users from their groups (excluding system-wide groups that contain 80%+ of all Metacentrum users). Returns ALL Perun users, including those without jobs.',
   })
   @ApiQuery({
     name: 'page',
