@@ -406,7 +406,15 @@ export class UsersService {
     const perunUsersMap = new Map<string, string>();
     const perunUserDataMap = new Map<
       string,
-      { name: string; org: string; publications: Record<string, string> | null }
+      {
+        name: string;
+        org: string;
+        publications: Record<string, string> | null;
+        vos: Record<
+          string,
+          { expires: string; groups: string[]; org: string; status: string }
+        > | null;
+      }
     >();
     if (perunData?.users?.users) {
       for (const perunUser of perunData.users.users) {
@@ -421,12 +429,14 @@ export class UsersService {
             name: perunUser.name,
             org: perunUser.org,
             publications: perunUser.publications || null,
+            vos: perunUser.vos || null,
           });
           if (lognameBase !== perunUser.logname) {
             perunUserDataMap.set(lognameBase, {
               name: perunUser.name,
               org: perunUser.org,
               publications: perunUser.publications || null,
+              vos: perunUser.vos || null,
             });
           }
         }
@@ -442,6 +452,22 @@ export class UsersService {
     const nickname = perunUserData?.name || null;
     const organization = perunUserData?.org || null;
     const publications = perunUserData?.publications || null;
+
+    // Extract earliest membership expiration date from VOS data
+    let membershipExpiration: string | null = null;
+    if (perunUserData?.vos) {
+      const expirationDates: string[] = [];
+      for (const vosInfo of Object.values(perunUserData.vos)) {
+        if (vosInfo?.expires) {
+          expirationDates.push(vosInfo.expires);
+        }
+      }
+      if (expirationDates.length > 0) {
+        // Sort dates and get the earliest (most restrictive)
+        expirationDates.sort();
+        membershipExpiration = expirationDates[0];
+      }
+    }
 
     // Collect all jobs for this user across all servers
     const userJobs: Array<{ job: PbsJob; server: string }> = [];
@@ -482,6 +508,7 @@ export class UsersService {
       nickname: nickname || null,
       organization: organization || null,
       publications: publications || null,
+      membershipExpiration: membershipExpiration || null,
       tasks,
       fairsharePerServer,
     };

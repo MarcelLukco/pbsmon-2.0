@@ -95,6 +95,14 @@ export class UserDetailDTO {
   publications?: Record<string, string> | null;
 
   @Expose()
+  @ApiProperty({
+    description:
+      'Membership expiration date (earliest expiration from all VOS memberships)',
+    nullable: true,
+  })
+  membershipExpiration?: string | null;
+
+  @Expose()
   @Type(() => UserTaskCountDTO)
   @ApiProperty({
     description: 'Task counts (job state counts)',

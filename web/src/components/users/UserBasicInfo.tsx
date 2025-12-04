@@ -42,6 +42,16 @@ export function UserBasicInfo({ user }: UserBasicInfoProps) {
             </div>
           </div>
         )}
+        {user.membershipExpiration && (
+          <div>
+            <div className="text-sm text-gray-500">
+              {t("users.membershipExpiration")}
+            </div>
+            <div className="text-lg font-medium text-gray-900">
+              {new Date(user.membershipExpiration).toLocaleDateString()}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Publications */}
