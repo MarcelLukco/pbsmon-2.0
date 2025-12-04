@@ -137,6 +137,8 @@ i18n.use(initReactI18next).init({
           noUsersFound: "No users found",
           actions: "Actions",
           impersonate: "Impersonate",
+          impersonating: "Impersonating: {{username}}",
+          cancelImpersonation: "Cancel",
           searchPlaceholder: "Search by username or nickname...",
           totalUsers: "Total {{count}} users",
           totalUsersFiltered: "{{filtered}} of {{total}} users",
@@ -356,6 +358,8 @@ i18n.use(initReactI18next).init({
           noUsersFound: "Nebyli nalezeni žádní uživatelé",
           actions: "Akce",
           impersonate: "Zosobnit",
+          impersonating: "Zosobňování: {{username}}",
+          cancelImpersonation: "Zrušit",
           searchPlaceholder:
             "Hledat podle uživatelského jména nebo přezdívky...",
           totalUsers: "Celkem {{count}} uživatelů",

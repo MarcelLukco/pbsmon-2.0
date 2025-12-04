@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useUsers } from "@/hooks/useUsers";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useImpersonation } from "@/contexts/ImpersonationContext";
 import { UsersSearchBar } from "@/components/users/UsersSearchBar";
 import { UsersTable } from "@/components/users/UsersTable";
 import { JobsPagination } from "@/components/jobs/JobsPagination";
@@ -9,6 +11,7 @@ import type { SortColumn } from "@/components/users/types";
 
 export function UsersPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [limit] = useState(20);
   const [sort, setSort] = useState<string>("fairshare-pbs-m1");
@@ -16,6 +19,7 @@ export function UsersPage() {
   const [search, setSearch] = useState("");
 
   const { data: currentUser } = useCurrentUser();
+  const { impersonate } = useImpersonation();
   const isAdmin = currentUser?.role === "admin";
 
   const { data, isLoading, error } = useUsers({
@@ -52,8 +56,9 @@ export function UsersPage() {
   };
 
   const handleImpersonate = (username: string) => {
-    // TODO: Implement impersonate functionality
-    console.log("Impersonate user:", username);
+    impersonate(username);
+    // Redirect admin to personal view page after impersonation
+    navigate("/personal-view");
   };
 
   // Get fairshare servers and maxFairshare from server response

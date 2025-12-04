@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { ApiError } from "@/lib/generated-api/core/ApiError";
+import { ImpersonationBanner } from "@/components/common/ImpersonationBanner";
+import { useImpersonation } from "@/contexts/ImpersonationContext";
 
 type MenuItem = {
   id: string;
@@ -115,6 +117,7 @@ export function SidebarLayout() {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const { data: currentUser, isLoading, error } = useCurrentUser();
+  const { impersonatedUsername } = useImpersonation();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(
     new Set(["resource-status"])
   );
@@ -424,11 +427,13 @@ export function SidebarLayout() {
           className="flex-1 bg-gray-light"
           style={{
             maxWidth: "calc(100vw - var(--spacing) * 64)",
+            paddingBottom: impersonatedUsername ? "60px" : "0",
           }}
         >
           <Outlet />
         </main>
       </div>
+      <ImpersonationBanner />
     </div>
   );
 }

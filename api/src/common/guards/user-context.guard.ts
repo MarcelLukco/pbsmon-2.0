@@ -57,6 +57,43 @@ export class UserContextGuard implements CanActivate {
       return true;
     }
 
+    // Handle impersonation: check if X-Impersonate-User header is present
+    // Headers are typically lowercased by Express, but check both cases
+    const impersonateHeader =
+      request.headers['x-impersonate-user'] ||
+      request.headers['X-Impersonate-User'];
+    if (impersonateHeader) {
+      // Only allow admins to impersonate
+      if (userContext.role !== UserRole.ADMIN) {
+        throw new ForbiddenException(
+          'Only administrators can impersonate users',
+        );
+      }
+
+      const impersonatedUsername = Array.isArray(impersonateHeader)
+        ? impersonateHeader[0]
+        : impersonateHeader;
+
+      // Validate that username is a non-empty string
+      if (
+        !impersonatedUsername ||
+        typeof impersonatedUsername !== 'string' ||
+        impersonatedUsername.trim() === ''
+      ) {
+        throw new ForbiddenException('Invalid impersonation username');
+      }
+
+      // Create impersonated user context
+      // Keep role as USER so admins can see what regular users see
+      request.userContext = {
+        username: impersonatedUsername.trim(),
+        role: UserRole.USER,
+        groups: userContext.groups || [],
+        hostname: userContext.hostname,
+      };
+      return true;
+    }
+
     // Attach user context to request for use in controllers/services
     request.userContext = userContext;
 
