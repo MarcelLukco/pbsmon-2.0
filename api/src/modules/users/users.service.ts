@@ -757,9 +757,6 @@ export class UsersService {
   ): UserFairshareDTO[] {
     const values: UserFairshareDTO[] = [];
 
-    console.log(fairshareRankingsLookup);
-    console.log(username);
-
     const fairsharePerUser = fairshareRankingsLookup.get(username);
     if (fairsharePerUser) {
       for (const [serverName, ranking] of Object.entries(fairsharePerUser)) {
