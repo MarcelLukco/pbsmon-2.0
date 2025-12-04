@@ -93,6 +93,16 @@ export class QueueListDTO {
   canBeDirectlySubmitted?: boolean;
 
   @Expose()
+  @ApiProperty({
+    description:
+      'ACL groups that have access to this queue (if acl_group_enable is true)',
+    type: [String],
+    nullable: true,
+    required: false,
+  })
+  aclGroups?: string[] | null;
+
+  @Expose()
   @Type(() => QueueListDTO)
   @ApiProperty({
     description: 'Child queues (queues that this queue routes to)',

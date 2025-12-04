@@ -107,7 +107,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get user detail',
     description:
-      'Returns user details including nickname, fairshare per server, tasks, and CPU tasks. Admin can see all users, non-admin can only see themselves.',
+      'Returns user details including nickname, fairshare per server, tasks, and CPU tasks. Admin can see all users. Non-admin can see themselves and users from their groups (excluding system-wide groups that contain 80%+ of all Metacentrum users).',
   })
   @ApiOkResponseModel(UserDetailDTO, 'User detail')
   @ApiResponse({ status: 404, description: 'User not found' })

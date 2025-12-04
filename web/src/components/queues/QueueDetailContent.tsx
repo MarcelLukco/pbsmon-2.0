@@ -195,9 +195,41 @@ export function QueueDetailContent({
                 </span>
               </div>
             )}
+            {queue.hasAccess === true &&
+              queue.acl?.groups &&
+              queue.acl.groups.length > 0 && (
+                <div className="col-span-2">
+                  <span className="flex items-center px-2 py-1 text-xs rounded bg-green-100 text-green-800">
+                    <Icon icon="bxs:lock-open-alt" className="w-4 h-4 mr-1" />
+                    {t("queues.restrictedAccess")}
+                  </span>
+                </div>
+              )}
           </div>
         </div>
       </div>
+
+      {/* ACL Groups */}
+      {queue.acl?.groups && queue.acl.groups.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              {t("queues.aclGroups")}
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {queue.acl.groups.map((groupName) => (
+                <Link
+                  key={groupName}
+                  to={`/groups/${encodeURIComponent(groupName)}`}
+                  className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
+                >
+                  {groupName}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Parent Queue */}
       {queue.parent && (

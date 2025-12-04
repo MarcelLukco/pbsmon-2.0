@@ -390,6 +390,13 @@ export class QueuesService {
       }
     }
 
+    // Extract ACL groups for tooltip display
+    const aclGroups =
+      queue.attributes.acl_group_enable === 'True' &&
+      queue.attributes.acl_groups
+        ? queue.attributes.acl_groups.split(',').map((g) => g.trim())
+        : null;
+
     return {
       name: queue.name,
       server: serverName || null,
@@ -405,6 +412,7 @@ export class QueuesService {
       started,
       hasAccess,
       canBeDirectlySubmitted,
+      aclGroups,
       children: children.length > 0 ? children : undefined,
     };
   }
@@ -640,12 +648,14 @@ export class QueuesService {
     }
 
     // Check group ACL
-    if (groupEnable && userContext.groups && userContext.groups.length > 0) {
+    if (groupEnable) {
       const allowedGroups = queue.attributes.acl_groups
         ? queue.attributes.acl_groups.split(',').map((g) => g.trim())
         : [];
 
-      if (userContext.groups.some((group) => allowedGroups.includes(group))) {
+      // Get user's groups from Perun data
+      const userGroups = this.getUserGroups(userContext.username);
+      if (userGroups.some((group) => allowedGroups.includes(group))) {
         return true;
       }
     }
@@ -671,5 +681,36 @@ export class QueuesService {
 
     // If ACL is enabled but no match found, deny access
     return false;
+  }
+
+  /**
+   * Get all groups that a user belongs to from Perun etc_groups data
+   * @param username Username to find groups for
+   * @returns Array of group names the user belongs to
+   */
+  private getUserGroups(username: string): string[] {
+    const perunData = this.dataCollectionService.getPerunData();
+
+    if (!perunData?.etcGroups || perunData.etcGroups.length === 0) {
+      return [];
+    }
+
+    const usernameBase = username.split('@')[0];
+    const userGroups = new Set<string>();
+
+    // Find all groups the user belongs to across all servers
+    for (const serverGroups of perunData.etcGroups) {
+      for (const group of serverGroups.entries) {
+        // Check if user is a member of this group
+        const isMember =
+          group.members.includes(usernameBase) ||
+          group.members.includes(username);
+        if (isMember) {
+          userGroups.add(group.groupname);
+        }
+      }
+    }
+
+    return Array.from(userGroups);
   }
 }

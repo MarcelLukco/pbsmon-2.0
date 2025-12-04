@@ -36,6 +36,12 @@ i18n.use(initReactI18next).init({
         queues: {
           routeQueue: "Route Queue",
           noAccess: "Access to this queue is reserved for authorized users",
+          noAccessGroups:
+            "Access to this queue is reserved for users in the following groups: {{groups}}",
+          restrictedAccess: "This queue is restricted to specific groups",
+          restrictedGroups:
+            "This queue is restricted to users in the following groups: {{groups}}",
+          aclGroups: "Access Control Groups",
           noDirectSubmission:
             "Jobs cannot be submitted directly to this queue. Please use the route queue instead.",
           min: "Min",
@@ -266,6 +272,12 @@ i18n.use(initReactI18next).init({
           routeQueue: "Směrovací fronta",
           noAccess:
             "Přístup k této frontě je vyhrazen autorizovaným uživatelům",
+          noAccessGroups:
+            "Přístup k této frontě je vyhrazen uživatelům v následujících skupinách: {{groups}}",
+          restrictedAccess: "Tato fronta je omezena na specifické skupiny",
+          restrictedGroups:
+            "Tato fronta je omezena na uživatele v následujících skupinách: {{groups}}",
+          aclGroups: "Skupiny s přístupem",
           noDirectSubmission:
             "Úlohy nelze odeslat přímo do této fronty. Použijte prosím směrovací frontu.",
           min: "Min",

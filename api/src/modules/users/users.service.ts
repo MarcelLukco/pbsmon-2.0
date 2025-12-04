@@ -384,16 +384,42 @@ export class UsersService {
    * @param userContext User context for access control
    */
   getUserDetail(username: string, userContext: UserContext): UserDetailDTO {
-    // Check if user is admin or viewing their own profile
-    if (
-      userContext.role !== UserRole.ADMIN &&
-      userContext.username !== username
-    ) {
-      throw new NotFoundException(`User '${username}' was not found`);
-    }
-
     const pbsData = this.dataCollectionService.getPbsData();
     const perunData = this.dataCollectionService.getPerunData();
+
+    // For non-admin users, check if they can access this user
+    if (userContext.role !== UserRole.ADMIN) {
+      const usernameBase = userContext.username.split('@')[0];
+      const requestedUsernameBase = username.split('@')[0];
+
+      // Always allow access to themselves
+      if (
+        userContext.username !== username &&
+        usernameBase !== requestedUsernameBase
+      ) {
+        // Check if the requested user is in the same groups (excluding system-wide groups)
+        const allowedUsernames = new Set<string>();
+        allowedUsernames.add(userContext.username);
+        allowedUsernames.add(usernameBase);
+
+        // Get users from groups the current user belongs to (excluding system-wide groups)
+        const groupMembers = this.getUsersFromUserGroups(
+          perunData,
+          userContext.username,
+        );
+        for (const member of groupMembers) {
+          allowedUsernames.add(member);
+        }
+
+        // Check if requested user is in allowed set
+        if (
+          !allowedUsernames.has(username) &&
+          !allowedUsernames.has(requestedUsernameBase)
+        ) {
+          throw new NotFoundException(`User '${username}' was not found`);
+        }
+      }
+    }
 
     // Build Perun users lookup map for O(1) access instead of O(n) find()
     const perunUsersMap = new Map<string, string>();

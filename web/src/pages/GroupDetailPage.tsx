@@ -128,7 +128,11 @@ export function GroupDetailPage() {
                         {member.nickname}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {member.name || "-"}
+                        {member.name
+                          ? typeof member.name === "string"
+                            ? member.name
+                            : member.name.name
+                          : "-"}
                       </td>
                     </tr>
                   ))}

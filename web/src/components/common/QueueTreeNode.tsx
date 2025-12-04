@@ -100,11 +100,39 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
             {queue.hasAccess === false && (
               <span
                 className="flex items-center px-2 py-0.5 text-xs rounded bg-red-100 text-red-800 flex-shrink-0"
-                title={t("queues.noAccess")}
+                data-tooltip-id={`no-access-${queue.name}-${queue.server}`}
+                data-tooltip-content={
+                  queue.aclGroups && queue.aclGroups.length > 0
+                    ? t("queues.noAccessGroups", {
+                        groups: queue.aclGroups.join(", "),
+                      })
+                    : t("queues.noAccess")
+                }
               >
                 <Icon icon="bxs:lock-alt" className="w-4 h-4 mr-1" />
+                <Tooltip
+                  id={`no-access-${queue.name}-${queue.server}`}
+                  style={{ maxWidth: "300px", whiteSpace: "normal" }}
+                />
               </span>
             )}
+            {queue.hasAccess === true &&
+              queue.aclGroups &&
+              queue.aclGroups.length > 0 && (
+                <span
+                  className="flex items-center px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 flex-shrink-0"
+                  data-tooltip-id={`restricted-${queue.name}-${queue.server}`}
+                  data-tooltip-content={t("queues.restrictedGroups", {
+                    groups: queue.aclGroups.join(", "),
+                  })}
+                >
+                  <Icon icon="bxs:lock-open-alt" className="w-4 h-4 mr-1" />
+                  <Tooltip
+                    id={`restricted-${queue.name}-${queue.server}`}
+                    style={{ maxWidth: "300px", whiteSpace: "normal" }}
+                  />
+                </span>
+              )}
           </div>
         </div>
 
