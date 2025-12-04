@@ -48,10 +48,19 @@ export class UserFairshareDTO {
 
   @Expose()
   @ApiProperty({
-    description: 'Fairshare ranking (1 = best, higher = worse)',
+    description:
+      'Fairshare ranking (1 = worst, maximum = best). Ranking is calculated among users currently computing (with running jobs).',
     nullable: true,
   })
   ranking?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description:
+      'Total number of users currently computing on this server (used to calculate users before you)',
+    nullable: true,
+  })
+  totalUsers?: number | null;
 }
 
 /**

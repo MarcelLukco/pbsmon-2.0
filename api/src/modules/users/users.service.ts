@@ -38,26 +38,7 @@ export class UsersService {
     const perunData = this.dataCollectionService.getPerunData();
 
     // Collect all jobs and map them to usernames
-    const userJobsMap = new Map<string, PbsJob[]>();
-    const usernamesWithJobs = new Set<string>();
-
-    if (pbsData?.servers) {
-      for (const serverData of Object.values(pbsData.servers)) {
-        if (serverData.jobs?.items) {
-          for (const job of serverData.jobs.items) {
-            const jobOwner = job.attributes.Job_Owner || '';
-            const ownerUsername = jobOwner.split('@')[0];
-            if (ownerUsername) {
-              usernamesWithJobs.add(ownerUsername);
-              if (!userJobsMap.has(ownerUsername)) {
-                userJobsMap.set(ownerUsername, []);
-              }
-              userJobsMap.get(ownerUsername)!.push(job);
-            }
-          }
-        }
-      }
-    }
+    const { usernamesWithJobs, userJobsMap } = this.getUsernamesWithJobs();
 
     // Start with ALL Perun users (not just users with jobs)
     const allUsers: UserListDTO[] = [];
@@ -485,10 +466,15 @@ export class UsersService {
     // Calculate task counts (same as queue state counts)
     const tasks = this.calculateTaskCounts(userJobs.map(({ job }) => job));
 
-    // Get fairshare per server
-    const fairsharePerServer = this.getFairsharePerServer(
-      userJobs,
-      pbsData?.servers,
+    const { usernamesWithJobs } = this.getUsernamesWithJobs();
+
+    const { lookup: fairshareRankingsLookup, maxRankings } =
+      this.buildFairshareRankingsLookup(pbsData?.servers, usernamesWithJobs);
+
+    const fairsharePerServer = this.getFairshareValuesForUser(
+      username,
+      fairshareRankingsLookup,
+      maxRankings,
     );
 
     return {
@@ -766,84 +752,59 @@ export class UsersService {
    */
   private getFairshareValuesForUser(
     username: string,
-    servers?: Record<string, any>,
-  ): Record<string, number> {
-    const values: Record<string, number> = {};
+    fairshareRankingsLookup: Map<string, Record<string, number>>,
+    maxRankings: Record<string, number>,
+  ): UserFairshareDTO[] {
+    const values: UserFairshareDTO[] = [];
 
-    if (!servers) {
-      return values;
-    }
+    console.log(fairshareRankingsLookup);
+    console.log(username);
 
-    const usernameBase = username.split('@')[0];
-
-    for (const [serverName, serverData] of Object.entries(servers)) {
-      if (!serverData.fairshare?.entries) {
-        continue;
-      }
-
-      // Find the user's entry in fairshare data
-      const userEntry = serverData.fairshare.entries.find(
-        (entry: { username: string; value2: number }) => {
-          const entryUsername = entry.username;
-          const entryUsernameBase = entryUsername.split('@')[0];
-          return (
-            (entryUsername === username ||
-              entryUsername === usernameBase ||
-              entryUsernameBase === username ||
-              entryUsernameBase === usernameBase) &&
-            entry.value2 !== undefined &&
-            entry.value2 !== null &&
-            entry.value2 > 0
-          );
-        },
-      );
-
-      if (
-        userEntry &&
-        userEntry.value2 !== undefined &&
-        userEntry.value2 !== null
-      ) {
-        values[serverName] = userEntry.value2;
+    const fairsharePerUser = fairshareRankingsLookup.get(username);
+    if (fairsharePerUser) {
+      for (const [serverName, ranking] of Object.entries(fairsharePerUser)) {
+        values.push({
+          server: serverName,
+          ranking,
+          totalUsers: maxRankings[serverName],
+        });
       }
     }
 
     return values;
   }
 
-  /**
-   * Get fairshare information per server
-   * Returns rankings from fairshare data
-   */
-  private getFairsharePerServer(
-    userJobs: Array<{ job: PbsJob; server: string }>,
-    servers?: Record<string, any>,
-  ): UserFairshareDTO[] {
-    // Get unique servers from user jobs
-    const uniqueServers = new Set<string>();
-    for (const { server } of userJobs) {
-      uniqueServers.add(server);
+  private getUsernamesWithJobs(): {
+    usernamesWithJobs: Set<string>;
+    userJobsMap: Map<string, PbsJob[]>;
+  } {
+    const pbsData = this.dataCollectionService.getPbsData();
+    const userJobsMap = new Map<string, PbsJob[]>();
+    const usernamesWithJobs = new Set<string>();
+
+    if (pbsData?.servers) {
+      for (const serverData of Object.values(pbsData.servers)) {
+        if (serverData.jobs?.items) {
+          for (const job of serverData.jobs.items) {
+            const jobOwner = job.attributes.Job_Owner || '';
+            const ownerUsername = jobOwner.split('@')[0];
+            if (ownerUsername) {
+              usernamesWithJobs.add(ownerUsername);
+              if (!userJobsMap.has(ownerUsername)) {
+                userJobsMap.set(ownerUsername, []);
+              }
+              userJobsMap.get(ownerUsername)!.push(job);
+            }
+          }
+        }
+      }
     }
 
-    // Get fairshare values for each server
-    const username = userJobs[0]?.job.attributes.Job_Owner?.split('@')[0] || '';
-    const values = this.getFairshareValuesForUser(username, servers);
-
-    // Convert to array format - for detail view, we still return ranking format
-    // but we'll calculate it from the values
-    const result: UserFairshareDTO[] = [];
-    for (const server of uniqueServers) {
-      const value = values[server];
-      // For detail view, we return the value as ranking for now
-      // TODO: Consider updating UserFairshareDTO to include value instead of ranking
-      result.push({
-        server,
-        ranking: value !== undefined ? value : null,
-      });
-    }
-
-    return result;
+    return {
+      usernamesWithJobs,
+      userJobsMap,
+    };
   }
-
   /**
    * Get all users from groups that the user belongs to
    * Excludes system-wide groups that contain 80%+ of all Metacentrum users
