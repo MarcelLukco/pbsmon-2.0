@@ -97,42 +97,69 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
                 ? `${queue.name}@${queue.server}.metacentrum.cz`
                 : queue.name}
             </Link>
-            {queue.hasAccess === false && (
-              <span
-                className="flex items-center px-2 py-0.5 text-xs rounded bg-red-100 text-red-800 flex-shrink-0"
-                data-tooltip-id={`no-access-${queue.name}-${queue.server}`}
-                data-tooltip-content={
-                  queue.aclGroups && queue.aclGroups.length > 0
+            {(() => {
+              const isReserved =
+                (queue.aclGroups && queue.aclGroups.length > 0) ||
+                (queue.aclUsers && queue.aclUsers.length > 0);
+
+              if (!isReserved) {
+                return null;
+              }
+
+              const tooltipId = `reserved-${queue.name}-${queue.server}`;
+              let tooltipContent = "";
+
+              if (queue.aclGroups && queue.aclGroups.length > 0) {
+                tooltipContent =
+                  queue.hasAccess === false
                     ? t("queues.noAccessGroups", {
                         groups: queue.aclGroups.join(", "),
                       })
-                    : t("queues.noAccess")
-                }
-              >
-                <Icon icon="bxs:lock-alt" className="w-4 h-4 mr-1" />
-                <Tooltip
-                  id={`no-access-${queue.name}-${queue.server}`}
-                  style={{ maxWidth: "300px", whiteSpace: "normal" }}
-                />
-              </span>
-            )}
-            {queue.hasAccess === true &&
-              queue.aclGroups &&
-              queue.aclGroups.length > 0 && (
+                    : t("queues.restrictedGroups", {
+                        groups: queue.aclGroups.join(", "),
+                      });
+              } else if (queue.aclUsers && queue.aclUsers.length > 0) {
+                tooltipContent = t("queues.reservedForUsers", {
+                  users: queue.aclUsers
+                    .map((u) => {
+                      // Show full info if username is available, otherwise just nickname
+                      if (u.username) {
+                        return u.name
+                          ? `${u.name} (${u.username})`
+                          : u.username;
+                      } else {
+                        return u.nickname || "Unknown";
+                      }
+                    })
+                    .join(", "),
+                });
+              }
+
+              return (
                 <span
-                  className="flex items-center px-2 py-0.5 text-xs rounded bg-green-100 text-green-800 flex-shrink-0"
-                  data-tooltip-id={`restricted-${queue.name}-${queue.server}`}
-                  data-tooltip-content={t("queues.restrictedGroups", {
-                    groups: queue.aclGroups.join(", "),
-                  })}
+                  className={`flex items-center px-2 py-0.5 text-xs rounded flex-shrink-0 ${
+                    queue.hasAccess === false
+                      ? "bg-red-100 text-red-800"
+                      : "bg-green-100 text-green-800"
+                  }`}
+                  data-tooltip-id={tooltipId}
+                  data-tooltip-content={tooltipContent}
                 >
-                  <Icon icon="bxs:lock-open-alt" className="w-4 h-4 mr-1" />
+                  <Icon
+                    icon={
+                      queue.hasAccess === false
+                        ? "bxs:lock-alt"
+                        : "bxs:lock-open-alt"
+                    }
+                    className="w-4 h-4 mr-1"
+                  />
                   <Tooltip
-                    id={`restricted-${queue.name}-${queue.server}`}
-                    style={{ maxWidth: "300px", whiteSpace: "normal" }}
+                    id={tooltipId}
+                    style={{ maxWidth: "400px", whiteSpace: "normal" }}
                   />
                 </span>
-              )}
+              );
+            })()}
           </div>
         </div>
 

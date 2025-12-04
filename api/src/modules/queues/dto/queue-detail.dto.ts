@@ -1,17 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
+import { QueueAclUserDTO } from './queue-list.dto';
 
 /**
  * Access Control List (ACL) information
  */
 export class QueueAclDTO {
   @Expose()
+  @Type(() => QueueAclUserDTO)
   @ApiProperty({
     description: 'ACL users (if acl_user_enable is true)',
-    type: [String],
+    type: [QueueAclUserDTO],
     nullable: true,
   })
-  users?: string[] | null;
+  users?: QueueAclUserDTO[] | null;
 
   @Expose()
   @ApiProperty({

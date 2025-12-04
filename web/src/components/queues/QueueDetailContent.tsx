@@ -187,24 +187,64 @@ export function QueueDetailContent({
                     : t("queues.disabled")}
               </div>
             </div>
-            {queue.hasAccess === false && (
-              <div className="col-span-2">
-                <span className="flex items-center px-2 py-1 text-xs rounded bg-red-100 text-red-800">
-                  <Icon icon="bxs:lock-alt" className="w-4 h-4 mr-1" />
-                  {t("queues.noAccess")}
-                </span>
-              </div>
-            )}
-            {queue.hasAccess === true &&
-              queue.acl?.groups &&
-              queue.acl.groups.length > 0 && (
+            {(() => {
+              const isReserved =
+                (queue.acl?.groups && queue.acl.groups.length > 0) ||
+                (queue.acl?.users && queue.acl.users.length > 0);
+
+              if (!isReserved) {
+                return null;
+              }
+
+              let message = "";
+              if (queue.acl?.groups && queue.acl.groups.length > 0) {
+                message =
+                  queue.hasAccess === false
+                    ? t("queues.noAccessGroups", {
+                        groups: queue.acl.groups.join(", "),
+                      })
+                    : t("queues.restrictedGroups", {
+                        groups: queue.acl.groups.join(", "),
+                      });
+              } else if (queue.acl?.users && queue.acl.users.length > 0) {
+                message = t("queues.reservedForUsers", {
+                  users: queue.acl.users
+                    .map((u) => {
+                      // Show full info if username is available, otherwise just nickname
+                      if (u.username) {
+                        return u.name
+                          ? `${u.name} (${u.username})`
+                          : u.username;
+                      } else {
+                        return u.nickname || "Unknown";
+                      }
+                    })
+                    .join(", "),
+                });
+              }
+
+              return (
                 <div className="col-span-2">
-                  <span className="flex items-center px-2 py-1 text-xs rounded bg-green-100 text-green-800">
-                    <Icon icon="bxs:lock-open-alt" className="w-4 h-4 mr-1" />
-                    {t("queues.restrictedAccess")}
+                  <span
+                    className={`flex items-center px-2 py-1 text-xs rounded ${
+                      queue.hasAccess === false
+                        ? "bg-red-100 text-red-800"
+                        : "bg-green-100 text-green-800"
+                    }`}
+                  >
+                    <Icon
+                      icon={
+                        queue.hasAccess === false
+                          ? "bxs:lock-alt"
+                          : "bxs:lock-open-alt"
+                      }
+                      className="w-4 h-4 mr-1"
+                    />
+                    {message}
                   </span>
                 </div>
-              )}
+              );
+            })()}
           </div>
         </div>
       </div>
@@ -226,6 +266,51 @@ export function QueueDetailContent({
                   {groupName}
                 </Link>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ACL Users */}
+      {queue.acl?.users && queue.acl.users.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              {t("queues.aclUsers")}
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {queue.acl.users.map((user, index) => {
+                const displayKey = user.username || `user-${index}`;
+                const displayText = user.username
+                  ? user.name
+                    ? `${user.name} (${user.username})`
+                    : user.username
+                  : user.nickname || "Unknown";
+
+                // Only make it a link if username is available (user can see full info)
+                if (user.username) {
+                  return (
+                    <Link
+                      key={displayKey}
+                      to={`/users/${encodeURIComponent(user.username)}`}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md hover:bg-yellow-100 hover:text-yellow-800"
+                    >
+                      <Icon icon="bxs:lock" className="w-4 h-4 mr-1" />
+                      {displayText}
+                    </Link>
+                  );
+                } else {
+                  return (
+                    <span
+                      key={displayKey}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md"
+                    >
+                      <Icon icon="bxs:lock" className="w-4 h-4 mr-1" />
+                      {displayText}
+                    </span>
+                  );
+                }
+              })}
             </div>
           </div>
         </div>

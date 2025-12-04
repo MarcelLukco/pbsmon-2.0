@@ -3,6 +3,31 @@ import { Expose, Type } from 'class-transformer';
 import { QueueStateCountDTO } from './queue-detail.dto';
 
 /**
+ * User information for ACL
+ */
+export class QueueAclUserDTO {
+  @Expose()
+  @ApiProperty({
+    description: 'Username (only visible to admins or users in shared groups)',
+  })
+  username?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'User display name (from Perun)',
+    nullable: true,
+  })
+  name?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'User nickname (always visible)',
+    nullable: true,
+  })
+  nickname?: string | null;
+}
+
+/**
  * Queue DTO for list view
  */
 export class QueueListDTO {
@@ -101,6 +126,17 @@ export class QueueListDTO {
     required: false,
   })
   aclGroups?: string[] | null;
+
+  @Expose()
+  @Type(() => QueueAclUserDTO)
+  @ApiProperty({
+    description:
+      'ACL users that have access to this queue (if acl_user_enable is true)',
+    type: [QueueAclUserDTO],
+    nullable: true,
+    required: false,
+  })
+  aclUsers?: QueueAclUserDTO[] | null;
 
   @Expose()
   @Type(() => QueueListDTO)

@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataCollectionService } from '@/modules/data-collection/data-collection.service';
 import { PbsQueue } from '@/modules/data-collection/types/pbs.types';
-import { QueueListDTO, QueuesListDTO } from './dto/queue-list.dto';
+import {
+  QueueListDTO,
+  QueuesListDTO,
+  QueueAclUserDTO,
+} from './dto/queue-list.dto';
 import {
   QueueDetailDTO,
   QueueStateCountDTO,
@@ -397,6 +401,9 @@ export class QueuesService {
         ? queue.attributes.acl_groups.split(',').map((g) => g.trim())
         : null;
 
+    // Extract ACL users and resolve their names from Perun data
+    const aclUsers = this.getAclUsers(queue, userContext);
+
     return {
       name: queue.name,
       server: serverName || null,
@@ -413,6 +420,7 @@ export class QueuesService {
       hasAccess,
       canBeDirectlySubmitted,
       aclGroups,
+      aclUsers,
       children: children.length > 0 ? children : undefined,
     };
   }
@@ -441,7 +449,7 @@ export class QueuesService {
     const started = queue.attributes.started === 'True';
 
     const stateCount = this.parseStateCount(queue.attributes.state_count);
-    const acl = this.parseAcl(queue);
+    const acl = this.parseAcl(queue, userContext);
     const resources = this.parseResources(queue);
 
     // Get additional attributes (exclude already mapped ones)
@@ -531,8 +539,13 @@ export class QueuesService {
 
   /**
    * Parse ACL information from queue attributes
+   * @param queue PBS queue
+   * @param userContext User context for access control and anonymization
    */
-  private parseAcl(queue: PbsQueue): QueueAclDTO | null {
+  private parseAcl(
+    queue: PbsQueue,
+    userContext: UserContext,
+  ): QueueAclDTO | null {
     const userEnable = queue.attributes.acl_user_enable === 'True';
     const groupEnable = queue.attributes.acl_group_enable === 'True';
     const hostEnable = queue.attributes.acl_host_enable === 'True';
@@ -544,7 +557,8 @@ export class QueuesService {
     const acl: QueueAclDTO = {};
 
     if (userEnable && queue.attributes.acl_users) {
-      acl.users = queue.attributes.acl_users.split(',').map((u) => u.trim());
+      // Use the same method to get users with anonymization based on user context
+      acl.users = this.getAclUsers(queue, userContext);
     }
 
     if (groupEnable && queue.attributes.acl_groups) {
@@ -712,5 +726,164 @@ export class QueuesService {
     }
 
     return Array.from(userGroups);
+  }
+
+  /**
+   * Get ACL users with resolved names from Perun data
+   * Anonymizes usernames for non-admin users unless they share groups
+   * @param queue PBS queue
+   * @param userContext User context for access control
+   * @returns Array of ACL users with username and name, or null if no ACL users
+   */
+  private getAclUsers(
+    queue: PbsQueue,
+    userContext: UserContext,
+  ): QueueAclUserDTO[] | null {
+    if (
+      queue.attributes.acl_user_enable !== 'True' ||
+      !queue.attributes.acl_users
+    ) {
+      return null;
+    }
+
+    const perunData = this.dataCollectionService.getPerunData();
+
+    // Build Perun users lookup map for O(1) access
+    const perunUsersMap = new Map<string, string>();
+    if (perunData?.users?.users) {
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          perunUsersMap.set(perunUser.logname, perunUser.name);
+          if (lognameBase !== perunUser.logname) {
+            perunUsersMap.set(lognameBase, perunUser.name);
+          }
+        }
+      }
+    }
+
+    // For non-admin users, get allowed usernames from their groups
+    const allowedUsernames = new Set<string>();
+    if (userContext.role !== UserRole.ADMIN) {
+      const usernameBase = userContext.username.split('@')[0];
+      allowedUsernames.add(userContext.username);
+      allowedUsernames.add(usernameBase);
+
+      // Get users from groups the user belongs to (excluding system-wide groups)
+      const groupMembers = this.getUsersFromUserGroups(
+        perunData,
+        userContext.username,
+      );
+      for (const member of groupMembers) {
+        allowedUsernames.add(member);
+        allowedUsernames.add(member.split('@')[0]);
+      }
+    }
+
+    // Parse ACL users and resolve their names
+    const aclUserStrings = queue.attributes.acl_users
+      .split(',')
+      .map((u) => u.trim());
+    const aclUsers: QueueAclUserDTO[] = aclUserStrings.map((username) => {
+      const usernameBase = username.split('@')[0];
+      const name =
+        perunUsersMap.get(username) || perunUsersMap.get(usernameBase) || null;
+
+      // Determine visibility based on user role and shared groups
+      const canSeeFullInfo =
+        userContext.role === UserRole.ADMIN ||
+        allowedUsernames.has(username) ||
+        allowedUsernames.has(usernameBase);
+
+      return {
+        username: canSeeFullInfo ? username : null,
+        name: canSeeFullInfo ? name : null,
+        nickname: usernameBase,
+      };
+    });
+
+    return aclUsers.length > 0 ? aclUsers : null;
+  }
+
+  /**
+   * Get all users that belong to the same groups as the given user
+   * (excluding system-wide groups that contain 80%+ of all users)
+   * @param perunData Perun data
+   * @param username Username to find group members for
+   * @returns Set of usernames that share groups with the user
+   */
+  private getUsersFromUserGroups(
+    perunData: any,
+    username: string,
+  ): Set<string> {
+    const result = new Set<string>();
+    const usernameBase = username.split('@')[0];
+
+    if (!perunData?.etcGroups || perunData.etcGroups.length === 0) {
+      return result;
+    }
+
+    // Calculate total unique users in the system
+    const allUsersSet = new Set<string>();
+    if (perunData?.users?.users) {
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          allUsersSet.add(lognameBase);
+          allUsersSet.add(perunUser.logname);
+        }
+      }
+    }
+    const totalUsers = allUsersSet.size;
+
+    // Collect all groups the user belongs to across all servers
+    const userGroupsMap = new Map<
+      string,
+      { gid: string; members: Set<string> }
+    >();
+
+    for (const serverGroups of perunData.etcGroups) {
+      for (const group of serverGroups.entries) {
+        // Check if user is a member of this group
+        const isMember =
+          group.members.includes(usernameBase) ||
+          group.members.includes(username);
+        if (!isMember) {
+          continue;
+        }
+
+        // Merge group members across all servers
+        if (!userGroupsMap.has(group.groupname)) {
+          userGroupsMap.set(group.groupname, {
+            gid: group.gid,
+            members: new Set(group.members),
+          });
+        } else {
+          const existing = userGroupsMap.get(group.groupname)!;
+          for (const member of group.members) {
+            existing.members.add(member);
+          }
+        }
+      }
+    }
+
+    // Filter out system-wide groups (80%+ of all users) and collect members
+    const MAX_PERCENTAGE_OF_ALL_USERS = 0.8; // 80%
+    for (const [groupName, groupData] of userGroupsMap.entries()) {
+      if (totalUsers > 0) {
+        const percentage = groupData.members.size / totalUsers;
+        // Skip groups that contain too many users (system-wide groups)
+        if (percentage > MAX_PERCENTAGE_OF_ALL_USERS) {
+          continue;
+        }
+      }
+
+      // Add all members from this group
+      for (const member of groupData.members) {
+        result.add(member);
+      }
+    }
+
+    return result;
   }
 }

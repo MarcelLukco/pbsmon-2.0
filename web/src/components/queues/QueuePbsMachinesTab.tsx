@@ -34,7 +34,8 @@ function filterMachinesByQueue(
             (q: string) =>
               q === queueNameOnly ||
               q === queueName ||
-              q.startsWith(queueNameOnly + "@")
+              q.startsWith(queueNameOnly + "@") ||
+              q === `q_${queueNameOnly}`
           );
           if (hasQueue) {
             machines.push({
@@ -54,6 +55,7 @@ export function QueuePbsMachinesTab({ queueName }: QueuePbsMachinesTabProps) {
   const { t } = useTranslation();
   const { data: infrastructureData, isLoading, error } = useInfrastructure();
 
+  console.log(infrastructureData);
   const machines = infrastructureData
     ? filterMachinesByQueue(infrastructureData, queueName)
     : [];
