@@ -96,8 +96,59 @@ export function QueuePbsMachinesTab({ queueName }: QueuePbsMachinesTabProps) {
     machinesByCluster.get(machine.clusterName)!.push(machine);
   }
 
+  // Calculate total statistics
+  const totalCpu = machines.reduce(
+    (sum, machine) => sum + (machine.node.cpu || 0),
+    0
+  );
+  const totalGpu = machines.reduce((sum, machine) => {
+    const gpuCount =
+      machine.node.gpuCount !== null &&
+      machine.node.gpuCount !== undefined &&
+      typeof machine.node.gpuCount === "number"
+        ? machine.node.gpuCount
+        : 0;
+    return sum + gpuCount;
+  }, 0);
+
   return (
     <div className="px-6 py-4 space-y-6">
+      {/* Statistics */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <h2 className="text-xl font-bold text-primary-900 mb-4">
+          {t("queues.machineStatistics")}
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div>
+            <div className="text-sm text-gray-600">
+              {t("queues.totalMachines")}
+            </div>
+            <div className="text-2xl font-bold text-primary-900">
+              {machines.length}
+            </div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-600">
+              {t("machines.totalCpu")}
+            </div>
+            <div className="text-2xl font-bold text-primary-900">
+              {totalCpu}
+            </div>
+          </div>
+          {totalGpu > 0 && (
+            <div>
+              <div className="text-sm text-gray-600">
+                {t("machines.totalGpu")}
+              </div>
+              <div className="text-2xl font-bold text-primary-900">
+                {totalGpu}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Machines by cluster */}
       {Array.from(machinesByCluster.entries()).map(
         ([clusterName, clusterMachines]) => (
           <div key={clusterName} className="mb-6 last:mb-0">

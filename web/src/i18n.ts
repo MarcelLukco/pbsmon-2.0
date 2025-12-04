@@ -79,6 +79,11 @@ i18n.use(initReactI18next).init({
           queueNotFound: "Queue not found",
           enabledAndStarted: "Enabled and Started",
           queueType: "Queue Type",
+          minWalltime: "Minimum Walltime",
+          maxWalltime: "Maximum Walltime",
+          defaultWalltime: "Default Walltime",
+          machineStatistics: "Machine Statistics",
+          totalMachines: "Total Machines",
           tabs: {
             jobs: "Jobs",
             machines: "Machines",
@@ -318,6 +323,11 @@ i18n.use(initReactI18next).init({
           queueNotFound: "Fronta nenalezena",
           enabledAndStarted: "Povoleno a spuštěno",
           queueType: "Typ fronty",
+          minWalltime: "Minimální walltime",
+          maxWalltime: "Maximální walltime",
+          defaultWalltime: "Výchozí walltime",
+          machineStatistics: "Statistiky strojů",
+          totalMachines: "Celkem strojů",
           tabs: {
             jobs: "Úlohy",
             machines: "Stroje",

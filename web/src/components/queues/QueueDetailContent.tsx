@@ -177,16 +177,40 @@ export function QueueDetailContent({
                   : "-"}
               </div>
             </div>
-            <div>
-              <div className="text-sm text-gray-500">{t("queues.status")}</div>
-              <div className="text-lg font-medium text-gray-900">
-                {queue.enabled && queue.started
-                  ? t("queues.enabledAndStarted")
-                  : queue.enabled
-                    ? t("queues.enabled")
-                    : t("queues.disabled")}
-              </div>
-            </div>
+            {queue.resources && (
+              <>
+                {queue.resources.minWalltime && (
+                  <div>
+                    <div className="text-sm text-gray-500">
+                      {t("queues.minWalltime")}
+                    </div>
+                    <div className="text-lg font-medium text-gray-900">
+                      {String(queue.resources.minWalltime)}
+                    </div>
+                  </div>
+                )}
+                {queue.resources.maxWalltime && (
+                  <div>
+                    <div className="text-sm text-gray-500">
+                      {t("queues.maxWalltime")}
+                    </div>
+                    <div className="text-lg font-medium text-gray-900">
+                      {String(queue.resources.maxWalltime)}
+                    </div>
+                  </div>
+                )}
+                {queue.resources.defaultWalltime && (
+                  <div>
+                    <div className="text-sm text-gray-500">
+                      {t("queues.defaultWalltime")}
+                    </div>
+                    <div className="text-lg font-medium text-gray-900">
+                      {String(queue.resources.defaultWalltime)}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
             {(() => {
               const isReserved =
                 (queue.acl?.groups && queue.acl.groups.length > 0) ||
