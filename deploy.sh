@@ -78,6 +78,38 @@ else
     echo -e "${YELLOW}Skipping git pull (--skip-pull flag set)${NC}"
 fi
 
+# Build pbscaller binary first (requires PBS libraries from host)
+echo -e "${YELLOW}Building pbscaller binary (requires PBS libraries from host)...${NC}"
+if [ -f "api/build-pbscaller.sh" ]; then
+    if cd api && ./build-pbscaller.sh; then
+        cd ..
+        echo -e "${GREEN}✓ pbscaller binary built successfully${NC}"
+    else
+        echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
+        exit 1
+    fi
+else
+    echo -e "${YELLOW}⚠️  build-pbscaller.sh not found, trying to build pbscaller manually...${NC}"
+    mkdir -p api/bin
+    if cd api/src/cli && gcc -g -L/usr/lib -I/usr/include pbscaller.c -o ../../bin/pbsprocaller -lpbs && chmod +x ../../bin/pbsprocaller; then
+        cd ../../..
+        echo -e "${GREEN}✓ pbscaller binary built successfully${NC}"
+    else
+        echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
+        echo -e "${YELLOW}Make sure PBS Pro libraries are installed on the host${NC}"
+        exit 1
+    fi
+fi
+
+# Build pbscaller service image
+echo -e "${YELLOW}Building pbscaller service image...${NC}"
+if sudo docker build -f api/Dockerfile.pbscaller-service -t pbscaller-service api/; then
+    echo -e "${GREEN}✓ pbscaller service built successfully${NC}"
+else
+    echo -e "${RED}✗ Failed to build pbscaller service${NC}"
+    exit 1
+fi
+
 # Build and start containers (web, api, and pbscaller services)
 echo -e "${YELLOW}Building and starting web, api, and pbscaller containers...${NC}"
 if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web api pbscaller; then
