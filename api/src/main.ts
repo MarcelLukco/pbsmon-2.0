@@ -54,6 +54,8 @@ async function bootstrap() {
     .setTitle('PBSMON API')
     .setDescription('API for showing data from Metacentrum computing grid')
     .setVersion('1.0')
+    .addServer('/api', 'Production API')
+    .addServer('/', 'Development API')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

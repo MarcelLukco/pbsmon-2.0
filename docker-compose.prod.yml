@@ -12,6 +12,7 @@ services:
       - FRONTEND_URL=${FRONTEND_URL:-https://mu-pub-245-82.flt.openstack.cloud.e-infra.cz}
       - PBS_DATA_PATH=/app/data/pbs
       - PERUN_DATA_PATH=/app/data/perun
+      - ACCOUNTING_CONNECTION_STRING=${ACCOUNTING_CONNECTION_STRING:-}
       - PROMETHEUS_BASE_URL=${PROMETHEUS_BASE_URL:-}
       - PROMETHEUS_USERNAME=${PROMETHEUS_USERNAME:-}
       - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-}
