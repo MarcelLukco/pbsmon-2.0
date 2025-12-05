@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import type { InfrastructureDetailDTO } from "@/lib/generated-api";
 
 export function useMachineDetail(nodeName: string) {
-  return useQuery({
+  return useQuery<InfrastructureDetailDTO>({
     queryKey: ["machine", nodeName],
     queryFn: async () => {
       // Use the new endpoint: /infrastructure/machines/:nodeName
@@ -20,12 +21,12 @@ export function useMachineDetail(nodeName: string) {
 
       if (!response.ok) {
         throw new Error(
-          `Failed to fetch machine detail: ${response.statusText}`,
+          `Failed to fetch machine detail: ${response.statusText}`
         );
       }
 
       const data = await response.json();
-      return data.data;
+      return data.data as InfrastructureDetailDTO;
     },
     enabled: !!nodeName,
   });

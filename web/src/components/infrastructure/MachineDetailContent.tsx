@@ -8,7 +8,10 @@ import { MachinePbsTasksTab } from "@/components/infrastructure/MachinePbsTasksT
 import { MachinePbsQueuesTab } from "@/components/infrastructure/MachinePbsQueuesTab";
 import { MachinePbsSystemInfoTab } from "@/components/infrastructure/MachinePbsSystemInfoTab";
 import { MachinePbsOutagesTab } from "@/components/infrastructure/MachinePbsOutagesTab";
-import type { QueueListDTO } from "@/lib/generated-api";
+import type {
+  QueueListDTO,
+  InfrastructureDetailDTO,
+} from "@/lib/generated-api";
 
 type SortColumn =
   | "id"
@@ -22,32 +25,7 @@ type SortColumn =
   | "createdAt";
 
 interface MachineDetailContentProps {
-  node: {
-    name: string;
-    cpu: number;
-    clusterName?: { cs: string; en: string } | null;
-    clusterId?: string | null;
-    owner?: { cs: string; en: string } | null;
-    pbs?: {
-      name: string;
-      actualState?: string | null;
-      cpuUsagePercent?: number | null;
-      cpuAssigned?: number | null;
-      gpuUsagePercent?: number | null;
-      gpuCount?: number | null;
-      gpuAssigned?: number | null;
-      gpuCapability?: string | null;
-      gpuMemory?: string | null;
-      cudaVersion?: string | null;
-      memoryTotal?: number | null;
-      memoryUsed?: number | null;
-      memoryUsagePercent?: number | null;
-      jobs?: string[] | null;
-      queues?: QueueListDTO[] | null;
-      rawPbsAttributes?: Record<string, string> | null;
-      outages?: Array<Record<string, any>> | null;
-    } | null;
-  };
+  node: NonNullable<InfrastructureDetailDTO["node"]>;
 }
 
 export function MachineDetailContent({ node }: MachineDetailContentProps) {

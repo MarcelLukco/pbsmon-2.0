@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useMachineDetail } from "@/hooks/useMachineDetail";
 import { MachineDetailContent } from "@/components/infrastructure/MachineDetailContent";
+import type { InfrastructureDetailDTO } from "@/lib/generated-api";
 
 export function MachineDetailPage() {
   const { t } = useTranslation();
@@ -70,32 +71,10 @@ export function MachineDetailPage() {
     );
   }
 
-  const node = data.node as {
-    name: string;
-    cpu: number;
-    clusterName?: { cs: string; en: string } | null;
-    clusterId?: string | null;
-    owner?: { cs: string; en: string } | null;
-    pbs?: {
-      name: string;
-      actualState?: string | null;
-      cpuUsagePercent?: number | null;
-      cpuAssigned?: number | null;
-      gpuUsagePercent?: number | null;
-      gpuCount?: number | null;
-      gpuAssigned?: number | null;
-      gpuCapability?: string | null;
-      gpuMemory?: string | null;
-      cudaVersion?: string | null;
-      memoryTotal?: number | null;
-      memoryUsed?: number | null;
-      memoryUsagePercent?: number | null;
-      jobs?: string[] | null;
-      queues?: any[] | null;
-      rawPbsAttributes?: Record<string, string> | null;
-      outages?: Array<Record<string, any>> | null;
-    } | null;
-  };
+  // Extract node from InfrastructureDetailDTO
+  // The generated type uses Record<string, any> for nested types,
+  // so we assert the type based on the API response structure
+  const node = data.node as NonNullable<InfrastructureDetailDTO["node"]>;
 
   return <MachineDetailContent node={node} />;
 }
