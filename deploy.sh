@@ -78,20 +78,6 @@ else
     echo -e "${YELLOW}Skipping git pull (--skip-pull flag set)${NC}"
 fi
 
-# Build pbscaller service first (requires PBS libraries from host)
-echo -e "${YELLOW}Building pbscaller service (requires PBS libraries from host)...${NC}"
-if sudo DOCKER_BUILDKIT=1 docker build \
-    --mount type=bind,source=/usr/lib,target=/host/usr/lib,readonly \
-    --mount type=bind,source=/usr/include,target=/host/usr/include,readonly \
-    -f api/Dockerfile.pbscaller-service \
-    -t pbscaller-service \
-    api/; then
-    echo -e "${GREEN}✓ pbscaller service built successfully${NC}"
-else
-    echo -e "${RED}✗ Failed to build pbscaller service${NC}"
-    exit 1
-fi
-
 # Build and start containers (web, api, and pbscaller services)
 echo -e "${YELLOW}Building and starting web, api, and pbscaller containers...${NC}"
 if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web api pbscaller; then
