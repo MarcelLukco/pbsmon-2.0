@@ -1,7 +1,14 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pool } from 'pg';
 import { AccountingConfig } from '@/config/accounting.config';
+import { DataCollectionService } from '@/modules/data-collection/data-collection.service';
+import { UserContext, UserRole } from '@/common/types/user-context.types';
 import { UserInfoDTO, UserUsageDTO } from './dto/user-info.dto';
 import { OutageRecordDTO } from './dto/outage-record.dto';
 import { CanonicalOrgNameDTO } from './dto/org-name.dto';
@@ -11,7 +18,10 @@ export class AccountingService implements OnModuleDestroy {
   private readonly logger = new Logger(AccountingService.name);
   private pool: Pool | null = null;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly dataCollectionService: DataCollectionService,
+  ) {
     const accountingConfig =
       this.configService.get<AccountingConfig>('accounting');
     if (accountingConfig?.connectionString) {
@@ -83,10 +93,146 @@ export class AccountingService implements OnModuleDestroy {
   }
 
   /**
+   * Check if user has access to view another user's accounting info
+   * Admin can see all users, non-admin can see themselves and users from their groups
+   */
+  private checkUserAccess(
+    requestedUsername: string,
+    userContext: UserContext,
+  ): void {
+    // Admin can access all users
+    if (userContext.role === UserRole.ADMIN) {
+      return;
+    }
+
+    const usernameBase = userContext.username.split('@')[0];
+    const requestedUsernameBase = requestedUsername.split('@')[0];
+
+    // Always allow access to themselves
+    if (
+      userContext.username === requestedUsername ||
+      usernameBase === requestedUsernameBase
+    ) {
+      return;
+    }
+
+    // Check if the requested user is in the same groups (excluding system-wide groups)
+    const perunData = this.dataCollectionService.getPerunData();
+    const allowedUsernames = new Set<string>();
+    allowedUsernames.add(userContext.username);
+    allowedUsernames.add(usernameBase);
+
+    // Get users from groups the current user belongs to (excluding system-wide groups)
+    const groupMembers = this.getUsersFromUserGroups(
+      perunData,
+      userContext.username,
+    );
+    for (const member of groupMembers) {
+      allowedUsernames.add(member);
+    }
+
+    // Check if requested user is in allowed set
+    if (
+      !allowedUsernames.has(requestedUsername) &&
+      !allowedUsernames.has(requestedUsernameBase)
+    ) {
+      throw new NotFoundException(`User '${requestedUsername}' was not found`);
+    }
+  }
+
+  /**
+   * Get all users from groups that the user belongs to
+   * Excludes system-wide groups that contain 80%+ of all Metacentrum users
+   * @param perunData Perun data
+   * @param username Username to find groups for
+   * @returns Set of usernames from relevant groups
+   */
+  private getUsersFromUserGroups(
+    perunData: any,
+    username: string,
+  ): Set<string> {
+    const result = new Set<string>();
+    const usernameBase = username.split('@')[0];
+
+    if (!perunData?.etcGroups || perunData.etcGroups.length === 0) {
+      return result;
+    }
+
+    // Calculate total unique users in the system
+    const allUsersSet = new Set<string>();
+    if (perunData?.users?.users) {
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          allUsersSet.add(lognameBase);
+          allUsersSet.add(perunUser.logname);
+        }
+      }
+    }
+    const totalUsers = allUsersSet.size;
+
+    // Collect all groups the user belongs to across all servers
+    const userGroupsMap = new Map<
+      string,
+      { gid: string; members: Set<string> }
+    >();
+
+    for (const serverGroups of perunData.etcGroups) {
+      for (const group of serverGroups.entries) {
+        // Check if user is a member of this group
+        const isMember =
+          group.members.includes(usernameBase) ||
+          group.members.includes(username);
+        if (!isMember) {
+          continue;
+        }
+
+        // Merge group members across all servers
+        if (!userGroupsMap.has(group.groupname)) {
+          userGroupsMap.set(group.groupname, {
+            gid: group.gid,
+            members: new Set(group.members),
+          });
+        } else {
+          const existing = userGroupsMap.get(group.groupname)!;
+          for (const member of group.members) {
+            existing.members.add(member);
+          }
+        }
+      }
+    }
+
+    // Filter out system-wide groups (80%+ of all users) and collect members
+    const MAX_PERCENTAGE_OF_ALL_USERS = 0.8; // 80%
+    for (const [groupName, groupData] of userGroupsMap.entries()) {
+      if (totalUsers > 0) {
+        const percentage = groupData.members.size / totalUsers;
+        // Skip groups that contain too many users (system-wide groups)
+        if (percentage > MAX_PERCENTAGE_OF_ALL_USERS) {
+          continue;
+        }
+      }
+
+      // Add all members from this group
+      for (const member of groupData.members) {
+        result.add(member);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Get user info by username
    * Returns null if database is not available
+   * Throws NotFoundException if user doesn't have access
    */
-  async getUserInfoByName(userName: string): Promise<UserInfoDTO | null> {
+  async getUserInfoByName(
+    userName: string,
+    userContext: UserContext,
+  ): Promise<UserInfoDTO | null> {
+    // Check access control first
+    this.checkUserAccess(userName, userContext);
     if (!this.isDatabaseAvailable()) {
       this.logger.debug(
         `getUserInfoByName(${userName}) - database not available`,

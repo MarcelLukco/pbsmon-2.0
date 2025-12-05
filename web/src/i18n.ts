@@ -239,6 +239,16 @@ i18n.use(initReactI18next).init({
           },
           totalUsers: "Total {{count}} users",
           totalUsersFiltered: "{{filtered}} of {{total}} users",
+          accounting: {
+            title: "Accounting Information",
+            notAvailable: "Accounting data is not available",
+            totalJobs: "Total Jobs",
+            totalCpuTime: "Total CPU Time",
+            yearlyUsage: "Yearly Usage Breakdown",
+            year: "Year",
+            jobs: "Jobs",
+            cpuTime: "CPU Time",
+          },
         },
         groups: {
           name: "Name",
@@ -588,6 +598,16 @@ i18n.use(initReactI18next).init({
           },
           totalUsers: "Celkem {{count}} uživatelů",
           totalUsersFiltered: "{{filtered}} z {{total}} uživatelů",
+          accounting: {
+            title: "Účetní informace",
+            notAvailable: "Účetní data nejsou k dispozici",
+            totalJobs: "Celkem úloh",
+            totalCpuTime: "Celkový CPU čas",
+            yearlyUsage: "Roční přehled využití",
+            year: "Rok",
+            jobs: "Úlohy",
+            cpuTime: "CPU čas",
+          },
         },
         groups: {
           name: "Název",

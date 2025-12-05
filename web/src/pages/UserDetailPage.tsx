@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useUserDetail } from "@/hooks/useUserDetail";
+import { useUserAccounting } from "@/hooks/useUserAccounting";
 import { useJobs } from "@/hooks/useJobs";
 import { useQueues } from "@/hooks/useQueues";
 import { Tabs } from "@/components/common/Tabs";
 import { UserBasicInfo } from "@/components/users/UserBasicInfo";
 import { UserFairshareSection } from "@/components/users/UserFairshareSection";
+import { UserAccountingSection } from "@/components/users/UserAccountingSection";
 import { UserJobsTab } from "@/components/users/UserJobsTab";
 import { UserQueuesTab } from "@/components/users/UserQueuesTab";
 
@@ -25,6 +27,13 @@ export function UserDetailPage() {
   const { t } = useTranslation();
   const { userId } = useParams<{ userId: string }>();
   const { data, isLoading, error } = useUserDetail(userId || "");
+
+  // Fetch accounting data
+  const {
+    data: accountingData,
+    isLoading: accountingLoading,
+    error: accountingError,
+  } = useUserAccounting(userId || "");
 
   // Tab state
   const [activeTab, setActiveTab] = useState("jobs");
@@ -188,6 +197,11 @@ export function UserDetailPage() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
           <UserBasicInfo user={data} />
           <UserFairshareSection fairsharePerServer={data.fairsharePerServer} />
+          <UserAccountingSection
+            accountingData={accountingData || null}
+            isLoading={accountingLoading}
+            error={accountingError as Error | null}
+          />
         </div>
 
         {/* Tabs Section */}

@@ -1,6 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiResponse as ApiResponseDto } from '@/common/dto/api-response.dto';
+import { UserContextDecorator } from '@/common/decorators/user-context.decorator';
+import { UserContext } from '@/common/types/user-context.types';
 import { AccountingService } from './accounting.service';
 import { UserInfoDTO } from './dto/user-info.dto';
 import { OutageRecordDTO } from './dto/outage-record.dto';
@@ -16,14 +18,26 @@ export class AccountingController {
   @ApiOperation({
     summary: 'Get user accounting information',
     description:
-      'Returns user accounting information including job count, total CPU time, and yearly usage breakdown. Returns null if database is not configured.',
+      'Returns user accounting information including job count, total CPU time, and yearly usage breakdown. Admin can see all users. Non-admin can see themselves and users from their groups (excluding system-wide groups that contain 80%+ of all Metacentrum users). Returns null if database is not configured.',
   })
   @ApiOkResponseModel(UserInfoDTO, 'User accounting information')
+  @ApiResponse({ status: 404, description: 'User not found' })
   async getUserInfo(
     @Param('username') username: string,
+    @UserContextDecorator() userContext: UserContext,
   ): Promise<ApiResponseDto<UserInfoDTO | null>> {
-    const data = await this.accountingService.getUserInfoByName(username);
-    return new ApiResponseDto(data);
+    try {
+      const data = await this.accountingService.getUserInfoByName(
+        username,
+        userContext,
+      );
+      return new ApiResponseDto(data);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new NotFoundException(`User '${username}' was not found`);
+    }
   }
 
   @Get('nodes/:nodeName/outages')
