@@ -16,6 +16,7 @@ interface UseJobsParams {
   state?: string;
   node?: string;
   queue?: string;
+  comment?: string;
   enabled?: boolean;
 }
 
@@ -29,11 +30,23 @@ export function useJobs(params: UseJobsParams = {}) {
     state,
     node,
     queue,
+    comment,
     enabled = true,
   } = params;
 
   return useQuery<JobsListResponse>({
-    queryKey: ["jobs", page, limit, sort, order, search, state, node, queue],
+    queryKey: [
+      "jobs",
+      page,
+      limit,
+      sort,
+      order,
+      search,
+      state,
+      node,
+      queue,
+      comment,
+    ],
     queryFn: async () => {
       const response = await apiClient.jobs.jobsControllerGetJobs({
         page,
@@ -44,6 +57,7 @@ export function useJobs(params: UseJobsParams = {}) {
         state,
         node,
         queue,
+        comment,
       });
       return response;
     },

@@ -108,6 +108,13 @@ export class JobListDTO {
     nullable: true,
   })
   exitCode?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Job comment (reason for waiting, etc.)',
+    nullable: true,
+  })
+  comment?: string | null;
 }
 
 /**

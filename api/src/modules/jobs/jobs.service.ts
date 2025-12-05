@@ -37,6 +37,7 @@ export class JobsService {
     state?: string,
     node?: string,
     queue?: string,
+    comment?: string,
   ): { data: JobsListDTO; totalCount: number } {
     const pbsData = this.dataCollectionService.getPbsData();
 
@@ -120,6 +121,14 @@ export class JobsService {
       });
     }
 
+    // Apply comment filter (exact match for waiting reason)
+    if (comment !== undefined && comment !== null) {
+      jobs = jobs.filter((job) => {
+        const jobComment = job.comment || '';
+        return jobComment === comment;
+      });
+    }
+
     // Apply sorting
     jobs = this.sortJobs(jobs, sort, order);
 
@@ -175,23 +184,11 @@ export class JobsService {
     let gpuUsagePercent: number | null = null;
     let memoryUsagePercent: number | null = null;
 
-    // Calculate CPU efficiency: CPU time used vs maximum possible (walltime * numCPUs)
-    if (
-      hasResourceUsage &&
-      cpuTimeUsed &&
-      attrs['Resource_List.walltime'] &&
-      cpuReserved > 0
-    ) {
-      const cpuTimeSeconds = this.parseTimeToSeconds(cpuTimeUsed);
-      const walltimeSeconds = this.parseTimeToSeconds(
-        attrs['Resource_List.walltime'],
-      );
-      const maxCpuTimeSeconds = walltimeSeconds * cpuReserved;
-      if (maxCpuTimeSeconds > 0) {
-        cpuUsagePercent = Math.min(
-          100,
-          Math.round((cpuTimeSeconds / maxCpuTimeSeconds) * 100),
-        );
+    // Use CPU percent from PBS directly
+    if (hasResourceUsage && attrs['resources_used.cpupercent']) {
+      const cpuPercent = parseFloat(attrs['resources_used.cpupercent']);
+      if (!isNaN(cpuPercent)) {
+        cpuUsagePercent = Math.min(100, Math.round(cpuPercent));
       }
     }
 
@@ -229,7 +226,7 @@ export class JobsService {
     // Parse creation time
     const createdAt = attrs['ctime'] ? parseInt(attrs['ctime'], 10) : 0;
 
-    // Get node name (exec_host or exec_vnode)
+    // Get node name (exec_host, exec_vnode, or Resource_List.host for preplanned jobs)
     let node: string | null = null;
     if (attrs['exec_host']) {
       // Format: "node1/0*8+node2/0*8" -> extract first node
@@ -240,6 +237,14 @@ export class JobsService {
       const match = attrs['exec_vnode'].match(/\(([^:]+):/);
       if (match) {
         node = match[1];
+      }
+    } else if (attrs['Resource_List.host']) {
+      // For preplanned queued jobs, check Resource_List.host
+      // Format: "node1" or "node1+node2" -> extract first node
+      const hostValue = attrs['Resource_List.host'];
+      if (hostValue) {
+        const firstHost = hostValue.split('+')[0].trim();
+        node = firstHost || null;
       }
     }
 
@@ -270,6 +275,7 @@ export class JobsService {
       memoryUsagePercent,
       createdAt,
       exitCode,
+      comment: attrs['comment'] || null,
     };
   }
 
@@ -561,38 +567,21 @@ export class JobsService {
         : null
       : null;
 
-    // Calculate runtime
-    let runtime: string | null = null;
-    if (hasResourceUsage) {
-      const startTime = attrs['stime'] ? parseInt(attrs['stime'], 10) : null;
-      const endTime = attrs['etime'] ? parseInt(attrs['etime'], 10) : null;
-      const currentTime = Math.floor(Date.now() / 1000);
-      const end = endTime || (state === 'R' ? currentTime : null);
-      if (startTime && end) {
-        const runtimeSeconds = end - startTime;
-        runtime = this.formatTimeFromSeconds(runtimeSeconds);
-      }
-    }
+    // Get runtime from resources_used.walltime
+    const runtime = hasResourceUsage
+      ? attrs['resources_used.walltime'] || null
+      : null;
 
     // Calculate usage percentages
     let cpuUsagePercent: number | null = null;
     let gpuUsagePercent: number | null = null;
     let memoryUsagePercent: number | null = null;
 
-    // Calculate CPU efficiency: CPU time used vs maximum possible (walltime * numCPUs)
-    if (
-      hasResourceUsage &&
-      cpuTimeUsed &&
-      walltimeReserved &&
-      cpuReserved > 0
-    ) {
-      const cpuTimeSeconds = this.parseTimeToSeconds(cpuTimeUsed);
-      const maxCpuTimeSeconds = walltimeReserved * cpuReserved;
-      if (maxCpuTimeSeconds > 0) {
-        cpuUsagePercent = Math.min(
-          100,
-          Math.round((cpuTimeSeconds / maxCpuTimeSeconds) * 100),
-        );
+    // Use CPU percent from PBS directly
+    if (hasResourceUsage && attrs['resources_used.cpupercent']) {
+      const cpuPercent = parseFloat(attrs['resources_used.cpupercent']);
+      if (!isNaN(cpuPercent)) {
+        cpuUsagePercent = Math.min(100, Math.round(cpuPercent));
       }
     }
 
@@ -722,6 +711,8 @@ export class JobsService {
       gpuReserved,
       memoryReserved,
       memoryUsed,
+      walltimeReserved,
+      runtime,
     );
 
     // Parse exit code
@@ -829,22 +820,10 @@ export class JobsService {
               ? subAttrs['resources_used.cput'] || null
               : null;
 
-            // Calculate runtime
-            let runtime: string | null = null;
-            if (subHasResourceUsage) {
-              const startTime = subAttrs['stime']
-                ? parseInt(subAttrs['stime'], 10)
-                : null;
-              const endTime = subAttrs['etime']
-                ? parseInt(subAttrs['etime'], 10)
-                : null;
-              const currentTime = Math.floor(Date.now() / 1000);
-              const end = endTime || (subState === 'R' ? currentTime : null);
-              if (startTime && end) {
-                const runtimeSeconds = end - startTime;
-                runtime = this.formatTimeFromSeconds(runtimeSeconds);
-              }
-            }
+            // Get runtime from resources_used.walltime
+            const runtime = subHasResourceUsage
+              ? subAttrs['resources_used.walltime'] || null
+              : null;
 
             // Get node
             let node: string | null = null;
@@ -898,6 +877,8 @@ export class JobsService {
     gpuReserved: number,
     memoryReserved: number,
     memoryUsed: number | null,
+    walltimeReserved: number | null,
+    walltimeUsed: string | null,
   ): JobMessageDTO[] {
     const messages: JobMessageDTO[] = [];
 
@@ -910,7 +891,7 @@ export class JobsService {
       return messages;
     }
 
-    // Check CPU efficiency (CPU time usage vs maximum possible)
+    // Check CPU efficiency using cpupercent from PBS
     if (cpuUsagePercent !== null && cpuUsagePercent < 75 && cpuReserved > 0) {
       messages.push({
         type: 'warning',
@@ -920,10 +901,33 @@ export class JobsService {
       });
     }
 
+    // Check if walltime is drastically lower than reserved (for finished jobs)
+    if (completedStates.includes(state) && walltimeReserved && walltimeUsed) {
+      const walltimeUsedSeconds = this.parseTimeToSeconds(walltimeUsed);
+      // If actual walltime is less than 50% of reserved, it's drastically lower
+      if (walltimeUsedSeconds > 0 && walltimeReserved > 0) {
+        const walltimeRatio = walltimeUsedSeconds / walltimeReserved;
+        if (walltimeRatio < 0.5) {
+          const walltimeUsedFormatted = walltimeUsed;
+          const walltimeReservedFormatted =
+            this.formatTimeFromSeconds(walltimeReserved);
+          messages.push({
+            type: 'error',
+            message: `Job finished way sooner than requested. Actual walltime: ${walltimeUsedFormatted}, Reserved: ${walltimeReservedFormatted}. Consider reducing the requested walltime.`,
+            code: 'walltimeTooHigh',
+            params: {
+              walltimeUsed: walltimeUsedFormatted,
+              walltimeReserved: walltimeReservedFormatted,
+            },
+          });
+        }
+      }
+    }
+
     // Check GPU usage
     if (gpuUsagePercent !== null && gpuUsagePercent < 75 && gpuReserved > 0) {
       messages.push({
-        type: 'warning',
+        type: 'error',
         message: `GPU usage is below 75% (${gpuUsagePercent}%). Consider reducing the number of GPUs requested.`,
         code: 'gpuUsageLow',
         params: { percent: gpuUsagePercent },

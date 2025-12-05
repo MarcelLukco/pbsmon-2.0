@@ -186,6 +186,8 @@ i18n.use(initReactI18next).init({
               "Memory usage is below 75% ({{percent}}%). Consider reducing the amount of memory requested.",
             memoryOverAllocated:
               "Memory usage ({{memoryUsed}} GB) exceeds reserved memory ({{memoryReserved}} GB).",
+            walltimeTooHigh:
+              "Job finished way sooner than requested. Actual walltime: {{walltimeUsed}}, Reserved: {{walltimeReserved}}. Consider reducing the requested walltime.",
           },
         },
         users: {
@@ -461,6 +463,12 @@ i18n.use(initReactI18next).init({
           node: "Uzel",
           exitCode: "Návratový kód",
           comment: "Komentář",
+          waitingReason: "Důvod čekání",
+          waitingJobsSummary: "Přehled úloh podle důvodu čekání",
+          filterByReason: "Filtrovat podle důvodu",
+          clearFilter: "Zrušit filtr",
+          filter: "Filtrovat",
+          clear: "Zrušit",
           resources: "Prostředky",
           requestedResources: "Požadované prostředky",
           noResourcesRequested: "Žádné prostředky nebyly požadovány",
@@ -501,6 +509,8 @@ i18n.use(initReactI18next).init({
               "Využití paměti je pod 75% ({{percent}}%). Zvažte snížení množství požadované paměti.",
             memoryOverAllocated:
               "Využití paměti ({{memoryUsed}} GB) překračuje vyhrazenou paměť ({{memoryReserved}} GB).",
+            walltimeTooHigh:
+              "Úloha skončila výrazně dříve, než bylo požadováno. Skutečný walltime: {{walltimeUsed}}, Vyhrazený: {{walltimeReserved}}. Zvažte snížení požadovaného walltime.",
           },
         },
         users: {

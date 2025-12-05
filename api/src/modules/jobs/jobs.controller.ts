@@ -72,6 +72,13 @@ export class JobsController {
     description:
       'Filter by queue name. If not provided, returns jobs from all queues.',
   })
+  @ApiQuery({
+    name: 'comment',
+    required: false,
+    type: String,
+    description:
+      'Filter by exact comment/reason for waiting. If not provided, returns jobs with all comments.',
+  })
   @ApiOkResponseModel(JobsListDTO, 'List of jobs', MetaDto)
   getJobs(
     @UserContextDecorator() userContext: UserContext,
@@ -83,6 +90,7 @@ export class JobsController {
     @Query('state') state?: string,
     @Query('node') node?: string,
     @Query('queue') queue?: string,
+    @Query('comment') comment?: string,
   ): ApiResponse<JobsListDTO, MetaDto> {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
@@ -99,6 +107,7 @@ export class JobsController {
       state,
       node,
       queue,
+      comment,
     );
 
     return new ApiResponse(data, {

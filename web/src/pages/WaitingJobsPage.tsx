@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next";
 import { useJobs } from "@/hooks/useJobs";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
-import { JobsTable } from "@/components/jobs/JobsTable";
+import { WaitingJobsTable } from "@/components/jobs/WaitingJobsTable";
+import { WaitingJobsSummary } from "@/components/jobs/WaitingJobsSummary";
 import { JobsPagination } from "@/components/jobs/JobsPagination";
 
 type SortColumn =
   | "id"
   | "name"
-  | "state"
   | "owner"
   | "node"
   | "cpuReserved"
@@ -24,6 +24,7 @@ export function WaitingJobsPage() {
   const [sort, setSort] = useState<SortColumn>("createdAt");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [search, setSearch] = useState("");
+  const [commentFilter, setCommentFilter] = useState<string | null>(null);
 
   const { data: currentUser } = useCurrentUser();
   const isAdmin = currentUser?.role === "admin";
@@ -35,6 +36,17 @@ export function WaitingJobsPage() {
     order,
     search: search.trim() || undefined,
     state: "Q", // Filter for queued jobs only
+    comment: commentFilter || undefined,
+  });
+
+  // Fetch all waiting jobs for summary (no pagination, no search filter)
+  const { data: summaryData } = useJobs({
+    page: 1,
+    limit: 10000, // Large limit to get all jobs for summary
+    sort: "createdAt",
+    order: "desc",
+    state: "Q", // Filter for queued jobs only
+    // No search filter for summary - we want all jobs
   });
 
   const handleSort = (column: SortColumn) => {
@@ -60,6 +72,18 @@ export function WaitingJobsPage() {
     setPage(1); // Reset to first page on search
   };
 
+  const handleFilterByReason = (reason: string) => {
+    if (commentFilter === reason) {
+      // Clear filter if clicking the same reason
+      setCommentFilter(null);
+    } else {
+      // Set filter to this reason
+      setCommentFilter(reason);
+    }
+    setPage(1); // Reset to first page on filter
+    setSearch(""); // Clear search when filtering by reason
+  };
+
   const totalPages = data?.meta?.totalCount
     ? Math.ceil(data.meta.totalCount / limit)
     : 0;
@@ -74,12 +98,6 @@ export function WaitingJobsPage() {
         </div>
       </header>
       <div className="p-6">
-        <JobsSearchBar
-          searchQuery={search}
-          onSearchChange={handleSearchChange}
-          totalJobs={data?.meta?.totalCount || 0}
-        />
-
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="text-gray-600">{t("common.loading")}</div>
@@ -99,7 +117,20 @@ export function WaitingJobsPage() {
 
         {data && data.data && (
           <>
-            <JobsTable
+            {summaryData?.data?.jobs && (
+              <WaitingJobsSummary
+                jobs={summaryData.data.jobs}
+                onFilterByReason={handleFilterByReason}
+                activeFilter={commentFilter}
+              />
+            )}
+
+            <JobsSearchBar
+              searchQuery={search}
+              onSearchChange={handleSearchChange}
+              totalJobs={data?.meta?.totalCount || 0}
+            />
+            <WaitingJobsTable
               jobs={data.data.jobs}
               sortColumn={sort}
               sortDirection={order}
