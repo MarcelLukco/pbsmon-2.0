@@ -24,8 +24,7 @@ export function UserFairshareSection({
     }
 
     // Ranking 1 = worst, ranking max (totalUsers) = best
-    // Calculate position from bottom: worst position = 1, best position = totalUsers
-    const positionFromBottom = ranking;
+    // Calculate position from top: worst position = totalUsers, best position = 1
     const positionFromTop = totalUsers - ranking + 1;
 
     // Top 10% or top 10 users (whichever is smaller) = green

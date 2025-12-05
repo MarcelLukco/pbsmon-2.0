@@ -17,7 +17,6 @@ type SortColumn =
 
 interface MachinePbsTasksTabProps {
   nodeName: string | null;
-  isAdmin: boolean;
   jobsPage: number;
   jobsLimit: number;
   jobsSort: SortColumn;
@@ -30,7 +29,6 @@ interface MachinePbsTasksTabProps {
 
 export function MachinePbsTasksTab({
   nodeName,
-  isAdmin,
   jobsPage,
   jobsLimit,
   jobsSort,
@@ -92,7 +90,6 @@ export function MachinePbsTasksTab({
             sortColumn={jobsSort}
             sortDirection={jobsOrder}
             onSort={onJobsSort}
-            isAdmin={isAdmin}
             hideMachineColumn={true}
           />
           <JobsPagination

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { Tabs } from "@/components/common/Tabs";
 import { QueueTreeNode } from "@/components/common/QueueTreeNode";
 import { QueuePbsJobsTab } from "@/components/queues/QueuePbsJobsTab";
@@ -31,8 +30,6 @@ export function QueueDetailContent({
   queueId,
 }: QueueDetailContentProps) {
   const { t } = useTranslation();
-  const { data: currentUser } = useCurrentUser();
-  const isAdmin = currentUser?.role === "admin";
   const [activeTab, setActiveTab] = useState("jobs");
 
   const [jobsPage, setJobsPage] = useState(1);
@@ -108,7 +105,6 @@ export function QueueDetailContent({
       content: (
         <QueuePbsJobsTab
           queueName={queueName}
-          isAdmin={isAdmin}
           jobsPage={jobsPage}
           jobsLimit={jobsLimit}
           jobsSort={jobsSort}

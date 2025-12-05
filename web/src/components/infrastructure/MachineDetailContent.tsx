@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { Tabs } from "@/components/common/Tabs";
 import { Icon } from "@iconify/react";
@@ -48,8 +47,6 @@ interface MachineDetailContentProps {
 
 export function MachineDetailContent({ node }: MachineDetailContentProps) {
   const { t } = useTranslation();
-  const { data: currentUser } = useCurrentUser();
-  const isAdmin = currentUser?.role === "admin";
   const [activeTab, setActiveTab] = useState("tasks");
 
   const [jobsPage, setJobsPage] = useState(1);
@@ -183,7 +180,6 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
           content: (
             <MachinePbsTasksTab
               nodeName={nodeName}
-              isAdmin={isAdmin}
               jobsPage={jobsPage}
               jobsLimit={jobsLimit}
               jobsSort={jobsSort}

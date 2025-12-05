@@ -109,8 +109,9 @@ export function useUsersSorting(users: UserListDTO[] | undefined) {
             bValue = b.doneTasks;
             break;
           case "cpuTasks":
-            aValue = a.cpuTasks;
-            bValue = b.cpuTasks;
+            // cpuTasks doesn't exist on UserListDTO, using totalCPU instead
+            aValue = a.totalCPU;
+            bValue = b.totalCPU;
             break;
           default:
             return 0;

@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { useUserDetail } from "@/hooks/useUserDetail";
 import { useJobs } from "@/hooks/useJobs";
 import { useQueues } from "@/hooks/useQueues";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { Tabs } from "@/components/common/Tabs";
 import { UserBasicInfo } from "@/components/users/UserBasicInfo";
 import { UserFairshareSection } from "@/components/users/UserFairshareSection";
@@ -26,8 +25,6 @@ export function UserDetailPage() {
   const { t } = useTranslation();
   const { userId } = useParams<{ userId: string }>();
   const { data, isLoading, error } = useUserDetail(userId || "");
-  const { data: currentUser } = useCurrentUser();
-  const isAdmin = currentUser?.role === "admin";
 
   // Tab state
   const [activeTab, setActiveTab] = useState("jobs");
@@ -159,7 +156,6 @@ export function UserDetailPage() {
           jobsSort={jobsSort}
           jobsOrder={jobsOrder}
           jobsSearch={jobsSearch}
-          isAdmin={isAdmin}
           onSort={handleJobsSort}
           onPageChange={handleJobsPageChange}
           onSearchChange={handleJobsSearchChange}

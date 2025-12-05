@@ -27,7 +27,6 @@ interface UserJobsTabProps {
   jobsSort: SortColumn;
   jobsOrder: "asc" | "desc";
   jobsSearch: string;
-  isAdmin: boolean;
   onSort: (column: SortColumn) => void;
   onPageChange: (page: number) => void;
   onSearchChange: (query: string) => void;
@@ -42,7 +41,6 @@ export function UserJobsTab({
   jobsSort,
   jobsOrder,
   jobsSearch,
-  isAdmin,
   onSort,
   onPageChange,
   onSearchChange,
@@ -83,7 +81,6 @@ export function UserJobsTab({
             sortColumn={jobsSort}
             sortDirection={jobsOrder}
             onSort={onSort}
-            isAdmin={isAdmin}
           />
           <JobsPagination
             currentPage={jobsPage}

@@ -48,7 +48,30 @@ export function UserBasicInfo({ user }: UserBasicInfoProps) {
               {t("users.membershipExpiration")}
             </div>
             <div className="text-lg font-medium text-gray-900">
-              {new Date(user.membershipExpiration).toLocaleDateString()}
+              {(() => {
+                const expiration = user.membershipExpiration;
+                if (expiration instanceof Date) {
+                  return expiration.toLocaleDateString();
+                }
+                if (
+                  typeof expiration === "string" ||
+                  typeof expiration === "number"
+                ) {
+                  return new Date(expiration).toLocaleDateString();
+                }
+                // If it's a Record, try to extract a date value
+                if (typeof expiration === "object" && expiration !== null) {
+                  const dateValue = Object.values(expiration).find(
+                    (v) => typeof v === "string" || typeof v === "number"
+                  );
+                  if (dateValue) {
+                    return new Date(
+                      dateValue as string | number
+                    ).toLocaleDateString();
+                  }
+                }
+                return String(expiration);
+              })()}
             </div>
           </div>
         )}

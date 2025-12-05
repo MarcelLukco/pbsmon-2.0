@@ -17,7 +17,6 @@ type SortColumn =
 
 interface QueuePbsJobsTabProps {
   queueName: string;
-  isAdmin: boolean;
   jobsPage: number;
   jobsLimit: number;
   jobsSort: SortColumn;
@@ -30,7 +29,6 @@ interface QueuePbsJobsTabProps {
 
 export function QueuePbsJobsTab({
   queueName,
-  isAdmin,
   jobsPage,
   jobsLimit,
   jobsSort,
@@ -92,7 +90,6 @@ export function QueuePbsJobsTab({
             sortColumn={jobsSort}
             sortDirection={jobsOrder}
             onSort={onJobsSort}
-            isAdmin={isAdmin}
           />
           <JobsPagination
             currentPage={jobsPage}
