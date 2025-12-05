@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { Tabs } from "@/components/common/Tabs";
 import { Icon } from "@iconify/react";
@@ -24,10 +25,14 @@ interface MachineDetailContentProps {
   node: {
     name: string;
     cpu: number;
+    clusterName?: { cs: string; en: string } | null;
+    clusterId?: string | null;
+    owner?: { cs: string; en: string } | null;
     pbs?: {
       name: string;
       actualState?: string | null;
       cpuUsagePercent?: number | null;
+      cpuAssigned?: number | null;
       gpuUsagePercent?: number | null;
       gpuCount?: number | null;
       gpuAssigned?: number | null;
@@ -230,8 +235,21 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                 <div className="text-sm text-gray-500">
                   {t("machines.nodeName")}
                 </div>
-                <div className="text-lg font-medium text-gray-900">
-                  {node.name}
+                <div className="flex items-center gap-3">
+                  <div className="text-lg font-medium text-gray-900">
+                    {node.name}
+                  </div>
+                  {node.pbs?.actualState && (
+                    <div
+                      className="text-sm font-medium px-2 py-1 rounded"
+                      style={{
+                        color: stateInfo.color,
+                        backgroundColor: `${stateInfo.color}20`,
+                      }}
+                    >
+                      {stateInfo.label}
+                    </div>
+                  )}
                 </div>
               </div>
               <div>
@@ -242,11 +260,33 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                   {node.cpu}
                 </div>
               </div>
+              {node.clusterName && (
+                <div>
+                  <div className="text-sm text-gray-500">
+                    {t("machines.clusterName")}
+                  </div>
+                  <div className="text-lg font-medium text-gray-900">
+                    {i18n.language === "cs"
+                      ? node.clusterName.cs
+                      : node.clusterName.en}
+                  </div>
+                </div>
+              )}
+              {node.owner && (
+                <div>
+                  <div className="text-sm text-gray-500">
+                    {t("machines.owner")}
+                  </div>
+                  <div className="text-lg font-medium text-gray-900">
+                    {i18n.language === "cs" ? node.owner.cs : node.owner.en}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Resource Usage from PBS (can be null) */}
+        {/* Reserved Resources from PBS (can be null) */}
         {node.pbs &&
           !isMaintenance &&
           (cpuUsage > 0 ||
@@ -255,13 +295,18 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  {t("machines.resourceUsage")}
+                  {t("machines.reservedResources")}
                 </h2>
                 <div className="space-y-4">
                   {cpuUsage > 0 && (
                     <ProgressBar
                       label="CPU"
-                      value={node.cpu}
+                      value={
+                        node.pbs.cpuAssigned !== null &&
+                        node.pbs.cpuAssigned !== undefined
+                          ? `${node.pbs.cpuAssigned} / ${node.cpu}`
+                          : `${node.cpu}`
+                      }
                       percent={cpuUsage}
                       color={getCpuGpuColorClass}
                       icon={
@@ -312,43 +357,20 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                       />
                     )}
                 </div>
-                {node.pbs.actualState && (
-                  <div className="mt-4">
-                    <div className="text-sm text-gray-500">
-                      {t("machines.state")}
-                    </div>
-                    <div
-                      className="text-lg font-medium"
-                      style={{ color: stateInfo.color }}
-                    >
-                      {stateInfo.label}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           )}
 
-        {/* Show state only (no progress bars) when in maintenance */}
+        {/* Show reserved resources section when in maintenance */}
         {node.pbs && isMaintenance && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="px-6 py-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                {t("machines.resourceUsage")}
+                {t("machines.reservedResources")}
               </h2>
-              {node.pbs.actualState && (
-                <div>
-                  <div className="text-sm text-gray-500">
-                    {t("machines.state")}
-                  </div>
-                  <div
-                    className="text-lg font-medium"
-                    style={{ color: stateInfo.color }}
-                  >
-                    {stateInfo.label}
-                  </div>
-                </div>
-              )}
+              <div className="text-sm text-gray-500">
+                {t("machines.nodeState.maintenance")}
+              </div>
             </div>
           </div>
         )}

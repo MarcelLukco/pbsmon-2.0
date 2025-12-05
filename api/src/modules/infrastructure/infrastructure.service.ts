@@ -352,7 +352,7 @@ export class InfrastructureService {
     org: PerunPhysicalMachine,
   ): InfrastructureDetailDTO {
     const resources = (org.resources || []).map((resource) =>
-      this.mapClusterToDetailDTO(resource),
+      this.mapClusterToDetailDTO(resource, org),
     );
 
     const orgDetail: InfrastructureOrganizationDetailDTO = {
@@ -378,7 +378,15 @@ export class InfrastructureService {
     resource: PerunResource;
     orgId: string;
   }): InfrastructureDetailDTO {
-    const clusterDetail = this.mapClusterToDetailDTO(cluster.resource);
+    // Find the organization to pass to mapClusterToDetailDTO
+    const perunData = this.dataCollectionService.getPerunData();
+    const organization = perunData?.machines?.physical_machines?.find(
+      (org) => org.id === cluster.orgId,
+    );
+    const clusterDetail = this.mapClusterToDetailDTO(
+      cluster.resource,
+      organization,
+    );
 
     return {
       type: 'Cluster',
@@ -395,9 +403,10 @@ export class InfrastructureService {
    */
   private mapClusterToDetailDTO(
     resource: PerunResource,
+    organization?: PerunPhysicalMachine,
   ): InfrastructureClusterDetailDTO {
     const machines = (resource.machines || []).map((machine) =>
-      this.mapNodeToDetailDTO(machine, resource.id),
+      this.mapNodeToDetailDTO(machine, resource.id, resource, organization),
     );
 
     return {
@@ -426,8 +435,15 @@ export class InfrastructureService {
   private mapNodeToDetail(node: {
     machine: PerunMachine;
     clusterId: string;
+    cluster: PerunResource;
+    organization: PerunPhysicalMachine;
   }): InfrastructureDetailDTO {
-    const nodeDetail = this.mapNodeToDetailDTO(node.machine, node.clusterId);
+    const nodeDetail = this.mapNodeToDetailDTO(
+      node.machine,
+      node.clusterId,
+      node.cluster,
+      node.organization,
+    );
 
     return {
       type: 'Node',
@@ -486,6 +502,8 @@ export class InfrastructureService {
   private mapNodeToDetailDTO(
     machine: PerunMachine,
     clusterId: string,
+    cluster?: PerunResource,
+    organization?: PerunPhysicalMachine,
   ): InfrastructureNodeDetailDTO {
     const pbsState = this.getNodeStateFromPbs(machine.name);
     const pbsNodeData = this.getPbsNodeData(machine.name);
@@ -603,6 +621,11 @@ export class InfrastructureService {
       name: machine.name,
       cpu: machine.cpu,
       pbs: pbsData,
+      clusterName: cluster?.name
+        ? { cs: cluster.name, en: cluster.name }
+        : null,
+      clusterId: cluster?.id,
+      owner: cluster?.owner,
     };
   }
 
@@ -952,7 +975,12 @@ export class InfrastructureService {
   private findNodeByName(
     nodeName: string,
     organizations: PerunPhysicalMachine[],
-  ): { machine: PerunMachine; clusterId: string } | null {
+  ): {
+    machine: PerunMachine;
+    clusterId: string;
+    cluster: PerunResource;
+    organization: PerunPhysicalMachine;
+  } | null {
     // Extract hostname from FQDN for matching
     const nodeHostname = nodeName.split('.')[0];
 
@@ -963,7 +991,12 @@ export class InfrastructureService {
         // Try exact match first
         let machine = machines.find((m) => m.name === nodeName);
         if (machine) {
-          return { machine, clusterId: resource.id };
+          return {
+            machine,
+            clusterId: resource.id,
+            cluster: resource,
+            organization: org,
+          };
         }
         // Try hostname match (FQDN vs short name)
         machine = machines.find((m) => {
@@ -971,7 +1004,12 @@ export class InfrastructureService {
           return machineHostname === nodeHostname || m.name === nodeHostname;
         });
         if (machine) {
-          return { machine, clusterId: resource.id };
+          return {
+            machine,
+            clusterId: resource.id,
+            cluster: resource,
+            organization: org,
+          };
         }
       }
     }

@@ -73,10 +73,14 @@ export function MachineDetailPage() {
   const node = data.node as {
     name: string;
     cpu: number;
+    clusterName?: { cs: string; en: string } | null;
+    clusterId?: string | null;
+    owner?: { cs: string; en: string } | null;
     pbs?: {
       name: string;
       actualState?: string | null;
       cpuUsagePercent?: number | null;
+      cpuAssigned?: number | null;
       gpuUsagePercent?: number | null;
       gpuCount?: number | null;
       gpuAssigned?: number | null;

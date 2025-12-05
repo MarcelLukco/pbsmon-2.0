@@ -183,6 +183,32 @@ export class InfrastructureNodeDetailDTO {
     required: false,
   })
   pbs?: InfrastructureNodePbsDTO | null;
+
+  @Expose()
+  @Type(() => LocalizedStringDTO)
+  @ApiProperty({
+    description: 'Cluster name (localized)',
+    nullable: true,
+    required: false,
+  })
+  clusterName?: LocalizedStringDTO | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Cluster ID',
+    nullable: true,
+    required: false,
+  })
+  clusterId?: string | null;
+
+  @Expose()
+  @Type(() => LocalizedStringDTO)
+  @ApiProperty({
+    description: 'Owner organization (localized)',
+    nullable: true,
+    required: false,
+  })
+  owner?: LocalizedStringDTO | null;
 }
 
 /**
