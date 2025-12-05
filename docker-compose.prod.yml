@@ -9,14 +9,13 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - FRONTEND_URL=http://localhost
+      - FRONTEND_URL=${FRONTEND_URL:-https://mu-pub-245-82.flt.openstack.cloud.e-infra.cz}
       - PBS_DATA_PATH=/app/data/pbs
       - PERUN_DATA_PATH=/app/data/perun
-      # Add other environment variables as needed
-      # - PROMETHEUS_BASE_URL=
-      # - PROMETHEUS_USERNAME=
-      # - PROMETHEUS_PASSWORD=
-      # - PROMETHEUS_TOKEN=
+      - PROMETHEUS_BASE_URL=${PROMETHEUS_BASE_URL:-}
+      - PROMETHEUS_USERNAME=${PROMETHEUS_USERNAME:-}
+      - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-}
+      - PROMETHEUS_TOKEN=${PROMETHEUS_TOKEN:-}
     volumes:
       # Mount data directories if needed
       - ./api/data:/app/data
@@ -28,7 +27,7 @@ services:
           "CMD",
           "node",
           "-e",
-          "require('http').get('http://localhost:3000/api', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+          "require('http').get('http://localhost:3000/status', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
         ]
       interval: 30s
       timeout: 10s
@@ -41,11 +40,13 @@ services:
       dockerfile: Dockerfile
       target: production
       args:
-        API_BASE_URL: ${API_BASE_URL:-http://147.251.245.82/api}
+        API_BASE_URL: ${API_BASE_URL:-https://mu-pub-245-82.flt.openstack.cloud.e-infra.cz/api}
         API_AUTH_USERNAME: ${API_AUTH_USERNAME:-}
         API_AUTH_PASSWORD: ${API_AUTH_PASSWORD:-}
     container_name: pbsmon-web
     restart: unless-stopped
+    depends_on:
+      - api
     networks:
       - pbsmon-network
     healthcheck:
@@ -76,6 +77,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./nginx/.htpasswd:/etc/nginx/.htpasswd:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - api
       - web

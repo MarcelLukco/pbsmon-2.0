@@ -18,6 +18,20 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
+# Load environment variables from .env file if it exists
+ENV_FILE="$SCRIPT_DIR/.env"
+if [ -f "$ENV_FILE" ]; then
+    echo -e "${YELLOW}Loading environment variables from .env file...${NC}"
+    # Export variables from .env file (handles comments and empty lines)
+    set -a
+    source "$ENV_FILE"
+    set +a
+    echo -e "${GREEN}✓ Environment variables loaded${NC}"
+else
+    echo -e "${YELLOW}⚠️  No .env file found at $ENV_FILE${NC}"
+    echo -e "${YELLOW}   Make sure API_AUTH_USERNAME and API_AUTH_PASSWORD are set${NC}"
+fi
+
 # Check if --skip-pull flag is present
 SKIP_PULL=false
 for arg in "$@"; do
@@ -45,6 +59,9 @@ else
     exit 1
 fi
 
+# Set the docker compose file
+COMPOSE_FILE="docker-compose.prod.yml"
+
 # Pull latest code (unless --skip-pull flag is set)
 if [ "$SKIP_PULL" = false ]; then
     echo -e "${YELLOW}Pulling latest code from git...${NC}"
@@ -61,13 +78,9 @@ else
     echo -e "${YELLOW}Skipping git pull (--skip-pull flag set)${NC}"
 fi
 
-# Stop existing containers
-echo -e "${YELLOW}Stopping existing containers...${NC}"
-sudo $DOCKER_COMPOSE down || true
-
-# Build and start containers
-echo -e "${YELLOW}Building and starting containers...${NC}"
-if sudo $DOCKER_COMPOSE up -d --build; then
+# Build and start containers (only web and api services)
+echo -e "${YELLOW}Building and starting web and api containers...${NC}"
+if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web api; then
     echo -e "${GREEN}✓ Containers started successfully${NC}"
 else
     echo -e "${RED}✗ Failed to start containers${NC}"
@@ -79,11 +92,11 @@ sleep 5
 
 # Check container status
 echo -e "${YELLOW}Checking container status...${NC}"
-sudo $DOCKER_COMPOSE ps
+sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" ps
 
 # Show logs for the last 20 lines
 echo -e "${YELLOW}Recent logs:${NC}"
-sudo $DOCKER_COMPOSE logs --tail=20
+sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" logs --tail=20
 
 echo -e "${GREEN}Deployment completed successfully!${NC}"
 echo -e "${GREEN}Services should be available at:${NC}"
