@@ -2,7 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { PbsConfig } from '@/config/pbs.config';
+
+const execAsync = promisify(exec);
 import {
   PbsData,
   PbsServerData,
@@ -40,6 +44,13 @@ export class PbsCollectionService {
     try {
       const serversData: Record<string, PbsServerData> = {};
       const basePath = this.config.dataPath;
+
+      // Call pbscaller if not using mock data
+      if (!this.config.mockData) {
+        await this.callPbscaller();
+      } else {
+        this.logger.log('MOCK_PBS_DATA is true, skipping pbscaller execution');
+      }
 
       // Check if the base directory exists
       try {
@@ -249,6 +260,42 @@ export class PbsCollectionService {
         this.logger.warn(`Failed to load fairshare file: ${errorMessage}`);
       }
       return null;
+    }
+  }
+
+  private async callPbscaller(): Promise<void> {
+    try {
+      const serverName = this.config.serverName;
+      const fullServerName = `${serverName}.metacentrum.cz`;
+      const outputDir = path.join(this.config.dataPath, serverName);
+      const pbscallerPath = path.join(process.cwd(), 'bin', 'pbsprocaller');
+
+      // Ensure output directory exists
+      await fs.mkdir(outputDir, { recursive: true });
+
+      this.logger.log(
+        `Calling pbscaller for server ${fullServerName}, output directory: ${outputDir}`,
+      );
+
+      const { stdout, stderr } = await execAsync(
+        `"${pbscallerPath}" "${fullServerName}" "${outputDir}"`,
+      );
+
+      if (stdout) {
+        this.logger.debug(`pbscaller stdout: ${stdout}`);
+      }
+      if (stderr) {
+        this.logger.warn(`pbscaller stderr: ${stderr}`);
+      }
+
+      this.logger.log('pbscaller execution completed successfully');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Failed to execute pbscaller: ${errorMessage}. Continuing with existing data files.`,
+      );
+      // Don't throw - allow collection to continue with existing files
     }
   }
 

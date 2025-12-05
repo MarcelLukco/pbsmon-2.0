@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <pbs_error.h>
 #include <pbs_ifl.h>
 #include <unistd.h>
@@ -9,7 +10,7 @@ extern char *pbs_server;
 
 int process_data(struct batch_status *bs,char* type);
 
-int process_data_json(struct batch_status *bs,char* type);
+int process_data_json(struct batch_status *bs,char* type, const char* output_dir);
 
 int main(int argc, char **argv) {
     /*PBS variables*/
@@ -17,12 +18,14 @@ int main(int argc, char **argv) {
     struct batch_status *bs;
     /* my variables */
     char* server;
+    const char* output_dir;
 
-    if(argc != 2) {
-        fprintf(stderr,"Usage: %s servername\n",argv[0]);
+    if(argc != 3) {
+        fprintf(stderr,"Usage: %s servername output_directory\n",argv[0]);
         return 1;
     }
     server = argv[1];
+    output_dir = argv[2];
     
     con = pbs_connect(server);    
     if(con<0) {
@@ -31,30 +34,30 @@ int main(int argc, char **argv) {
     }
     /* get server info */
     bs = pbs_statserver(con, NULL, NULL);
-    process_data_json(bs,"servers");
+    process_data_json(bs,"servers", output_dir);
 
     /* get queues info */
     bs = pbs_statque(con, "", NULL, NULL);
-    process_data_json(bs,"queues");
+    process_data_json(bs,"queues", output_dir);
 
     /* get nodes info */
     bs = pbs_statnode(con, "", NULL, NULL);
-    process_data_json(bs,"nodes");
+    process_data_json(bs,"nodes", output_dir);
     /* get jobs info: t - job arrays, x - finished jobs*/
     bs = pbs_statjob(con, "", NULL, "tx");
-    process_data_json(bs,"jobs");
+    process_data_json(bs,"jobs", output_dir);
     /* get reservations info */
     bs = pbs_statresv(con, NULL, NULL, NULL);
-    process_data_json(bs,"reservations");
+    process_data_json(bs,"reservations", output_dir);
     /* get resources info */
     bs = pbs_statrsc(con, NULL, NULL, NULL);
-    process_data_json(bs,"resources");
+    process_data_json(bs,"resources", output_dir);
     /* get scheduler info */
     bs = pbs_statsched(con, NULL, NULL);
-    process_data_json(bs,"schedulers");
+    process_data_json(bs,"schedulers", output_dir);
     /* get hook info */
     bs = pbs_stathook(con, NULL, NULL, NULL);
-    process_data_json(bs,"hooks");
+    process_data_json(bs,"hooks", output_dir);
     /* end connection */
     pbs_disconnect(con);
     return 0;
@@ -110,13 +113,13 @@ static void json_escape(const char *src, FILE *fp) {
 }
 
 /* Main function */
-int process_data_json(struct batch_status *bs, char *type) {
+int process_data_json(struct batch_status *bs, char *type, const char* output_dir) {
     struct batch_status *tmp;
     struct attrl *atp;
     int count = 0;
-    char filename[256];
+    char filename[512];
 
-    snprintf(filename, sizeof(filename), "%s.json", type);
+    snprintf(filename, sizeof(filename), "%s/%s.json", output_dir, type);
     FILE *fp = fopen(filename, "w");
     if (!fp) {
         fprintf(stderr, "Failed to open file %s for writing\n", filename);
