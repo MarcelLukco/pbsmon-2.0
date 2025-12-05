@@ -136,7 +136,10 @@ export function JobsTableRow({
 
       {/* CPU Column */}
       <div className="text-sm">
-        {jobState === "R" &&
+        {(jobState === "R" ||
+          jobState === "C" ||
+          jobState === "F" ||
+          jobState === "X") &&
         typeof job.cpuUsagePercent === "number" &&
         job.cpuUsagePercent !== null &&
         job.cpuUsagePercent !== undefined ? (
@@ -154,6 +157,24 @@ export function JobsTableRow({
                 <Icon icon="solar:cpu-bold" className="w-[14px] h-[14px]" />
               }
             />
+            {job.cpuTimeUsed && (
+              <div className="text-gray-600 flex justify-between">
+                <span>{t("jobs.cpuTime")}:</span>
+                <span>{formatTimeString(String(job.cpuTimeUsed))}</span>
+              </div>
+            )}
+          </div>
+        ) : job.cpuTimeUsed ? (
+          // Show CPU time even if CPU percent is not available (for completed jobs)
+          <div>
+            <div className="flex items-center gap-1 mb-1">
+              <span className="text-gray-900">
+                {typeof job.cpuReserved === "number"
+                  ? job.cpuReserved
+                  : Number(job.cpuReserved) || 0}
+              </span>
+              <Icon icon="solar:cpu-bold" className="w-[14px] h-[14px]" />
+            </div>
             <div className="text-gray-600 flex justify-between">
               <span>{t("jobs.cpuTime")}:</span>
               <span>{formatTimeString(String(job.cpuTimeUsed))}</span>
