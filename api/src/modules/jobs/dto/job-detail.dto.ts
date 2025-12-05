@@ -172,6 +172,13 @@ export class JobDetailDTO {
   username: string;
 
   @Expose()
+  @ApiProperty({
+    description:
+      'Whether the current user can see the job owner username (true if admin, same user, or in same group)',
+  })
+  canSeeOwner: boolean;
+
+  @Expose()
   @ApiProperty({ description: 'Queue name', nullable: true })
   queue?: string | null;
 

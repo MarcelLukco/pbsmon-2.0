@@ -79,6 +79,13 @@ export class JobsController {
     description:
       'Filter by exact comment/reason for waiting. If not provided, returns jobs with all comments.',
   })
+  @ApiQuery({
+    name: 'owner',
+    required: false,
+    type: String,
+    description:
+      'Filter by job owner username (exact match on username part, before @). If not provided, returns jobs from all owners.',
+  })
   @ApiOkResponseModel(JobsListDTO, 'List of jobs', MetaDto)
   getJobs(
     @UserContextDecorator() userContext: UserContext,
@@ -91,6 +98,7 @@ export class JobsController {
     @Query('node') node?: string,
     @Query('queue') queue?: string,
     @Query('comment') comment?: string,
+    @Query('owner') owner?: string,
   ): ApiResponse<JobsListDTO, MetaDto> {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
@@ -108,6 +116,7 @@ export class JobsController {
       node,
       queue,
       comment,
+      owner,
     );
 
     return new ApiResponse(data, {

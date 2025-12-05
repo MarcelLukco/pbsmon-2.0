@@ -60,6 +60,7 @@ export function getJobStateFromPbsState(
         color: 'bg-gray-100 text-gray-800',
       };
     case 'T':
+    case 'M':
       return {
         name: 'moved',
         color: 'bg-gray-100 text-gray-800',
@@ -68,11 +69,6 @@ export function getJobStateFromPbsState(
       return {
         name: 'waiting',
         color: 'bg-yellow-100 text-yellow-800',
-      };
-    case 'M':
-      return {
-        name: 'moved',
-        color: 'bg-gray-100 text-gray-800',
       };
     default:
       return {

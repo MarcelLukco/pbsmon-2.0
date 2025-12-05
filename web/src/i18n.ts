@@ -147,6 +147,11 @@ i18n.use(initReactI18next).init({
           exitCode: "Exit Code",
           comment: "Comment",
           resources: "Resources",
+          tabs: {
+            myJobs: "My Jobs",
+            allJobs: "All Jobs",
+            waitingJobs: "Waiting Jobs",
+          },
           requestedResources: "Requested Resources",
           noResourcesRequested: "No resources requested",
           resourceReservation: "Resource Reservation",
@@ -470,6 +475,11 @@ i18n.use(initReactI18next).init({
           filter: "Filtrovat",
           clear: "Zrušit",
           resources: "Prostředky",
+          tabs: {
+            myJobs: "Moje úlohy",
+            allJobs: "Všechny úlohy",
+            waitingJobs: "Čekající úlohy",
+          },
           requestedResources: "Požadované prostředky",
           noResourcesRequested: "Žádné prostředky nebyly požadovány",
           resourceReservation: "Vyhrazení prostředků",

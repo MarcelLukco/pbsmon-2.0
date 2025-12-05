@@ -17,6 +17,7 @@ interface UseJobsParams {
   node?: string;
   queue?: string;
   comment?: string;
+  owner?: string;
   enabled?: boolean;
 }
 
@@ -31,6 +32,7 @@ export function useJobs(params: UseJobsParams = {}) {
     node,
     queue,
     comment,
+    owner,
     enabled = true,
   } = params;
 
@@ -46,6 +48,7 @@ export function useJobs(params: UseJobsParams = {}) {
       node,
       queue,
       comment,
+      owner,
     ],
     queryFn: async () => {
       const response = await apiClient.jobs.jobsControllerGetJobs({
@@ -58,6 +61,7 @@ export function useJobs(params: UseJobsParams = {}) {
         node,
         queue,
         comment,
+        owner,
       });
       return response;
     },

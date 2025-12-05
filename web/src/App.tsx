@@ -21,7 +21,6 @@ import "@/i18n";
 import "@/app.css";
 import { QsubAssemblerPage } from "@/pages/QsubAssemblerPage.tsx";
 import { StorageSpacesPage } from "@/pages/StorageSpacesPage";
-import { WaitingJobsPage } from "@/pages/WaitingJobsPage";
 
 export default function App() {
   return (
@@ -37,7 +36,10 @@ export default function App() {
             <Route path="storage-spaces" element={<StorageSpacesPage />} />
             <Route path="jobs" element={<JobsPage />} />
             <Route path="jobs/:jobId" element={<JobDetailPage />} />
-            <Route path="waiting-jobs" element={<WaitingJobsPage />} />
+            <Route
+              path="waiting-jobs"
+              element={<Navigate to="/jobs?tab=waiting" replace />}
+            />
             <Route path="queues" element={<JobsQueuesPage />} />
             <Route path="queues/:queueId" element={<QueueDetailPage />} />
             <Route path="users" element={<UsersPage />} />

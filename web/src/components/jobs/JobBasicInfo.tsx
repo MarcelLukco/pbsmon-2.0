@@ -46,12 +46,16 @@ export function JobBasicInfo({ job }: JobBasicInfoProps) {
         <div>
           <div className="text-sm text-gray-500">{t("jobs.owner")}</div>
           <div className="text-lg font-medium text-gray-900">
-            <Link
-              to={`/users/${String(job.username || "")}`}
-              className="text-primary-600 hover:text-primary-800"
-            >
-              {String(job.owner || "")}
-            </Link>
+            {job.canSeeOwner && job.username ? (
+              <Link
+                to={`/users/${String(job.username)}`}
+                className="text-primary-600 hover:text-primary-800"
+              >
+                {String(job.owner || "")}
+              </Link>
+            ) : (
+              <span>{t("jobs.anonym")}</span>
+            )}
           </div>
         </div>
         {job.queue && (

@@ -5,13 +5,9 @@ import type { JobListDTO } from "@/lib/generated-api";
 
 interface WaitingJobsTableRowProps {
   job: JobListDTO;
-  isAdmin?: boolean;
 }
 
-export function WaitingJobsTableRow({
-  job,
-  isAdmin = false,
-}: WaitingJobsTableRowProps) {
+export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
   const { t } = useTranslation();
 
   const username = job.username || job.owner?.split("@")[0];
@@ -61,9 +57,9 @@ export function WaitingJobsTableRow({
         {String(job.name || "")}
       </div>
 
-      {/* Username Column - Show username for admins, anonymized for non-admins */}
+      {/* Username Column - Show username if canSeeOwner, anonymized otherwise */}
       <div className="text-sm">
-        {isAdmin && username ? (
+        {job.canSeeOwner && username ? (
           <Link
             to={`/users/${encodeURIComponent(username)}`}
             className="text-gray-900 hover:text-primary-600 underline cursor-pointer"

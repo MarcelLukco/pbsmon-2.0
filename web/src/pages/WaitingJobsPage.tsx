@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useJobs } from "@/hooks/useJobs";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 import { WaitingJobsTable } from "@/components/jobs/WaitingJobsTable";
 import { WaitingJobsSummary } from "@/components/jobs/WaitingJobsSummary";
@@ -25,9 +24,6 @@ export function WaitingJobsPage() {
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [search, setSearch] = useState("");
   const [commentFilter, setCommentFilter] = useState<string | null>(null);
-
-  const { data: currentUser } = useCurrentUser();
-  const isAdmin = currentUser?.role === "admin";
 
   const { data, isLoading, error } = useJobs({
     page,
@@ -135,7 +131,6 @@ export function WaitingJobsPage() {
               sortColumn={sort}
               sortDirection={order}
               onSort={handleSort}
-              isAdmin={isAdmin}
             />
             <JobsPagination
               currentPage={page}

@@ -115,6 +115,13 @@ export class JobListDTO {
     nullable: true,
   })
   comment?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description:
+      'Whether the current user can see the job owner username (true if admin, same user, or in same group)',
+  })
+  canSeeOwner: boolean;
 }
 
 /**

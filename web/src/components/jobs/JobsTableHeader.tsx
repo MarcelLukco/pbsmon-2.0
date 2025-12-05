@@ -16,8 +16,8 @@ interface JobsTableHeaderProps {
   sortColumn: SortColumn;
   sortDirection: "asc" | "desc";
   onSort: (column: SortColumn) => void;
-  isAdmin?: boolean;
   hideMachineColumn?: boolean;
+  hideUserColumn?: boolean;
 }
 
 export function JobsTableHeader({
@@ -25,12 +25,21 @@ export function JobsTableHeader({
   sortDirection,
   onSort,
   hideMachineColumn = false,
+  hideUserColumn = false,
 }: JobsTableHeaderProps) {
   const { t } = useTranslation();
 
-  const gridCols = hideMachineColumn
-    ? "grid-cols-[80px_300px_150px_120px_1fr_1fr_1fr_180px]"
-    : "grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px]";
+  // Calculate grid columns based on which columns are hidden
+  let gridCols: string;
+  if (hideMachineColumn && hideUserColumn) {
+    gridCols = "grid-cols-[80px_300px_150px_1fr_1fr_1fr_180px]";
+  } else if (hideMachineColumn) {
+    gridCols = "grid-cols-[80px_300px_150px_120px_1fr_1fr_1fr_180px]";
+  } else if (hideUserColumn) {
+    gridCols = "grid-cols-[80px_300px_150px_150px_1fr_1fr_1fr_180px]";
+  } else {
+    gridCols = "grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px]";
+  }
 
   return (
     <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
@@ -64,14 +73,16 @@ export function JobsTableHeader({
           {t("jobs.name")}
         </JobsSortableHeader>
 
-        <JobsSortableHeader
-          column="owner"
-          currentSortColumn={sortColumn}
-          sortDirection={sortDirection}
-          onSort={onSort}
-        >
-          {t("jobs.username")}
-        </JobsSortableHeader>
+        {!hideUserColumn && (
+          <JobsSortableHeader
+            column="owner"
+            currentSortColumn={sortColumn}
+            sortDirection={sortDirection}
+            onSort={onSort}
+          >
+            {t("jobs.username")}
+          </JobsSortableHeader>
+        )}
 
         {!hideMachineColumn && (
           <JobsSortableHeader

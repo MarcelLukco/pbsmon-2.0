@@ -18,7 +18,6 @@ interface WaitingJobsTableProps {
   sortColumn: SortColumn;
   sortDirection: "asc" | "desc";
   onSort: (column: SortColumn) => void;
-  isAdmin?: boolean;
 }
 
 export function WaitingJobsTable({
@@ -26,7 +25,6 @@ export function WaitingJobsTable({
   sortColumn,
   sortDirection,
   onSort,
-  isAdmin = false,
 }: WaitingJobsTableProps) {
   const { t } = useTranslation();
 
@@ -46,9 +44,7 @@ export function WaitingJobsTable({
               {t("jobs.noJobsFound")}
             </div>
           ) : (
-            jobs.map((job) => (
-              <WaitingJobsTableRow key={job.id} job={job} isAdmin={isAdmin} />
-            ))
+            jobs.map((job) => <WaitingJobsTableRow key={job.id} job={job} />)
           )}
         </div>
       </div>

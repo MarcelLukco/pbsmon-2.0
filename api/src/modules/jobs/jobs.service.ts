@@ -26,6 +26,8 @@ export class JobsService {
    * @param state Filter by job state (Q=Queued, R=Running, C=Completed, E=Exiting, H=Held)
    * @param node Filter by node/machine name
    * @param queue Filter by queue name
+   * @param comment Filter by job comment/waiting reason
+   * @param owner Filter by job owner username (exact match on username part, before @)
    */
   getJobsList(
     userContext: UserContext,
@@ -38,6 +40,7 @@ export class JobsService {
     node?: string,
     queue?: string,
     comment?: string,
+    owner?: string,
   ): { data: JobsListDTO; totalCount: number } {
     const pbsData = this.dataCollectionService.getPbsData();
 
@@ -59,24 +62,40 @@ export class JobsService {
     // Transform to DTOs
     let jobs = allJobs.map((job) => this.transformJobToDTO(job));
 
-    // Apply access control filter (admin sees all, non-admin sees only their jobs or group jobs)
-    if (userContext.role !== UserRole.ADMIN) {
-      const userGroups = this.getUserGroups(userContext);
+    // Calculate which usernames the current user can see
+    // (for anonymization - non-admins can see usernames of themselves and group members)
+    const allowedUsernames = new Set<string>();
+    if (userContext.role === UserRole.ADMIN) {
+      // Admins can see all usernames
+      // We'll set canSeeOwner to true for all jobs below
+    } else {
       const username = userContext.username.split('@')[0];
+      const usernameBase = username.split('@')[0];
+      allowedUsernames.add(userContext.username);
+      allowedUsernames.add(username);
+      allowedUsernames.add(usernameBase);
 
-      jobs = jobs.filter((job) => {
-        const jobOwner = job.owner.split('@')[0];
-        // User can see their own jobs
-        if (jobOwner === username) {
-          return true;
-        }
-        // User can see jobs from their groups
-        if (userGroups.length > 0 && userGroups.includes(jobOwner)) {
-          return true;
-        }
-        return false;
-      });
+      // Get users from groups the current user belongs to
+      const userGroups = this.getUserGroups(userContext);
+      for (const groupMember of userGroups) {
+        allowedUsernames.add(groupMember);
+        const groupMemberBase = groupMember.split('@')[0];
+        allowedUsernames.add(groupMemberBase);
+      }
     }
+
+    // Add canSeeOwner field to each job
+    jobs = jobs.map((job) => {
+      const jobOwner = job.owner.split('@')[0];
+      const canSeeOwner =
+        userContext.role === UserRole.ADMIN ||
+        allowedUsernames.has(job.owner) ||
+        allowedUsernames.has(jobOwner);
+      return {
+        ...job,
+        canSeeOwner,
+      };
+    });
 
     // Apply node filter
     if (node && node.trim()) {
@@ -126,6 +145,15 @@ export class JobsService {
       jobs = jobs.filter((job) => {
         const jobComment = job.comment || '';
         return jobComment === comment;
+      });
+    }
+
+    // Apply owner filter (exact match on username part, before @)
+    if (owner && owner.trim()) {
+      const ownerFilter = owner.trim().toLowerCase();
+      jobs = jobs.filter((job) => {
+        const jobOwner = job.owner.split('@')[0].toLowerCase();
+        return jobOwner === ownerFilter;
       });
     }
 
@@ -276,6 +304,7 @@ export class JobsService {
       createdAt,
       exitCode,
       comment: attrs['comment'] || null,
+      canSeeOwner: true, // Will be overridden in getJobsList based on user context
     };
   }
 
@@ -465,26 +494,38 @@ export class JobsService {
       throw new NotFoundException('Job not found');
     }
 
-    // Check access control
+    // Calculate if current user can see the job owner
     const attrs = job.attributes;
     const owner = attrs['Job_Owner'] || '';
     const jobOwner = owner.split('@')[0];
 
+    let canSeeOwner = true;
     if (userContext.role !== UserRole.ADMIN) {
-      const userGroups = this.getUserGroups(userContext);
       const username = userContext.username.split('@')[0];
+      const usernameBase = username.split('@')[0];
+      const allowedUsernames = new Set<string>();
+      allowedUsernames.add(userContext.username);
+      allowedUsernames.add(username);
+      allowedUsernames.add(usernameBase);
 
-      const hasAccess =
-        jobOwner === username ||
-        (userGroups.length > 0 && userGroups.includes(jobOwner));
-
-      if (!hasAccess) {
-        throw new NotFoundException('Job not found');
+      // Get users from groups the current user belongs to
+      const userGroups = this.getUserGroups(userContext);
+      for (const groupMember of userGroups) {
+        allowedUsernames.add(groupMember);
+        const groupMemberBase = groupMember.split('@')[0];
+        allowedUsernames.add(groupMemberBase);
       }
+
+      canSeeOwner =
+        allowedUsernames.has(owner) || allowedUsernames.has(jobOwner);
     }
 
     // Transform to detail DTO
-    return this.transformJobToDetailDTO(job, pbsData);
+    const jobDetail = this.transformJobToDetailDTO(job, pbsData);
+    return {
+      ...jobDetail,
+      canSeeOwner,
+    };
   }
 
   /**
@@ -731,6 +772,7 @@ export class JobsService {
       stateColor: stateInfo.color,
       owner,
       username,
+      canSeeOwner: true, // Will be overridden in getJobDetail based on user context
       queue: attrs['queue'] || null,
       server: attrs['server'] || null,
       node,

@@ -6,14 +6,14 @@ import { ProgressBar } from "@/components/common/ProgressBar";
 
 interface JobsTableRowProps {
   job: JobListDTO;
-  isAdmin?: boolean;
   hideMachineColumn?: boolean;
+  hideUserColumn?: boolean;
 }
 
 export function JobsTableRow({
   job,
-  isAdmin = false,
   hideMachineColumn = false,
+  hideUserColumn = false,
 }: JobsTableRowProps) {
   const { t } = useTranslation();
 
@@ -59,9 +59,17 @@ export function JobsTableRow({
     return timeStr;
   };
 
-  const gridCols = hideMachineColumn
-    ? "grid-cols-[80px_300px_150px_120px_1fr_1fr_1fr_180px]"
-    : "grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px]";
+  // Calculate grid columns based on which columns are hidden
+  let gridCols: string;
+  if (hideMachineColumn && hideUserColumn) {
+    gridCols = "grid-cols-[80px_300px_150px_1fr_1fr_1fr_180px]";
+  } else if (hideMachineColumn) {
+    gridCols = "grid-cols-[80px_300px_150px_120px_1fr_1fr_1fr_180px]";
+  } else if (hideUserColumn) {
+    gridCols = "grid-cols-[80px_300px_150px_150px_1fr_1fr_1fr_180px]";
+  } else {
+    gridCols = "grid-cols-[80px_300px_150px_120px_150px_1fr_1fr_1fr_180px]";
+  }
 
   return (
     <div
@@ -99,19 +107,21 @@ export function JobsTableRow({
         {String(job.name || "")}
       </div>
 
-      {/* Username Column - Show username for admins, anonymized for non-admins */}
-      <div className="text-sm">
-        {isAdmin && username ? (
-          <Link
-            to={`/users/${encodeURIComponent(username)}`}
-            className="text-gray-900 hover:text-primary-600 underline cursor-pointer"
-          >
-            {String(username)}
-          </Link>
-        ) : (
-          <span className="text-gray-900">{t("jobs.anonym")}</span>
-        )}
-      </div>
+      {/* Username Column - Show username if canSeeOwner, anonymized otherwise */}
+      {!hideUserColumn && (
+        <div className="text-sm">
+          {job.canSeeOwner && username ? (
+            <Link
+              to={`/users/${encodeURIComponent(username)}`}
+              className="text-gray-900 hover:text-primary-600 underline cursor-pointer"
+            >
+              {String(username)}
+            </Link>
+          ) : (
+            <span className="text-gray-900">{t("jobs.anonym")}</span>
+          )}
+        </div>
+      )}
 
       {/* Machine Column */}
       {!hideMachineColumn && (

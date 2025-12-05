@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import { useJobs } from "@/hooks/useJobs";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 import { JobsTable } from "@/components/jobs/JobsTable";
+import { WaitingJobsTable } from "@/components/jobs/WaitingJobsTable";
+import { WaitingJobsSummary } from "@/components/jobs/WaitingJobsSummary";
 import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { Tabs } from "@/components/common/Tabs";
 
 type SortColumn =
   | "id"
@@ -17,51 +21,355 @@ type SortColumn =
   | "memoryReserved"
   | "createdAt";
 
+type WaitingSortColumn =
+  | "id"
+  | "name"
+  | "owner"
+  | "node"
+  | "cpuReserved"
+  | "gpuReserved"
+  | "memoryReserved"
+  | "createdAt";
+
 export function JobsPage() {
   const { t } = useTranslation();
-  const [page, setPage] = useState(1);
-  const [limit] = useState(20);
-  const [sort, setSort] = useState<SortColumn>("createdAt");
-  const [order, setOrder] = useState<"asc" | "desc">("desc");
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState<"all" | "waiting" | "my">(
+    tabParam === "waiting" ? "waiting" : tabParam === "my" ? "my" : "all"
+  );
+
+  // Update URL when tab changes
+  useEffect(() => {
+    if (activeTab === "waiting") {
+      setSearchParams({ tab: "waiting" }, { replace: true });
+    } else if (activeTab === "my") {
+      setSearchParams({ tab: "my" }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  }, [activeTab, setSearchParams]);
+
+  // All Jobs tab state
+  const [allJobsPage, setAllJobsPage] = useState(1);
+  const [allJobsLimit] = useState(20);
+  const [allJobsSort, setAllJobsSort] = useState<SortColumn>("createdAt");
+  const [allJobsOrder, setAllJobsOrder] = useState<"asc" | "desc">("desc");
+  const [allJobsSearch, setAllJobsSearch] = useState("");
+
+  // Waiting Jobs tab state
+  const [waitingJobsPage, setWaitingJobsPage] = useState(1);
+  const [waitingJobsLimit] = useState(20);
+  const [waitingJobsSort, setWaitingJobsSort] =
+    useState<WaitingSortColumn>("createdAt");
+  const [waitingJobsOrder, setWaitingJobsOrder] = useState<"asc" | "desc">(
+    "desc"
+  );
+  const [waitingJobsSearch, setWaitingJobsSearch] = useState("");
+  const [commentFilter, setCommentFilter] = useState<string | null>(null);
+
+  // My Jobs tab state
+  const [myJobsPage, setMyJobsPage] = useState(1);
+  const [myJobsLimit] = useState(20);
+  const [myJobsSort, setMyJobsSort] = useState<SortColumn>("createdAt");
+  const [myJobsOrder, setMyJobsOrder] = useState<"asc" | "desc">("desc");
+  const [myJobsSearch, setMyJobsSearch] = useState("");
 
   const { data: currentUser } = useCurrentUser();
-  const isAdmin = currentUser?.role === "admin";
+  const currentUsername = currentUser?.username?.split("@")[0] || "";
 
-  const { data, isLoading, error } = useJobs({
-    page,
-    limit,
-    sort,
-    order,
-    search: search.trim() || undefined,
+  // Fetch all jobs
+  const {
+    data: allJobsData,
+    isLoading: allJobsLoading,
+    error: allJobsError,
+  } = useJobs({
+    page: allJobsPage,
+    limit: allJobsLimit,
+    sort: allJobsSort,
+    order: allJobsOrder,
+    search: allJobsSearch.trim() || undefined,
+    enabled: activeTab === "all",
   });
 
-  const handleSort = (column: SortColumn) => {
-    if (sort === column) {
-      // Toggle order if same column
-      setOrder(order === "asc" ? "desc" : "asc");
+  // Fetch waiting jobs
+  const {
+    data: waitingJobsData,
+    isLoading: waitingJobsLoading,
+    error: waitingJobsError,
+  } = useJobs({
+    page: waitingJobsPage,
+    limit: waitingJobsLimit,
+    sort: waitingJobsSort,
+    order: waitingJobsOrder,
+    search: waitingJobsSearch.trim() || undefined,
+    state: "Q", // Filter for queued jobs only
+    comment: commentFilter || undefined,
+    enabled: activeTab === "waiting",
+  });
+
+  // Fetch my jobs (filtered by current user's username)
+  // Use owner filter to get only the current user's jobs
+  const {
+    data: myJobsData,
+    isLoading: myJobsLoading,
+    error: myJobsError,
+  } = useJobs({
+    page: myJobsPage,
+    limit: myJobsLimit,
+    sort: myJobsSort,
+    order: myJobsOrder,
+    search: myJobsSearch.trim() || undefined,
+    owner: currentUsername || undefined, // Filter by current user's username
+    enabled: activeTab === "my" && !!currentUsername,
+  });
+
+  // Fetch all waiting jobs for summary (no pagination, no search filter)
+  const { data: summaryData } = useJobs({
+    page: 1,
+    limit: 10000, // Large limit to get all jobs for summary
+    sort: "createdAt",
+    order: "desc",
+    state: "Q", // Filter for queued jobs only
+    enabled: activeTab === "waiting",
+    // No search filter for summary - we want all jobs
+  });
+
+  // All Jobs handlers
+  const handleAllJobsSort = (column: SortColumn) => {
+    if (allJobsSort === column) {
+      setAllJobsOrder(allJobsOrder === "asc" ? "desc" : "asc");
     } else {
-      // Set new column with default order
-      setSort(column);
-      setOrder("desc");
+      setAllJobsSort(column);
+      setAllJobsOrder("desc");
     }
-    setPage(1); // Reset to first page on sort
+    setAllJobsPage(1);
   };
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    // Scroll to top when page changes
+  const handleAllJobsPageChange = (newPage: number) => {
+    setAllJobsPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSearchChange = (query: string) => {
-    setSearch(query);
-    setPage(1); // Reset to first page on search
+  const handleAllJobsSearchChange = (query: string) => {
+    setAllJobsSearch(query);
+    setAllJobsPage(1);
   };
 
-  const totalPages = data?.meta?.totalCount
-    ? Math.ceil(data.meta.totalCount / limit)
+  // Waiting Jobs handlers
+  const handleWaitingJobsSort = (column: WaitingSortColumn) => {
+    if (waitingJobsSort === column) {
+      setWaitingJobsOrder(waitingJobsOrder === "asc" ? "desc" : "asc");
+    } else {
+      setWaitingJobsSort(column);
+      setWaitingJobsOrder("desc");
+    }
+    setWaitingJobsPage(1);
+  };
+
+  const handleWaitingJobsPageChange = (newPage: number) => {
+    setWaitingJobsPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleWaitingJobsSearchChange = (query: string) => {
+    setWaitingJobsSearch(query);
+    setWaitingJobsPage(1);
+  };
+
+  const handleFilterByReason = (reason: string) => {
+    if (commentFilter === reason) {
+      // Clear filter if clicking the same reason
+      setCommentFilter(null);
+    } else {
+      // Set filter to this reason
+      setCommentFilter(reason);
+    }
+    setWaitingJobsPage(1); // Reset to first page on filter
+    setWaitingJobsSearch(""); // Clear search when filtering by reason
+  };
+
+  // My Jobs handlers
+  const handleMyJobsSort = (column: SortColumn) => {
+    if (myJobsSort === column) {
+      setMyJobsOrder(myJobsOrder === "asc" ? "desc" : "asc");
+    } else {
+      setMyJobsSort(column);
+      setMyJobsOrder("desc");
+    }
+    setMyJobsPage(1);
+  };
+
+  const handleMyJobsPageChange = (newPage: number) => {
+    setMyJobsPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleMyJobsSearchChange = (query: string) => {
+    setMyJobsSearch(query);
+    setMyJobsPage(1);
+  };
+
+  const allJobsTotalPages = allJobsData?.meta?.totalCount
+    ? Math.ceil(allJobsData.meta.totalCount / allJobsLimit)
     : 0;
+
+  const waitingJobsTotalPages = waitingJobsData?.meta?.totalCount
+    ? Math.ceil(waitingJobsData.meta.totalCount / waitingJobsLimit)
+    : 0;
+
+  const myJobsTotalPages = myJobsData?.meta?.totalCount
+    ? Math.ceil(myJobsData.meta.totalCount / myJobsLimit)
+    : 0;
+
+  const tabs = [
+    {
+      id: "my",
+      label: t("jobs.tabs.myJobs"),
+      content: (
+        <div>
+          <JobsSearchBar
+            searchQuery={myJobsSearch}
+            onSearchChange={handleMyJobsSearchChange}
+            totalJobs={myJobsData?.meta?.totalCount || 0}
+          />
+
+          {myJobsLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-600">{t("common.loading")}</div>
+            </div>
+          )}
+
+          {myJobsError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="text-red-800">
+                {t("common.errorLoading")}{" "}
+                {myJobsError instanceof Error
+                  ? myJobsError.message
+                  : t("common.unknownError")}
+              </div>
+            </div>
+          )}
+
+          {myJobsData && myJobsData.data && (
+            <>
+              <JobsTable
+                jobs={myJobsData.data.jobs}
+                sortColumn={myJobsSort}
+                sortDirection={myJobsOrder}
+                onSort={handleMyJobsSort}
+                hideUserColumn={true}
+              />
+              <JobsPagination
+                currentPage={myJobsPage}
+                totalPages={myJobsTotalPages}
+                onPageChange={handleMyJobsPageChange}
+              />
+            </>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: "all",
+      label: t("jobs.tabs.allJobs"),
+      content: (
+        <div>
+          <JobsSearchBar
+            searchQuery={allJobsSearch}
+            onSearchChange={handleAllJobsSearchChange}
+            totalJobs={allJobsData?.meta?.totalCount || 0}
+          />
+
+          {allJobsLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-600">{t("common.loading")}</div>
+            </div>
+          )}
+
+          {allJobsError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="text-red-800">
+                {t("common.errorLoading")}{" "}
+                {allJobsError instanceof Error
+                  ? allJobsError.message
+                  : t("common.unknownError")}
+              </div>
+            </div>
+          )}
+
+          {allJobsData && allJobsData.data && (
+            <>
+              <JobsTable
+                jobs={allJobsData.data.jobs}
+                sortColumn={allJobsSort}
+                sortDirection={allJobsOrder}
+                onSort={handleAllJobsSort}
+              />
+              <JobsPagination
+                currentPage={allJobsPage}
+                totalPages={allJobsTotalPages}
+                onPageChange={handleAllJobsPageChange}
+              />
+            </>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: "waiting",
+      label: t("jobs.tabs.waitingJobs"),
+      content: (
+        <div>
+          {waitingJobsLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-600">{t("common.loading")}</div>
+            </div>
+          )}
+
+          {waitingJobsError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="text-red-800">
+                {t("common.errorLoading")}{" "}
+                {waitingJobsError instanceof Error
+                  ? waitingJobsError.message
+                  : t("common.unknownError")}
+              </div>
+            </div>
+          )}
+
+          {waitingJobsData && waitingJobsData.data && (
+            <>
+              {summaryData?.data?.jobs && (
+                <WaitingJobsSummary
+                  jobs={summaryData.data.jobs}
+                  onFilterByReason={handleFilterByReason}
+                  activeFilter={commentFilter}
+                />
+              )}
+
+              <JobsSearchBar
+                searchQuery={waitingJobsSearch}
+                onSearchChange={handleWaitingJobsSearchChange}
+                totalJobs={waitingJobsData?.meta?.totalCount || 0}
+              />
+              <WaitingJobsTable
+                jobs={waitingJobsData.data.jobs}
+                sortColumn={waitingJobsSort}
+                sortDirection={waitingJobsOrder}
+                onSort={handleWaitingJobsSort}
+              />
+              <JobsPagination
+                currentPage={waitingJobsPage}
+                totalPages={waitingJobsTotalPages}
+                onPageChange={handleWaitingJobsPageChange}
+              />
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -73,45 +381,17 @@ export function JobsPage() {
         </div>
       </header>
       <div className="p-6">
-        <JobsSearchBar
-          searchQuery={search}
-          onSearchChange={handleSearchChange}
-          totalJobs={data?.meta?.totalCount || 0}
-        />
-
-        {isLoading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-gray-600">{t("common.loading")}</div>
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="text-red-800">
-              {t("common.errorLoading")}{" "}
-              {error instanceof Error
-                ? error.message
-                : t("common.unknownError")}
-            </div>
-          </div>
-        )}
-
-        {data && data.data && (
-          <>
-            <JobsTable
-              jobs={data.data.jobs}
-              sortColumn={sort}
-              sortDirection={order}
-              onSort={handleSort}
-              isAdmin={isAdmin}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="px-6 py-4">
+            <Tabs
+              tabs={tabs}
+              activeTab={activeTab}
+              onTabChange={(tabId) =>
+                setActiveTab(tabId as "all" | "waiting" | "my")
+              }
             />
-            <JobsPagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </>
   );
