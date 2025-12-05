@@ -16,8 +16,12 @@ export class AccountingService implements OnModuleDestroy {
       this.configService.get<AccountingConfig>('accounting');
     if (accountingConfig?.connectionString) {
       try {
+        // Ensure SSL mode is set if not already specified in connection string
+        const connectionString = this.ensureSslMode(
+          accountingConfig.connectionString,
+        );
         this.pool = new Pool({
-          connectionString: accountingConfig.connectionString,
+          connectionString,
         });
         this.logger.log('Accounting database connection pool initialized');
       } catch (error) {
@@ -31,6 +35,43 @@ export class AccountingService implements OnModuleDestroy {
       this.logger.warn(
         'ACCOUNTING_CONNECTION_STRING not set - accounting database features disabled',
       );
+    }
+  }
+
+  /**
+   * Ensure SSL mode is set in connection string
+   * If sslmode is not specified, defaults to 'require'
+   * If sslmode is explicitly set, it will be preserved
+   */
+  private ensureSslMode(connectionString: string): string {
+    try {
+      const url = new URL(connectionString);
+      const params = url.searchParams;
+
+      // If sslmode is not set, add it as 'require'
+      if (!params.has('sslmode')) {
+        params.set('sslmode', 'require');
+        url.search = params.toString();
+        this.logger.debug(
+          'SSL mode not specified in connection string, defaulting to require',
+        );
+        return url.toString();
+      }
+
+      return connectionString;
+    } catch (error) {
+      // If URL parsing fails, try to append sslmode manually
+      // This handles cases where the connection string might not be a full URL
+      if (connectionString.includes('?')) {
+        if (!connectionString.includes('sslmode=')) {
+          return `${connectionString}&sslmode=require`;
+        }
+      } else {
+        if (!connectionString.includes('sslmode=')) {
+          return `${connectionString}?sslmode=require`;
+        }
+      }
+      return connectionString;
     }
   }
 
@@ -107,10 +148,22 @@ export class AccountingService implements OnModuleDestroy {
         usages,
       };
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.error(
-        `Error getting user info for ${userName}:`,
-        error instanceof Error ? error.stack : error,
+        `Error getting user info for ${userName}: ${errorMessage}`,
       );
+
+      // Provide helpful error message for SSL-related errors
+      if (
+        errorMessage.includes('no pg_hba.conf entry') ||
+        errorMessage.includes('no encryption')
+      ) {
+        this.logger.warn(
+          'Database connection requires SSL. Ensure your connection string includes sslmode=require or update ACCOUNTING_CONNECTION_STRING',
+        );
+      }
+
       return null;
     }
   }
