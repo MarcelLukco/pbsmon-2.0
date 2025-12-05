@@ -466,6 +466,7 @@ export class InfrastructureService {
       cpu: machine.cpu,
       actualState: pbsState.state,
       cpuUsagePercent: pbsState.cpuUsage,
+      cpuAssigned: pbsState.cpuAssigned,
       gpuUsagePercent: pbsState.gpuUsage,
       gpuCount: pbsState.gpuCount,
       gpuAssigned: pbsState.gpuAssigned,
@@ -581,6 +582,7 @@ export class InfrastructureService {
           name: pbsNodeData.pbsNode.name,
           actualState: pbsState.state,
           cpuUsagePercent: pbsState.cpuUsage,
+          cpuAssigned: pbsState.cpuAssigned,
           gpuUsagePercent: pbsState.gpuUsage,
           gpuCount: pbsState.gpuCount,
           gpuAssigned: pbsState.gpuAssigned,
@@ -744,6 +746,7 @@ export class InfrastructureService {
   private getNodeStateFromPbs(nodeName: string): {
     state: NodeState | null;
     cpuUsage: number | null;
+    cpuAssigned: number | null;
     gpuUsage: number | null;
     gpuCount: number | null;
     gpuAssigned: number | null;
@@ -760,6 +763,7 @@ export class InfrastructureService {
       return {
         state: null, // No PBS detected - return null instead of UNKNOWN
         cpuUsage: null,
+        cpuAssigned: null,
         gpuUsage: null,
         gpuCount: null,
         gpuAssigned: null,
@@ -853,6 +857,7 @@ export class InfrastructureService {
       return {
         state: NodeState.MAINTENANCE,
         cpuUsage: null, // Don't show usage during maintenance
+        cpuAssigned: null,
         gpuUsage: null,
         gpuCount: availableGpus > 0 ? availableGpus : null,
         gpuAssigned: null,
@@ -886,6 +891,7 @@ export class InfrastructureService {
     return {
       state,
       cpuUsage: cpuUsage !== null ? Math.round(cpuUsage * 100) / 100 : null,
+      cpuAssigned: assignedCpus > 0 ? assignedCpus : null,
       gpuUsage: gpuUsage !== null ? Math.round(gpuUsage * 100) / 100 : null,
       gpuCount: availableGpus > 0 ? availableGpus : null,
       gpuAssigned: assignedGpus > 0 ? assignedGpus : null,

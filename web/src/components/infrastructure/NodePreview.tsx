@@ -124,19 +124,30 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
       className="px-4 py-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:border-primary-500 hover:shadow-md transition-all block"
     >
       <div className="mb-4">
-        <h3 className="font-semibold text-gray-900">{shortNodeName}</h3>
-        {stateInfo && (
-          <p className="font-medium" style={{ color: stateInfo.color }}>
-            ({stateInfo.label})
-          </p>
-        )}
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-gray-900">{shortNodeName}</h3>
+          {stateInfo && (
+            <span
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
+              style={{ backgroundColor: stateInfo.color }}
+            >
+              {stateInfo.label}
+            </span>
+          )}
+        </div>
       </div>
 
       {shouldShowProgressBars && (
         <div className="space-y-3">
           <ProgressBar
             label="CPU"
-            value={node.cpu}
+            value={
+              node.cpuAssigned !== null &&
+              node.cpuAssigned !== undefined &&
+              typeof node.cpuAssigned === "number"
+                ? `${node.cpuAssigned} / ${node.cpu}`
+                : node.cpu
+            }
             percent={cpuUsage}
             color={getCpuGpuColorClass}
             icon={<Icon icon="solar:cpu-bold" className="w-[14px] h-[14px]" />}

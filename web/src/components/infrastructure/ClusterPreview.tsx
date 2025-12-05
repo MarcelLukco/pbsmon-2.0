@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import type { InfrastructureClusterListDTO } from "@/lib/generated-api";
 import { NodePreview } from "./NodePreview";
 
@@ -17,12 +18,15 @@ export function ClusterPreview({ cluster }: ClusterPreviewProps) {
     <div id={`cluster-${cluster.id}`} className="mb-6 last:mb-0">
       {/* Cluster Header */}
       <div className="mb-3">
-        <h3 className="text-lg font-semibold text-primary-800 mb-2">
+        <Link
+          to={`/clusters/${encodeURIComponent(cluster.id)}`}
+          className="text-lg font-semibold text-primary-800 mb-2 hover:text-primary-600 hover:underline inline-block"
+        >
           {cluster.name}
           <span className="ml-2 text-sm font-normal text-gray-600">
             ({cluster.totalCpu} {t("machines.totalCpu")})
           </span>
-        </h3>
+        </Link>
       </div>
 
       {/* Nodes */}

@@ -8,6 +8,7 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { PersonalViewPage } from "@/pages/PersonalViewPage";
 import { MachinesPage } from "@/pages/MachinesPage";
 import { MachineDetailPage } from "@/pages/MachineDetailPage";
+import { ClusterDetailPage } from "@/pages/ClusterDetailPage";
 import { JobsPage } from "@/pages/JobsPage";
 import { JobDetailPage } from "@/pages/JobDetailPage";
 import { JobsQueuesPage } from "@/pages/JobsQueuesPage";
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="qsub-assembler" element={<QsubAssemblerPage />} />
             <Route path="machines" element={<MachinesPage />} />
             <Route path="machines/:machineId" element={<MachineDetailPage />} />
+            <Route path="clusters/:clusterId" element={<ClusterDetailPage />} />
             <Route path="storage-spaces" element={<StorageSpacesPage />} />
             <Route path="jobs" element={<JobsPage />} />
             <Route path="jobs/:jobId" element={<JobDetailPage />} />

@@ -45,6 +45,14 @@ export class InfrastructureNodePbsDTO {
 
   @Expose()
   @ApiProperty({
+    description: 'Number of assigned CPUs',
+    nullable: true,
+    required: false,
+  })
+  cpuAssigned?: number | null;
+
+  @Expose()
+  @ApiProperty({
     description: 'GPU usage percentage (0-100)',
     nullable: true,
     required: false,
