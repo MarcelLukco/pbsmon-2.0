@@ -70,5 +70,5 @@ export function ClusterDetailPage() {
     );
   }
 
-  return <ClusterDetailContent cluster={data.cluster} />;
+  return <ClusterDetailContent cluster={data.cluster as any} />;
 }

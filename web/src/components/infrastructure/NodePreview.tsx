@@ -142,10 +142,10 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
           <ProgressBar
             label="CPU"
             value={
-              node.cpuAssigned !== null &&
-              node.cpuAssigned !== undefined &&
-              typeof node.cpuAssigned === "number"
-                ? `${node.cpuAssigned} / ${node.cpu}`
+              (node as any).cpuAssigned !== null &&
+              (node as any).cpuAssigned !== undefined &&
+              typeof (node as any).cpuAssigned === "number"
+                ? `${(node as any).cpuAssigned} / ${node.cpu}`
                 : node.cpu
             }
             percent={cpuUsage}

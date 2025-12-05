@@ -120,9 +120,10 @@ export function JobsTableRow({
           jobState === "C" ||
           jobState === "F" ||
           jobState === "X") &&
-          job.runtime && (
+          (job as any).runtime && (
             <div className="text-xs text-gray-600 mt-1">
-              {t("jobs.runtime")}: {formatTimeString(String(job.runtime))}
+              {t("jobs.runtime")}:{" "}
+              {formatTimeString(String((job as any).runtime))}
             </div>
           )}
       </div>
