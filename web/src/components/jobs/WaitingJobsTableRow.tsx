@@ -31,9 +31,10 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
     });
   };
 
-  // Grid: ID (bigger), Name (smaller), User, Machine, Resources (bigger), Comment (flex-1), Created
+  // Grid: ID (bigger), Name (smaller), User, Machine, CPU, GPU, RAM, Comment (flex-1), Created
   // Using fixed widths for all except Comment which uses flex-1
-  const gridCols = "grid-cols-[300px_150px_120px_150px_280px_1fr_180px]";
+  const gridCols =
+    "grid-cols-[300px_150px_120px_150px_100px_100px_100px_1fr_180px]";
 
   return (
     <div
@@ -75,7 +76,7 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
       <div className="text-sm">
         {job.node ? (
           <Link
-            to={`/machines/${String(job.node)}`}
+            to={`/machines/${encodeURIComponent(String(job.node))}`}
             className="text-primary-600 hover:text-primary-800 underline"
           >
             {String(job.node)}
@@ -85,8 +86,8 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
         )}
       </div>
 
-      {/* Resources Column - CPU, GPU, RAM combined */}
-      <div className="text-sm space-y-1 flex gap-1 items-start">
+      {/* CPU Column */}
+      <div className="text-sm">
         <div className="flex items-center gap-1">
           <span className="text-gray-900">
             {typeof job.cpuReserved === "number"
@@ -95,6 +96,10 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
           </span>
           <Icon icon="solar:cpu-bold" className="w-[14px] h-[14px]" />
         </div>
+      </div>
+
+      {/* GPU Column */}
+      <div className="text-sm">
         <div className="flex items-center gap-1">
           <span className="text-gray-900">
             {typeof job.gpuReserved === "number"
@@ -103,6 +108,10 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
           </span>
           <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
         </div>
+      </div>
+
+      {/* RAM Column */}
+      <div className="text-sm">
         <div className="flex items-center gap-1">
           <span className="text-gray-900">
             {typeof job.memoryReserved === "number"

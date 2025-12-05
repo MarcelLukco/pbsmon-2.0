@@ -95,11 +95,32 @@ export function JobsTableHeader({
           </JobsSortableHeader>
         )}
 
-        <div>{t("jobs.cpuReserved")}</div>
+        <JobsSortableHeader
+          column="cpuReserved"
+          currentSortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+        >
+          {t("jobs.cpuReserved")}
+        </JobsSortableHeader>
 
-        <div>{t("jobs.gpuReserved")}</div>
+        <JobsSortableHeader
+          column="gpuReserved"
+          currentSortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+        >
+          {t("jobs.gpuReserved")}
+        </JobsSortableHeader>
 
-        <div>{t("jobs.ram")}</div>
+        <JobsSortableHeader
+          column="memoryReserved"
+          currentSortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+        >
+          {t("jobs.ram")}
+        </JobsSortableHeader>
 
         <div className="flex justify-end">
           <JobsSortableHeader

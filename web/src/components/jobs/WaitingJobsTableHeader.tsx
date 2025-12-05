@@ -24,9 +24,10 @@ export function WaitingJobsTableHeader({
 }: WaitingJobsTableHeaderProps) {
   const { t } = useTranslation();
 
-  // Grid: ID (bigger), Name (smaller), User, Machine, Resources (bigger), Comment (flex-1), Created
+  // Grid: ID (bigger), Name (smaller), User, Machine, CPU, GPU, RAM, Comment (flex-1), Created
   // Using fixed widths for all except Comment which uses flex-1
-  const gridCols = "grid-cols-[300px_150px_120px_150px_280px_1fr_180px]";
+  const gridCols =
+    "grid-cols-[300px_150px_120px_150px_100px_100px_100px_1fr_180px]";
 
   return (
     <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
@@ -69,7 +70,32 @@ export function WaitingJobsTableHeader({
           {t("jobs.machine")}
         </WaitingJobsSortableHeader>
 
-        <div>{t("jobs.resources")}</div>
+        <WaitingJobsSortableHeader
+          column="cpuReserved"
+          currentSortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+        >
+          {t("jobs.cpuReserved")}
+        </WaitingJobsSortableHeader>
+
+        <WaitingJobsSortableHeader
+          column="gpuReserved"
+          currentSortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+        >
+          {t("jobs.gpuReserved")}
+        </WaitingJobsSortableHeader>
+
+        <WaitingJobsSortableHeader
+          column="memoryReserved"
+          currentSortColumn={sortColumn}
+          sortDirection={sortDirection}
+          onSort={onSort}
+        >
+          {t("jobs.ram")}
+        </WaitingJobsSortableHeader>
 
         <div>{t("jobs.waitingReason")}</div>
 
