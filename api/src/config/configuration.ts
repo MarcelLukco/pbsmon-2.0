@@ -5,6 +5,7 @@ import { AppConfig, getAppConfig } from './app.config';
 import { PrometheusConfig, getPrometheusConfig } from './prometheus.config';
 import { PerunConfig, getPerunConfig } from './perun.config';
 import { PbsConfig, getPbsConfig } from './pbs.config';
+import { AccountingConfig, getAccountingConfig } from './accounting.config';
 
 function validate<T extends object>(
   config: T,
@@ -46,4 +47,9 @@ export const perunConfig = registerAs('perun', () => {
 export const pbsConfig = registerAs('pbs', () => {
   const config = getPbsConfig();
   return validate(config, PbsConfig, 'PBS');
+});
+
+export const accountingConfig = registerAs('accounting', () => {
+  const config = getAccountingConfig();
+  return validate(config, AccountingConfig, 'Accounting');
 });
