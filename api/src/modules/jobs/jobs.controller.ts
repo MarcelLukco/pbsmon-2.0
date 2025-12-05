@@ -1,11 +1,12 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query, Param } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiResponse } from '@/common/dto/api-response.dto';
 import { ApiOkResponseModel } from '@/common/swagger/api-generic-response';
 import { UserContextDecorator } from '@/common/decorators/user-context.decorator';
 import { UserContext } from '@/common/types/user-context.types';
 import { JobsService } from './jobs.service';
 import { JobsListDTO } from './dto/job-list.dto';
+import { JobDetailDTO } from './dto/job-detail.dto';
 import { MetaDto } from '@/common/dto/meta.dto';
 
 @ApiTags('jobs')
@@ -103,5 +104,26 @@ export class JobsController {
     return new ApiResponse(data, {
       totalCount,
     });
+  }
+
+  @Get(':jobId')
+  @ApiOperation({
+    summary: 'Get job detail',
+    description:
+      'Returns detailed information about a specific PBS job, including resources, subjobs, and system information.',
+  })
+  @ApiParam({
+    name: 'jobId',
+    description:
+      'Job ID (e.g., "11118906.pbs-m1.metacentrum.cz" or "14699148[96].pbs-m1.metacentrum.cz")',
+    type: String,
+  })
+  @ApiOkResponseModel(JobDetailDTO, 'Job detail')
+  getJobDetail(
+    @UserContextDecorator() userContext: UserContext,
+    @Param('jobId') jobId: string,
+  ): ApiResponse<JobDetailDTO> {
+    const job = this.jobsService.getJobDetail(userContext, jobId);
+    return new ApiResponse(job);
   }
 }

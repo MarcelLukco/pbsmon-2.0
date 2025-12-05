@@ -22,6 +22,19 @@ export class JobListDTO {
   state: string;
 
   @Expose()
+  @ApiProperty({
+    description: 'Job state name (queued, running, completed, etc.)',
+  })
+  stateName: string;
+
+  @Expose()
+  @ApiProperty({
+    description:
+      'Job state color classes (e.g., "bg-green-100 text-green-800")',
+  })
+  stateColor: string;
+
+  @Expose()
   @ApiProperty({ description: 'Job owner (username@realm)' })
   owner: string;
 

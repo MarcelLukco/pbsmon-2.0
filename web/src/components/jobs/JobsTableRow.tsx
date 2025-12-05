@@ -19,36 +19,19 @@ export function JobsTableRow({
 
   const username = job.username || job.owner?.split("@")[0];
 
-  // Get state label and color
-  const getStateInfo = () => {
-    const state = String(job.state || "");
-    switch (state) {
-      case "Q":
-        return {
-          label: t("jobs.state.queued"),
-          color: "bg-gray-200 text-gray-800",
-        };
-      case "R":
-      case "B":
-        return {
-          label: t("jobs.state.running"),
-          color: "bg-blue-100 text-blue-800",
-        };
-      case "F":
-      case "X":
-        return {
-          label: t("jobs.state.done"),
-          color:
-            typeof job.exitCode === "number" && job.exitCode !== 0
-              ? "bg-red-100 text-red-800"
-              : "bg-green-100 text-green-800",
-        };
-      default:
-        return { label: state, color: "bg-gray-100 text-gray-800" };
-    }
-  };
+  // Get state label and color from backend
+  const stateName = String((job as any).stateName || job.state || "");
+  const stateColor = String(
+    (job as any).stateColor || "bg-gray-100 text-gray-800"
+  );
+  const stateLabel = String(
+    t(`jobs.state.${stateName}`, { default: stateName })
+  );
 
-  const stateInfo = getStateInfo();
+  const stateInfo = {
+    label: stateLabel,
+    color: stateColor,
+  };
   const jobState = String(job.state || "");
 
   // Format date (DD.MM.YYYY)
