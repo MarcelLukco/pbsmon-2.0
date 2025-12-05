@@ -87,6 +87,13 @@ export class JobListDTO {
   memoryUsed?: number | null;
 
   @Expose()
+  @ApiProperty({
+    description: 'Runtime (HH:MM:SS format)',
+    nullable: true,
+  })
+  runtime?: string | null;
+
+  @Expose()
   @ApiProperty({ description: 'CPU usage percentage', nullable: true })
   cpuUsagePercent?: number | null;
 

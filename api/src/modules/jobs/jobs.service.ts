@@ -207,6 +207,11 @@ export class JobsService {
         : null
       : null;
 
+    // Get runtime from resources_used.walltime
+    const runtime = hasResourceUsage
+      ? attrs['resources_used.walltime'] || null
+      : null;
+
     // Calculate usage percentages
     let cpuUsagePercent: number | null = null;
     let gpuUsagePercent: number | null = null;
@@ -298,6 +303,7 @@ export class JobsService {
       cpuTimeUsed,
       gpuTimeUsed,
       memoryUsed,
+      runtime,
       cpuUsagePercent,
       gpuUsagePercent,
       memoryUsagePercent,

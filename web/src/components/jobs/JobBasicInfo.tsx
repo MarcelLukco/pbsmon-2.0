@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { Icon } from "@iconify/react";
+import { Tooltip } from "react-tooltip";
 import type { JobDetailDTO } from "@/lib/generated-api";
 import { Link } from "react-router-dom";
 
@@ -25,8 +27,21 @@ export function JobBasicInfo({ job }: JobBasicInfoProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div className="text-sm text-gray-500">{t("jobs.jobId")}</div>
-          <div className="text-lg font-medium text-gray-900 font-mono">
-            {job.id}
+          <div className="flex items-center gap-2">
+            <div className="text-lg font-medium text-gray-900 font-mono">
+              {job.id}
+            </div>
+            {job.subjobs && job.subjobs.length > 0 && (
+              <>
+                <Icon
+                  icon="ph:tree-view-fill"
+                  className="w-5 h-5 text-primary-600"
+                  data-tooltip-id="parent-job-detail"
+                  data-tooltip-content={t("jobs.parentJobTooltip")}
+                />
+                <Tooltip id="parent-job-detail" />
+              </>
+            )}
           </div>
         </div>
         <div>

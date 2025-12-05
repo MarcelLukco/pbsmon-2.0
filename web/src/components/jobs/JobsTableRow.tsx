@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { Tooltip } from "react-tooltip";
 import type { JobListDTO } from "@/lib/generated-api";
 import { ProgressBar } from "@/components/common/ProgressBar";
 
@@ -33,6 +34,11 @@ export function JobsTableRow({
     color: stateColor,
   };
   const jobState = String(job.state || "");
+
+  // Check if this is a parent job (array job controller)
+  // Parent jobs have IDs like "14699148[].pbs-m1.metacentrum.cz"
+  const isParentJob = /\[\]/.test(job.id);
+  const parentJobTooltipId = `parent-job-${job.id}`;
 
   // Format date (DD.MM.YYYY)
   const formatDate = (timestamp: number) => {
@@ -91,12 +97,34 @@ export function JobsTableRow({
 
       {/* ID Column */}
       <div className="text-left">
-        <Link
-          to={`/jobs/${encodeURIComponent(job.id)}`}
-          className="text-sm text-gray-900 font-mono hover:text-primary-600 underline cursor-pointer"
-        >
-          <span>{job.id}</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to={`/jobs/${encodeURIComponent(job.id)}`}
+            className="text-sm text-gray-900 font-mono hover:text-primary-600 underline cursor-pointer"
+          >
+            <span>{job.id}</span>
+          </Link>
+          {isParentJob && (
+            <>
+              <Icon
+                icon="ph:tree-view-fill"
+                className="w-4 h-4 text-primary-600"
+                data-tooltip-id={parentJobTooltipId}
+                data-tooltip-content={t("jobs.parentJobTooltip")}
+              />
+              <Tooltip id={parentJobTooltipId} />
+            </>
+          )}
+        </div>
+        {(jobState === "R" ||
+          jobState === "C" ||
+          jobState === "F" ||
+          jobState === "X") &&
+          job.runtime && (
+            <div className="text-xs text-gray-600 mt-1">
+              {t("jobs.runtime")}: {formatTimeString(String(job.runtime))}
+            </div>
+          )}
       </div>
 
       {/* Name Column */}
