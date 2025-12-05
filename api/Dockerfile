@@ -1,10 +1,7 @@
-# Build stage
+# Build stage for Node.js application
 FROM node:20-alpine AS builder
 
 WORKDIR /app
-
-# Install build tools and gcc for compiling pbscaller.c
-RUN apk add --no-cache gcc musl-dev
 
 # Copy package files
 COPY package*.json ./
@@ -20,11 +17,7 @@ COPY src ./src
 # Build the application
 RUN npm run build
 
-# Build pbscaller executable
-RUN mkdir -p bin && \
-    cd src/cli && \
-    gcc -g -L/usr/lib pbscaller.c -o ../../bin/pbsprocaller -lpbs && \
-    chmod +x ../../bin/pbsprocaller
+# Note: pbscaller is now a separate service in docker-compose.prod.yml
 
 # Production stage
 FROM node:20-alpine AS production
@@ -40,8 +33,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
 
-# Copy pbscaller executable from builder
-COPY --from=builder /app/bin ./bin
+# Note: pbscaller is a separate service, no need to include it here
 
 # Create data directory for perun data
 RUN mkdir -p /app/data/perun /app/data/pbs

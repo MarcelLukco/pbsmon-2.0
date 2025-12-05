@@ -17,9 +17,15 @@ services:
       - PROMETHEUS_USERNAME=${PROMETHEUS_USERNAME:-}
       - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-}
       - PROMETHEUS_TOKEN=${PROMETHEUS_TOKEN:-}
+      # pbscaller service container name
+      - PBSCALLER_CONTAINER=pbscaller
     volumes:
-      # Mount data directories if needed
+      # Mount data directories (shared with pbscaller)
       - ./api/data:/app/data
+      # Mount Docker socket to allow API to exec into pbscaller container
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - pbscaller
     networks:
       - pbsmon-network
     healthcheck:
@@ -34,6 +40,24 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  pbscaller:
+    # Note: pbscaller image must be built separately with PBS libraries mounted:
+    # DOCKER_BUILDKIT=1 docker build --mount type=bind,source=/usr/lib,target=/host/usr/lib,readonly --mount type=bind,source=/usr/include,target=/host/usr/include,readonly -f api/Dockerfile.pbscaller-service -t pbscaller-service api/
+    # Then docker-compose will use the pre-built image
+    image: pbscaller-service
+    container_name: pbscaller
+    restart: unless-stopped
+    volumes:
+      # Mount PBS libraries and config from host
+      - /usr/lib:/host/usr/lib:ro
+      - /usr/include:/host/usr/include:ro
+      - /etc/pbs.conf:/host/etc/pbs.conf:ro
+      # Shared data directory with API
+      - ./api/data:/app/data
+    networks:
+      - pbsmon-network
+    # Container stays running, API will exec into it to run pbscaller
 
   web:
     build:

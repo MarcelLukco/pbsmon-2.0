@@ -1,0 +1,37 @@
+# Dockerfile for building pbscaller
+# This container is used to build pbscaller using PBS libraries from the host
+# Usage:
+#   docker build -f api/Dockerfile.pbscaller -t pbscaller-builder api/
+#   docker run --rm -v /usr/lib:/host/usr/lib:ro -v /usr/include:/host/usr/include:ro -v $(pwd)/api/bin:/output pbscaller-builder
+#   Or use the build script: cd api && ./build-pbscaller.sh
+
+FROM debian:bookworm-slim
+
+WORKDIR /build
+
+# Install build tools
+RUN apt-get update && \
+    apt-get install -y gcc && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy pbscaller source
+COPY src/cli/pbscaller.c ./pbscaller.c
+
+# Build script that uses mounted PBS libraries
+RUN echo '#!/bin/bash\n\
+set -e\n\
+echo "Building pbscaller with PBS libraries from host..."\n\
+if [ ! -d "/host/usr/lib" ] || [ ! -d "/host/usr/include" ]; then\n\
+  echo "Error: PBS libraries not mounted. Ensure /host/usr/lib and /host/usr/include are mounted."\n\
+  exit 1\n\
+fi\n\
+gcc -g -L/host/usr/lib -I/host/usr/include pbscaller.c -o /output/pbsprocaller -lpbs\n\
+chmod +x /output/pbsprocaller\n\
+echo "pbscaller built successfully: /output/pbsprocaller"\n\
+' > /build.sh && chmod +x /build.sh
+
+# Create output directory
+RUN mkdir -p /output
+
+CMD ["/build.sh"]
+

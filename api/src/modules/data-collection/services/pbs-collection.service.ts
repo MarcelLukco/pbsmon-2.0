@@ -268,17 +268,18 @@ export class PbsCollectionService {
       const serverName = this.config.serverName;
       const fullServerName = `${serverName}.metacentrum.cz`;
       const outputDir = path.join(this.config.dataPath, serverName);
-      const pbscallerPath = path.join(process.cwd(), 'bin', 'pbsprocaller');
+      const pbscallerContainer = process.env.PBSCALLER_CONTAINER || 'pbscaller';
 
       // Ensure output directory exists
       await fs.mkdir(outputDir, { recursive: true });
 
       this.logger.log(
-        `Calling pbscaller for server ${fullServerName}, output directory: ${outputDir}`,
+        `Calling pbscaller in container ${pbscallerContainer} for server ${fullServerName}, output directory: ${outputDir}`,
       );
 
+      // Execute pbscaller in the pbscaller container via docker exec
       const { stdout, stderr } = await execAsync(
-        `"${pbscallerPath}" "${fullServerName}" "${outputDir}"`,
+        `docker exec ${pbscallerContainer} /app/run-pbscaller.sh "${fullServerName}" "${outputDir}"`,
       );
 
       if (stdout) {

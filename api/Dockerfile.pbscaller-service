@@ -1,0 +1,44 @@
+# Dockerfile for pbscaller service
+# This service runs pbscaller when called by the API
+# Build with: docker build --mount type=bind,source=/usr/lib,target=/host/usr/lib,readonly --mount type=bind,source=/usr/include,target=/host/usr/include,readonly -f api/Dockerfile.pbscaller-service -t pbscaller-service api/
+
+FROM debian:bookworm-slim
+
+WORKDIR /app
+
+# Install build tools and runtime dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy pbscaller source
+COPY src/cli/pbscaller.c ./pbscaller.c
+
+# Build pbscaller using PBS libraries mounted from host during build
+# This uses Docker build mounts (--mount flag)
+RUN --mount=type=bind,source=/usr/lib,target=/host/usr/lib,readonly \
+    --mount=type=bind,source=/usr/include,target=/host/usr/include,readonly \
+    gcc -g -L/host/usr/lib -I/host/usr/include pbscaller.c -o /app/pbsprocaller -lpbs && \
+    chmod +x /app/pbsprocaller
+
+# Create a wrapper script that runs pbscaller
+RUN echo '#!/bin/bash\n\
+set -e\n\
+SERVER_NAME="${1:-pbs-m1.metacentrum.cz}"\n\
+OUTPUT_DIR="${2:-/app/data/pbs/pbs-m1}"\n\
+\n\
+# Ensure output directory exists\n\
+mkdir -p "${OUTPUT_DIR}"\n\
+\n\
+# Run pbscaller with PBS libraries from mounted host\n\
+# PBS libraries should be mounted at /host/usr/lib\n\
+export LD_LIBRARY_PATH=/host/usr/lib:${LD_LIBRARY_PATH:-}\n\
+\n\
+/app/pbsprocaller "${SERVER_NAME}" "${OUTPUT_DIR}"\n\
+' > /app/run-pbscaller.sh && chmod +x /app/run-pbscaller.sh
+
+# Keep container running (it will be called via docker exec)
+CMD ["tail", "-f", "/dev/null"]
+
