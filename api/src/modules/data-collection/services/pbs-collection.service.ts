@@ -270,25 +270,43 @@ export class PbsCollectionService {
       const outputDir = path.join(this.config.dataPath, serverName);
       const pbscallerPath = process.env.PBSCALLER_PATH || '/host/pbscaller';
 
-      // Check if pbscaller binary exists
+      // Check if pbscaller binary exists and is executable
       try {
         const stats = await fs.stat(pbscallerPath);
+        if (stats.isDirectory()) {
+          this.logger.error(
+            `pbscaller path is a directory, not a file: ${pbscallerPath}. This usually means api/bin/pbsprocaller didn't exist when the container started. Docker created a directory instead. Please ensure the file exists on the host and restart the container.`,
+          );
+          return;
+        }
         if (!stats.isFile()) {
           this.logger.error(
             `pbscaller path exists but is not a file: ${pbscallerPath}. Make sure api/bin/pbsprocaller exists on the host.`,
           );
           return;
         }
+        // Check if file is executable
+        const mode = stats.mode;
+        const isExecutable = (mode & parseInt('111', 8)) !== 0;
+        if (!isExecutable) {
+          this.logger.warn(
+            `pbscaller binary exists but is not executable. Attempting to continue anyway.`,
+          );
+        }
+        this.logger.debug(
+          `pbscaller binary found at ${pbscallerPath}, size: ${stats.size} bytes`,
+        );
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         if (errorMessage.includes('ENOENT')) {
           this.logger.error(
-            `pbscaller binary not found at ${pbscallerPath}. Make sure api/bin/pbsprocaller exists on the host and is mounted correctly.`,
+            `pbscaller binary not found at ${pbscallerPath}. Make sure api/bin/pbsprocaller exists on the host and is mounted correctly. The file must exist before starting the container.`,
           );
           return;
         }
-        throw error;
+        this.logger.error(`Error checking pbscaller binary: ${errorMessage}`);
+        return;
       }
 
       // Ensure output directory exists

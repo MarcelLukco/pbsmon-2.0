@@ -156,6 +156,7 @@ fi
 if [ ! -f "api/bin/pbsprocaller" ]; then
     echo -e "${RED}✗ Error: pbscaller binary not found at api/bin/pbsprocaller${NC}"
     echo -e "${YELLOW}The binary must exist before starting containers${NC}"
+    echo -e "${YELLOW}Please ensure the build step completed successfully${NC}"
     exit 1
 fi
 
@@ -163,6 +164,19 @@ if [ ! -x "api/bin/pbsprocaller" ]; then
     echo -e "${YELLOW}Making pbscaller binary executable...${NC}"
     chmod +x api/bin/pbsprocaller
 fi
+
+# Check if the mount point might be a directory (Docker created it instead of mounting)
+# This can happen if the container was started before the binary existed
+if [ -d "api/bin/pbsprocaller" ]; then
+    echo -e "${RED}✗ Error: api/bin/pbsprocaller is a directory, not a file${NC}"
+    echo -e "${YELLOW}This happens when Docker creates a directory instead of mounting the file${NC}"
+    echo -e "${YELLOW}Removing the directory...${NC}"
+    rm -rf api/bin/pbsprocaller
+    echo -e "${YELLOW}Please ensure the binary is built and restart the container${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✓ pbscaller binary verified: $(ls -lh api/bin/pbsprocaller | awk '{print $5}')${NC}"
 
 # Build and start containers (web and api services)
 echo -e "${YELLOW}Building and starting web and api containers...${NC}"
