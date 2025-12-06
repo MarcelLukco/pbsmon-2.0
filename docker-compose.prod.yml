@@ -20,10 +20,9 @@ services:
       # pbscaller service container name
       - PBSCALLER_CONTAINER=pbscaller
     volumes:
-      # Mount data directories (shared with pbscaller)
       - ./api/data:/app/data
-      # Mount Docker socket to allow API to exec into pbscaller container
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /usr/bin/docker:/usr/bin/docker:ro
     depends_on:
       - pbscaller
     networks:
