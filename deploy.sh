@@ -80,20 +80,51 @@ fi
 
 # Build pbscaller binary first (requires PBS libraries from host)
 echo -e "${YELLOW}Building pbscaller binary (requires PBS libraries from host)...${NC}"
-if [ -f "api/build-pbscaller.sh" ]; then
-    if cd api && ./build-pbscaller.sh; then
-        cd ..
-        echo -e "${GREEN}✓ pbscaller binary built successfully${NC}"
-    else
-        echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
-        exit 1
-    fi
-else
-    echo -e "${YELLOW}⚠️  build-pbscaller.sh not found, trying to build pbscaller manually...${NC}"
-    mkdir -p api/bin
+mkdir -p api/bin
+
+# Try to build pbscaller directly on the host first (simpler, no Docker needed)
+if command -v gcc &> /dev/null; then
+    echo -e "${YELLOW}Building pbscaller directly on host...${NC}"
     if cd api/src/cli && gcc -g -L/usr/lib -I/usr/include pbscaller.c -o ../../bin/pbsprocaller -lpbs && chmod +x ../../bin/pbsprocaller; then
         cd ../../..
         echo -e "${GREEN}✓ pbscaller binary built successfully${NC}"
+    else
+        echo -e "${YELLOW}Direct build failed, trying Docker approach...${NC}"
+        cd ../../..
+        # Fall back to Docker build if direct build fails
+        if sudo docker build -f api/Dockerfile.pbscaller -t pbscaller-builder api/ 2>/dev/null; then
+            if sudo docker run --rm \
+                -v /usr/lib:/host/usr/lib:ro \
+                -v /usr/include:/host/usr/include:ro \
+                -v "$(pwd)/api/bin:/output" \
+                pbscaller-builder; then
+                echo -e "${GREEN}✓ pbscaller binary built successfully using Docker${NC}"
+            else
+                echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
+                echo -e "${YELLOW}Make sure PBS Pro libraries are installed on the host${NC}"
+                exit 1
+            fi
+        else
+            echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
+            echo -e "${YELLOW}Make sure PBS Pro libraries are installed on the host${NC}"
+            exit 1
+        fi
+    fi
+else
+    echo -e "${YELLOW}gcc not found, using Docker to build pbscaller...${NC}"
+    # Build using Docker
+    if sudo docker build -f api/Dockerfile.pbscaller -t pbscaller-builder api/; then
+        if sudo docker run --rm \
+            -v /usr/lib:/host/usr/lib:ro \
+            -v /usr/include:/host/usr/include:ro \
+            -v "$(pwd)/api/bin:/output" \
+            pbscaller-builder; then
+            echo -e "${GREEN}✓ pbscaller binary built successfully using Docker${NC}"
+        else
+            echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
+            echo -e "${YELLOW}Make sure PBS Pro libraries are installed on the host${NC}"
+            exit 1
+        fi
     else
         echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
         echo -e "${YELLOW}Make sure PBS Pro libraries are installed on the host${NC}"
