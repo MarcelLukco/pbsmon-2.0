@@ -270,6 +270,27 @@ export class PbsCollectionService {
       const outputDir = path.join(this.config.dataPath, serverName);
       const pbscallerPath = process.env.PBSCALLER_PATH || '/host/pbscaller';
 
+      // Check if pbscaller binary exists
+      try {
+        const stats = await fs.stat(pbscallerPath);
+        if (!stats.isFile()) {
+          this.logger.error(
+            `pbscaller path exists but is not a file: ${pbscallerPath}. Make sure api/bin/pbsprocaller exists on the host.`,
+          );
+          return;
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes('ENOENT')) {
+          this.logger.error(
+            `pbscaller binary not found at ${pbscallerPath}. Make sure api/bin/pbsprocaller exists on the host and is mounted correctly.`,
+          );
+          return;
+        }
+        throw error;
+      }
+
       // Ensure output directory exists
       await fs.mkdir(outputDir, { recursive: true });
 

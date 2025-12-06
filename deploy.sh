@@ -89,7 +89,13 @@ if command -v gcc &> /dev/null; then
     echo -e "${YELLOW}Building pbscaller directly on host...${NC}"
     if cd api/src/cli && gcc -g -L/usr/lib -I/usr/include pbscaller.c -o ../../bin/pbsprocaller -lpbs && chmod +x ../../bin/pbsprocaller; then
         cd ../../..
-        echo -e "${GREEN}✓ pbscaller binary built successfully${NC}"
+        # Verify the binary was created
+        if [ -f "api/bin/pbsprocaller" ] && [ -x "api/bin/pbsprocaller" ]; then
+            echo -e "${GREEN}✓ pbscaller binary built successfully${NC}"
+        else
+            echo -e "${RED}✗ pbscaller binary was not created or is not executable${NC}"
+            exit 1
+        fi
     else
         echo -e "${YELLOW}Direct build failed, trying Docker approach...${NC}"
         cd ../../..
@@ -100,7 +106,13 @@ if command -v gcc &> /dev/null; then
                 -v /usr/include:/host/usr/include:ro \
                 -v "$(pwd)/api/bin:/output" \
                 pbscaller-builder; then
-                echo -e "${GREEN}✓ pbscaller binary built successfully using Docker${NC}"
+                # Verify the binary was created
+                if [ -f "api/bin/pbsprocaller" ] && [ -x "api/bin/pbsprocaller" ]; then
+                    echo -e "${GREEN}✓ pbscaller binary built successfully using Docker${NC}"
+                else
+                    echo -e "${RED}✗ pbscaller binary was not created or is not executable${NC}"
+                    exit 1
+                fi
             else
                 echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
                 echo -e "${YELLOW}Make sure PBS Pro libraries are installed on the host${NC}"
@@ -121,7 +133,13 @@ else
             -v /usr/include:/host/usr/include:ro \
             -v "$(pwd)/api/bin:/output" \
             pbscaller-builder; then
-            echo -e "${GREEN}✓ pbscaller binary built successfully using Docker${NC}"
+            # Verify the binary was created
+            if [ -f "api/bin/pbsprocaller" ] && [ -x "api/bin/pbsprocaller" ]; then
+                echo -e "${GREEN}✓ pbscaller binary built successfully using Docker${NC}"
+            else
+                echo -e "${RED}✗ pbscaller binary was not created or is not executable${NC}"
+                exit 1
+            fi
         else
             echo -e "${RED}✗ Failed to build pbscaller binary${NC}"
             echo -e "${YELLOW}Make sure PBS Pro libraries are installed on the host${NC}"
@@ -134,13 +152,16 @@ else
     fi
 fi
 
-# Build pbscaller service image
-echo -e "${YELLOW}Building pbscaller service image...${NC}"
-if sudo docker build -f api/Dockerfile.pbscaller-service -t pbscaller-service api/; then
-    echo -e "${GREEN}✓ pbscaller service built successfully${NC}"
-else
-    echo -e "${RED}✗ Failed to build pbscaller service${NC}"
+# Verify pbscaller binary exists before starting containers
+if [ ! -f "api/bin/pbsprocaller" ]; then
+    echo -e "${RED}✗ Error: pbscaller binary not found at api/bin/pbsprocaller${NC}"
+    echo -e "${YELLOW}The binary must exist before starting containers${NC}"
     exit 1
+fi
+
+if [ ! -x "api/bin/pbsprocaller" ]; then
+    echo -e "${YELLOW}Making pbscaller binary executable...${NC}"
+    chmod +x api/bin/pbsprocaller
 fi
 
 # Build and start containers (web and api services)
