@@ -155,20 +155,26 @@ export function QsubResults({
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
                   {nodes.map((node) => (
-                    <div key={node.name} className="relative">
+                    <div
+                      key={node.name}
+                      className={`relative ${
+                        node.canRunImmediately
+                          ? "rounded-lg border-2 border-green-500"
+                          : ""
+                      }`}
+                    >
                       <NodePreview
                         node={node as InfrastructureNodeListDTO}
                         clusterName={clusterName}
                       />
                       {node.canRunImmediately && (
-                        <div className="absolute top-2 right-2">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                        <div className="absolute top-0 right-0 z-10">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center">
                             <Icon
                               icon="solar:check-circle-bold"
-                              className="w-3 h-3 mr-1"
+                              className="w-3 h-3 sm:w-4 sm:h-4 text-green-600"
                             />
-                            {currentLang === "cs" ? "Dostupné" : "Available"}
-                          </span>
+                          </div>
                         </div>
                       )}
                     </div>

@@ -267,10 +267,89 @@ export class QsubService {
           return null;
         }
 
-        // Check if node can run immediately (state is "free")
-        const canRunImmediately =
+        // Check if node can run immediately - must have enough free resources
+        let canRunImmediately = false;
+
+        // Node must be in a runnable state (not maintenance, not used)
+        if (
           infraNode.actualState === NodeState.FREE ||
-          infraNode.actualState === NodeState.PARTIALLY_USED;
+          infraNode.actualState === NodeState.PARTIALLY_USED
+        ) {
+          // Calculate free resources
+          const totalCpus = infraNode.cpu || 0;
+          const assignedCpus = infraNode.cpuAssigned || 0;
+          const freeCpus = totalCpus - assignedCpus;
+
+          const totalGpus = infraNode.gpuCount || 0;
+          const assignedGpus = infraNode.gpuAssigned || 0;
+          const freeGpus = totalGpus - assignedGpus;
+
+          const totalMemory = infraNode.memoryTotal || 0;
+          const usedMemory = infraNode.memoryUsed || 0;
+          const freeMemory = totalMemory - usedMemory;
+
+          // Check if node has enough free resources for the job
+          const requiredCpus = request.ncpu || 0;
+          const requiredGpus = request.ngpu || 0;
+
+          // Convert memory requirement to GB if specified
+          let requiredMemory = 0;
+          if (request.memory && request.memory.amount) {
+            requiredMemory =
+              request.memory.unit === 'gb'
+                ? request.memory.amount
+                : request.memory.amount / 1024; // Convert MB to GB
+          }
+
+          // Check GPU memory if specified (GPU memory is per GPU)
+          let hasEnoughGpuMemory = true;
+          if (
+            request.gpu_memory &&
+            request.gpu_memory.amount &&
+            requiredGpus > 0
+          ) {
+            const requiredGpuMemory =
+              request.gpu_memory.unit === 'gb'
+                ? request.gpu_memory.amount
+                : request.gpu_memory.amount / 1024; // Convert MB to GB
+
+            // Parse GPU memory from node (format: "46068mb" or "46gb")
+            if (infraNode.gpuMemory) {
+              const parseGpuMemory = (gpuMemStr: string): number => {
+                const match = gpuMemStr.match(
+                  /^(\d+(?:\.\d+)?)\s*(gb|mb|tb|kb)?$/i,
+                );
+                if (!match) return 0;
+                const value = parseFloat(match[1]);
+                const unit = (match[2] || 'gb').toLowerCase();
+                switch (unit) {
+                  case 'tb':
+                    return value * 1024;
+                  case 'gb':
+                    return value;
+                  case 'mb':
+                    return value / 1024;
+                  case 'kb':
+                    return value / (1024 * 1024);
+                  default:
+                    return value;
+                }
+              };
+
+              const availableGpuMemory = parseGpuMemory(infraNode.gpuMemory);
+              hasEnoughGpuMemory = availableGpuMemory >= requiredGpuMemory;
+            } else {
+              hasEnoughGpuMemory = false;
+            }
+          }
+
+          // Check if all requirements are met
+          canRunImmediately =
+            freeCpus >= requiredCpus &&
+            freeGpus >= requiredGpus &&
+            freeMemory >= requiredMemory &&
+            hasEnoughGpuMemory;
+        }
 
         return {
           ...infraNode,
