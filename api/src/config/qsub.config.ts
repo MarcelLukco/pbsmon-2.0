@@ -1,4 +1,5 @@
 import { PbsNode, PbsQueue } from '@/modules/data-collection/types/pbs.types';
+import { QueueListDTO } from '@/modules/queues/dto/queue-list.dto';
 
 /**
  * Field types for QSUB form fields
@@ -26,7 +27,7 @@ export interface QsubFieldContext {
 export type QsubFilterFunction = (
   node: PbsNode,
   value: any,
-  queues?: PbsQueue[],
+  queues?: QueueListDTO[],
   context?: QsubFieldContext,
 ) => boolean;
 
@@ -111,8 +112,48 @@ export const qsubConfig: QsubFieldConfig[] = [
       if (!value) return true;
       const queueList = node.attributes['resources_available.queue_list'];
       if (!queueList) return false;
+
+      const queueName = value.includes('@') ? value.split('@')[0] : value;
+
+      const findQueue = (
+        queueList: QueueListDTO[],
+        name: string,
+      ): QueueListDTO | null => {
+        for (const queue of queueList) {
+          if (queue.name === name) {
+            return queue;
+          }
+          if (queue.children) {
+            const found = findQueue(queue.children, name);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      const queue = queues ? findQueue(queues, queueName) : null;
+      if (!queue) return false;
+
+      // If it's a routing queue, collect all child execution queues recursively
+      const getAllExecutionQueues = (q: QueueListDTO): string[] => {
+        const executionQueues: string[] = [];
+        if (q.queueType === 'Execution') {
+          executionQueues.push(q.name);
+        }
+        if (q.children) {
+          for (const child of q.children) {
+            executionQueues.push(...getAllExecutionQueues(child));
+          }
+        }
+        return executionQueues;
+      };
+
+      // Get all execution queues (if routing queue, get all children; if execution queue, just itself)
+      const executionQueues = getAllExecutionQueues(queue);
+
+      // Check if node is in any of the execution queues
       const nodeQueues = queueList.split(',').map((q) => q.trim());
-      return nodeQueues.includes(value);
+      return executionQueues.some((eq) => nodeQueues.includes(eq));
     },
     scriptParamFunction: (value) => {
       if (!value) return null;
@@ -340,7 +381,7 @@ export const qsubConfig: QsubFieldConfig[] = [
     category: 'basic',
     dependsOn: ['scratch_type'],
     filterFunction: (node, value, queues, context) => {
-      if (!value || !context?.scratch_type) return true;
+      if (!value || !value.amount || !context?.scratch_type) return true;
       if (context.scratch_type === 'shm') return true; // Not applicable for shm
 
       let attrName: string;
@@ -355,7 +396,10 @@ export const qsubConfig: QsubFieldConfig[] = [
       }
 
       const available = parseSize(node.attributes[attrName] || '0');
-      return available >= value;
+      // Convert value to GB for comparison
+      const requiredSize =
+        value.unit === 'gb' ? value.amount : value.amount / 1024; // Convert MB to GB
+      return available >= requiredSize;
     },
     scriptParamFunction: (value, context) => {
       // Scratch memory is handled in ncpu scriptParamFunction to combine select params

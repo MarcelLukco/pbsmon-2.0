@@ -20,6 +20,7 @@ import {
   NodeState,
 } from '@/modules/infrastructure/dto/infrastructure-list.dto';
 import { UserContext } from '@/common/types/user-context.types';
+import { QueueListDTO } from '@/modules/queues/dto/queue-list.dto';
 
 @Injectable()
 export class QsubService {
@@ -159,6 +160,7 @@ export class QsubService {
    */
   async getPreview(
     request: QsubPreviewRequestDto,
+    userContext: UserContext,
   ): Promise<QsubPreviewResponseDto> {
     const pbsData = this.dataCollectionService.getPbsData();
     if (!pbsData?.servers) {
@@ -188,6 +190,9 @@ export class QsubService {
       }
     }
 
+    const hierarchicalQueues: QueueListDTO[] =
+      this.queuesService.getQueuesList(userContext)?.queues || [];
+
     // Build context from request
     const context: QsubFieldContext = { ...request };
 
@@ -210,16 +215,20 @@ export class QsubService {
           return false;
         }
         // Handle memory type - check if it has amount
-        if (
-          typeof value === 'object' &&
-          value !== null &&
-          'amount' in value &&
-          (!value.amount || value.amount === '')
-        ) {
-          if (!field.required) return true;
-          return false;
+        if (typeof value === 'object' && value !== null && 'amount' in value) {
+          // For memory fields, check if amount is empty or zero
+          if (!value.amount || value.amount === '' || value.amount === 0) {
+            if (!field.required) return true;
+            return false;
+          }
         }
-        return field.filterFunction(node, value, allQueues, context);
+        // For queue field, pass hierarchical queues; for others, pass PbsQueue array
+        // Type assertion needed because filterFunction accepts QueueListDTO[] | PbsQueue[]
+        const queuesForFilter =
+          field.name === 'queue'
+            ? (hierarchicalQueues as any)
+            : (allQueues as any);
+        return field.filterFunction(node, value, queuesForFilter, context);
       });
     });
 

@@ -42,8 +42,9 @@ export class QsubController {
   })
   async getPreview(
     @Body() request: QsubPreviewRequestDto,
+    @UserContextDecorator() userContext: UserContext,
   ): Promise<ApiResponse<QsubPreviewResponseDto>> {
-    const preview = await this.qsubService.getPreview(request);
+    const preview = await this.qsubService.getPreview(request, userContext);
     return new ApiResponse(preview);
   }
 }
