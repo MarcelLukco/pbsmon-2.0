@@ -32,6 +32,9 @@ export class QsubFieldConfigDto {
 
   @ApiProperty({ required: false, type: [String] })
   dependsOn?: string[];
+
+  @ApiProperty({ required: false, type: [Object] })
+  options?: any[];
 }
 
 export class QsubConfigResponseDto {
