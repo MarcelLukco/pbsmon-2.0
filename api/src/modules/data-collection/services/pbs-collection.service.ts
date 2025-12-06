@@ -268,18 +268,25 @@ export class PbsCollectionService {
       const serverName = this.config.serverName;
       const fullServerName = `${serverName}.metacentrum.cz`;
       const outputDir = path.join(this.config.dataPath, serverName);
-      const pbscallerContainer = process.env.PBSCALLER_CONTAINER || 'pbscaller';
+      const pbscallerPath = process.env.PBSCALLER_PATH || '/host/pbscaller';
 
       // Ensure output directory exists
       await fs.mkdir(outputDir, { recursive: true });
 
       this.logger.log(
-        `Calling pbscaller in container ${pbscallerContainer} for server ${fullServerName}, output directory: ${outputDir}`,
+        `Calling pbscaller on host for server ${fullServerName}, output directory: ${outputDir}`,
       );
 
-      // Execute pbscaller in the pbscaller container via docker exec
+      // Set LD_LIBRARY_PATH to use PBS libraries from host
+      const env = {
+        ...process.env,
+        LD_LIBRARY_PATH: '/host/usr/lib:' + (process.env.LD_LIBRARY_PATH || ''),
+      };
+
+      // Execute pbscaller binary mounted from host
       const { stdout, stderr } = await execAsync(
-        `docker exec ${pbscallerContainer} /app/run-pbscaller.sh "${fullServerName}" "${outputDir}"`,
+        `"${pbscallerPath}" "${fullServerName}" "${outputDir}"`,
+        { env },
       );
 
       if (stdout) {

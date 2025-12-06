@@ -18,6 +18,38 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
+
+# Check if --skip-pull flag is present
+SKIP_PULL=false
+for arg in "$@"; do
+    if [ "$arg" = "--skip-pull" ]; then
+        SKIP_PULL=true
+        break
+    fi
+done
+
+# Check if git is available
+if ! command -v git &> /dev/null; then
+    echo -e "${RED}Error: git is not installed${NC}"
+    exit 1
+fi
+
+
+# Pull latest code (unless --skip-pull flag is set)
+if [ "$SKIP_PULL" = false ]; then
+    echo -e "${YELLOW}Pulling latest code from git...${NC}"
+    if git pull; then
+        echo -e "${GREEN}✓ Code updated successfully${NC}"
+        echo -e "${YELLOW}Restarting script with --skip-pull flag...${NC}"
+        # Kill current process and restart script with --skip-pull
+        exec "$0" --skip-pull
+    else
+        echo -e "${RED}✗ Failed to pull code from git${NC}"
+        exit 1
+    fi
+fi
+
+
 # Load environment variables from .env file if it exists
 ENV_FILE="$SCRIPT_DIR/.env"
 if [ -f "$ENV_FILE" ]; then
@@ -32,22 +64,7 @@ else
     echo -e "${YELLOW}   Make sure API_AUTH_USERNAME and API_AUTH_PASSWORD are set${NC}"
 fi
 
-# Check if --skip-pull flag is present
-SKIP_PULL=false
-for arg in "$@"; do
-    if [ "$arg" = "--skip-pull" ]; then
-        SKIP_PULL=true
-        break
-    fi
-done
-
 echo -e "${GREEN}Starting deployment...${NC}"
-
-# Check if git is available
-if ! command -v git &> /dev/null; then
-    echo -e "${RED}Error: git is not installed${NC}"
-    exit 1
-fi
 
 # Check if docker-compose or docker compose is available
 if command -v docker-compose &> /dev/null; then
@@ -62,21 +79,6 @@ fi
 # Set the docker compose file
 COMPOSE_FILE="docker-compose.prod.yml"
 
-# Pull latest code (unless --skip-pull flag is set)
-if [ "$SKIP_PULL" = false ]; then
-    echo -e "${YELLOW}Pulling latest code from git...${NC}"
-    if git pull; then
-        echo -e "${GREEN}✓ Code updated successfully${NC}"
-        echo -e "${YELLOW}Restarting script with --skip-pull flag...${NC}"
-        # Kill current process and restart script with --skip-pull
-        exec "$0" --skip-pull
-    else
-        echo -e "${RED}✗ Failed to pull code from git${NC}"
-        exit 1
-    fi
-else
-    echo -e "${YELLOW}Skipping git pull (--skip-pull flag set)${NC}"
-fi
 
 # Build pbscaller binary first (requires PBS libraries from host)
 echo -e "${YELLOW}Building pbscaller binary (requires PBS libraries from host)...${NC}"
@@ -141,9 +143,9 @@ else
     exit 1
 fi
 
-# Build and start containers (web, api, and pbscaller services)
-echo -e "${YELLOW}Building and starting web, api, and pbscaller containers...${NC}"
-if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web api pbscaller; then
+# Build and start containers (web and api services)
+echo -e "${YELLOW}Building and starting web and api containers...${NC}"
+if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web api; then
     echo -e "${GREEN}✓ Containers started successfully${NC}"
 else
     echo -e "${RED}✗ Failed to start containers${NC}"
