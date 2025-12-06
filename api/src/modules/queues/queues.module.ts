@@ -15,5 +15,6 @@ import { UserContextGuard } from '@/common/guards/user-context.guard';
       useClass: UserContextGuard,
     },
   ],
+  exports: [QueuesService],
 })
 export class QueuesModule {}

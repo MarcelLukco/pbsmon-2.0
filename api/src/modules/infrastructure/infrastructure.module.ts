@@ -7,5 +7,6 @@ import { DataCollectionModule } from '@/modules/data-collection/data-collection.
   imports: [DataCollectionModule],
   controllers: [InfrastructureController],
   providers: [InfrastructureService],
+  exports: [InfrastructureService],
 })
 export class InfrastructureModule {}
