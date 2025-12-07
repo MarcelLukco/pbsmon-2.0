@@ -138,7 +138,6 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
     node.pbs?.rawPbsAttributes && typeof node.pbs.rawPbsAttributes === "object"
       ? (node.pbs.rawPbsAttributes as Record<string, string>)
       : null;
-  const nodeOutages = Array.isArray(node.pbs?.outages) ? node.pbs.outages : [];
 
   const handleJobsSort = (column: SortColumn) => {
     if (jobsSort === column) {
@@ -192,7 +191,7 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
         {
           id: "outages",
           label: t("machines.tabs.outages"),
-          content: <MachinePbsOutagesTab nodeOutages={nodeOutages} />,
+          content: <MachinePbsOutagesTab nodeName={nodeName} />,
         },
       ]
     : [];

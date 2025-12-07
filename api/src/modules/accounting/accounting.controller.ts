@@ -7,7 +7,10 @@ import { AccountingService } from './accounting.service';
 import { UserInfoDTO } from './dto/user-info.dto';
 import { OutageRecordDTO } from './dto/outage-record.dto';
 import { CanonicalOrgNameDTO } from './dto/org-name.dto';
-import { ApiOkResponseModel } from '@/common/swagger/api-generic-response';
+import {
+  ApiOkResponseModel,
+  ApiOkResponseArray,
+} from '@/common/swagger/api-generic-response';
 
 @ApiTags('accounting')
 @Controller('accounting')
@@ -46,7 +49,7 @@ export class AccountingController {
     description:
       'Returns list of outages for a specific node. Returns empty array if database is not configured.',
   })
-  @ApiOkResponseModel([OutageRecordDTO], 'List of outages')
+  @ApiOkResponseArray(OutageRecordDTO, 'List of outages')
   async getOutagesForNode(
     @Param('nodeName') nodeName: string,
   ): Promise<ApiResponseDto<OutageRecordDTO[]>> {
@@ -60,7 +63,7 @@ export class AccountingController {
     description:
       'Returns list of started job IDs. Returns empty array if database is not configured.',
   })
-  @ApiOkResponseModel([String], 'List of started job IDs')
+  @ApiOkResponseArray(String, 'List of started job IDs')
   async getStartedJobIds(): Promise<ApiResponseDto<string[]>> {
     const data = await this.accountingService.getStartedJobIds();
     return new ApiResponseDto(data);
@@ -72,7 +75,7 @@ export class AccountingController {
     description:
       'Returns list of canonical organization names. Returns empty array if database is not configured.',
   })
-  @ApiOkResponseModel([CanonicalOrgNameDTO], 'List of organization names')
+  @ApiOkResponseArray(CanonicalOrgNameDTO, 'List of organization names')
   async getCanonicalOrgNames(): Promise<ApiResponseDto<CanonicalOrgNameDTO[]>> {
     const data = await this.accountingService.getCanonicalOrgNames();
     return new ApiResponseDto(data);
