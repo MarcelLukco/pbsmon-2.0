@@ -620,6 +620,14 @@ export class InfrastructureService {
           outages: outages.length > 0 ? outages : null,
           comment: comment || null,
           commentAux: commentAux || null,
+          scratchLocalTotal: pbsState.scratchLocalTotal,
+          scratchLocalUsed: pbsState.scratchLocalUsed,
+          scratchLocalAvailable: pbsState.scratchLocalAvailable,
+          scratchSsdTotal: pbsState.scratchSsdTotal,
+          scratchSsdUsed: pbsState.scratchSsdUsed,
+          scratchSsdAvailable: pbsState.scratchSsdAvailable,
+          scratchSharedTotal: pbsState.scratchSharedTotal,
+          scratchShmAvailable: pbsState.scratchShmAvailable,
         }
       : null;
 
@@ -895,6 +903,14 @@ export class InfrastructureService {
     memoryTotal: number | null;
     memoryUsed: number | null;
     memoryUsagePercent: number | null;
+    scratchLocalTotal: number | null;
+    scratchLocalUsed: number | null;
+    scratchLocalAvailable: number | null;
+    scratchSsdTotal: number | null;
+    scratchSsdUsed: number | null;
+    scratchSsdAvailable: number | null;
+    scratchSharedTotal: number | null;
+    scratchShmAvailable: boolean | null;
   } {
     const { pbsNode } = this.getPbsNodeData(nodeName);
 
@@ -912,6 +928,14 @@ export class InfrastructureService {
         memoryTotal: null,
         memoryUsed: null,
         memoryUsagePercent: null,
+        scratchLocalTotal: null,
+        scratchLocalUsed: null,
+        scratchLocalAvailable: null,
+        scratchSsdTotal: null,
+        scratchSsdUsed: null,
+        scratchSsdAvailable: null,
+        scratchSharedTotal: null,
+        scratchShmAvailable: null,
       };
     }
 
@@ -983,6 +1007,36 @@ export class InfrastructureService {
         ? (memoryUsed / memoryTotal) * 100
         : null;
 
+    // Extract scratch space information
+    const scratchLocalTotalStr =
+      pbsNode.attributes['resources_available.scratch_local'] || null;
+    const scratchLocalAssignedStr =
+      pbsNode.attributes['resources_assigned.scratch_local'] || null;
+    const scratchLocalTotal = parseMemory(scratchLocalTotalStr);
+    const scratchLocalUsed = parseMemory(scratchLocalAssignedStr);
+    const scratchLocalAvailable =
+      scratchLocalTotal !== null && scratchLocalUsed !== null
+        ? scratchLocalTotal - scratchLocalUsed
+        : scratchLocalTotal;
+
+    const scratchSsdTotalStr =
+      pbsNode.attributes['resources_available.scratch_ssd'] || null;
+    const scratchSsdAssignedStr =
+      pbsNode.attributes['resources_assigned.scratch_ssd'] || null;
+    const scratchSsdTotal = parseMemory(scratchSsdTotalStr);
+    const scratchSsdUsed = parseMemory(scratchSsdAssignedStr);
+    const scratchSsdAvailable =
+      scratchSsdTotal !== null && scratchSsdUsed !== null
+        ? scratchSsdTotal - scratchSsdUsed
+        : scratchSsdTotal;
+
+    const scratchSharedTotalStr =
+      pbsNode.attributes['resources_available.scratch_shared'] || null;
+    const scratchSharedTotal = parseMemory(scratchSharedTotalStr);
+
+    const scratchShmAvailable =
+      pbsNode.attributes['resources_available.scratch_shm'] === 'True';
+
     // Check if node is in maintenance or reserved queue FIRST - this overrides everything
     // This must be checked before state/state_aux processing
     if (this.isNodeInMaintenanceOrReservedQueue(pbsNode)) {
@@ -999,6 +1053,14 @@ export class InfrastructureService {
         memoryTotal,
         memoryUsed: null, // Don't show usage during maintenance
         memoryUsagePercent: null,
+        scratchLocalTotal,
+        scratchLocalUsed: null,
+        scratchLocalAvailable: scratchLocalTotal,
+        scratchSsdTotal,
+        scratchSsdUsed: null,
+        scratchSsdAvailable: scratchSsdTotal,
+        scratchSharedTotal,
+        scratchShmAvailable,
       };
     }
 
@@ -1025,6 +1087,14 @@ export class InfrastructureService {
         memoryTotal,
         memoryUsed: null,
         memoryUsagePercent: null,
+        scratchLocalTotal,
+        scratchLocalUsed: null,
+        scratchLocalAvailable: scratchLocalTotal,
+        scratchSsdTotal,
+        scratchSsdUsed: null,
+        scratchSsdAvailable: scratchSsdTotal,
+        scratchSharedTotal,
+        scratchShmAvailable,
       };
     }
 
@@ -1042,6 +1112,14 @@ export class InfrastructureService {
         memoryTotal,
         memoryUsed: null,
         memoryUsagePercent: null,
+        scratchLocalTotal,
+        scratchLocalUsed: null,
+        scratchLocalAvailable: scratchLocalTotal,
+        scratchSsdTotal,
+        scratchSsdUsed: null,
+        scratchSsdAvailable: scratchSsdTotal,
+        scratchSharedTotal,
+        scratchShmAvailable,
       };
     }
 
@@ -1079,6 +1157,14 @@ export class InfrastructureService {
         memoryUsagePercent !== null
           ? Math.round(memoryUsagePercent * 100) / 100
           : null,
+      scratchLocalTotal,
+      scratchLocalUsed,
+      scratchLocalAvailable,
+      scratchSsdTotal,
+      scratchSsdUsed,
+      scratchSsdAvailable,
+      scratchSharedTotal,
+      scratchShmAvailable,
     };
   }
 

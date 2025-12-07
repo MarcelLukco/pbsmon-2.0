@@ -384,6 +384,117 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
           </div>
         )}
 
+        {/* Scratch Space Information */}
+        {node.pbs &&
+          (node.pbs.scratchLocalTotal !== null ||
+            node.pbs.scratchSsdTotal !== null ||
+            node.pbs.scratchSharedTotal !== null ||
+            node.pbs.scratchShmAvailable === true) && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  {t("machines.scratchSpace") || "Scratch Space"}
+                </h2>
+              </div>
+              <div className="px-6 py-4 space-y-4">
+                {/* Scratch Local */}
+                {node.pbs.scratchLocalTotal !== null &&
+                  node.pbs.scratchLocalTotal > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-gray-700">
+                          {t("machines.scratchLocal") || "Scratch Local"}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {node.pbs.scratchLocalAvailable !== null
+                            ? `${node.pbs.scratchLocalAvailable.toFixed(1)} GB ${t("machines.available") || "available"}`
+                            : ""}
+                          {node.pbs.scratchLocalUsed !== null &&
+                            node.pbs.scratchLocalTotal !== null &&
+                            ` / ${node.pbs.scratchLocalTotal.toFixed(1)} GB`}
+                        </div>
+                      </div>
+                      {node.pbs.scratchLocalTotal !== null &&
+                        node.pbs.scratchLocalUsed !== null && (
+                          <ProgressBar
+                            label=""
+                            value=""
+                            percent={
+                              (node.pbs.scratchLocalUsed /
+                                node.pbs.scratchLocalTotal) *
+                              100
+                            }
+                            color="#5D7085"
+                          />
+                        )}
+                    </div>
+                  )}
+
+                {/* Scratch SSD */}
+                {node.pbs.scratchSsdTotal !== null &&
+                  node.pbs.scratchSsdTotal > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-gray-700">
+                          {t("machines.scratchSsd") || "Scratch SSD"}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {node.pbs.scratchSsdAvailable !== null
+                            ? `${node.pbs.scratchSsdAvailable.toFixed(1)} GB ${t("machines.available") || "available"}`
+                            : ""}
+                          {node.pbs.scratchSsdUsed !== null &&
+                            node.pbs.scratchSsdTotal !== null &&
+                            ` / ${node.pbs.scratchSsdTotal.toFixed(1)} GB`}
+                        </div>
+                      </div>
+                      {node.pbs.scratchSsdTotal !== null &&
+                        node.pbs.scratchSsdUsed !== null && (
+                          <ProgressBar
+                            label=""
+                            value=""
+                            percent={
+                              (node.pbs.scratchSsdUsed /
+                                node.pbs.scratchSsdTotal) *
+                              100
+                            }
+                            color="#5D7085"
+                          />
+                        )}
+                    </div>
+                  )}
+
+                {/* Scratch Shared */}
+                {node.pbs.scratchSharedTotal !== null &&
+                  node.pbs.scratchSharedTotal > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-gray-700">
+                          {t("machines.scratchShared") || "Scratch Shared"}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {node.pbs.scratchSharedTotal.toFixed(1)} GB
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Scratch SHM */}
+                {node.pbs.scratchShmAvailable === true && (
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-medium text-gray-700">
+                        {t("machines.scratchShm") || "Scratch SHM"}
+                      </div>
+                      <div className="text-sm text-green-600 font-medium">
+                        {t("machines.available") || "Available"}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
         {/* Tabs Section - Only show if PBS data exists */}
         {node.pbs && tabs.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">

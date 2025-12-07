@@ -175,6 +175,70 @@ export class InfrastructureNodePbsDTO {
     required: false,
   })
   commentAux?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Total scratch local space in GB',
+    nullable: true,
+    required: false,
+  })
+  scratchLocalTotal?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Used scratch local space in GB',
+    nullable: true,
+    required: false,
+  })
+  scratchLocalUsed?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Available scratch local space in GB',
+    nullable: true,
+    required: false,
+  })
+  scratchLocalAvailable?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Total scratch SSD space in GB',
+    nullable: true,
+    required: false,
+  })
+  scratchSsdTotal?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Used scratch SSD space in GB',
+    nullable: true,
+    required: false,
+  })
+  scratchSsdUsed?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Available scratch SSD space in GB',
+    nullable: true,
+    required: false,
+  })
+  scratchSsdAvailable?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Total scratch shared space in GB',
+    nullable: true,
+    required: false,
+  })
+  scratchSharedTotal?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Is scratch SHM (shared memory) available',
+    nullable: true,
+    required: false,
+  })
+  scratchShmAvailable?: boolean | null;
 }
 
 /**
