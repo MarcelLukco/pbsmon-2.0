@@ -61,6 +61,7 @@ const menuItems: MenuItem[] = [
         path: "/storage-spaces",
         translationKey: "pages.storageSpaces",
       },
+      { id: "projects", path: "/projects", translationKey: "pages.projects" },
       { id: "queues", path: "/queues", translationKey: "pages.queues" },
       { id: "jobs", path: "/jobs", translationKey: "pages.jobs" },
       {

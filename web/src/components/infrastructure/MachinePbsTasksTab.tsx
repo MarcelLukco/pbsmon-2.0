@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useJobs } from "@/hooks/useJobs";
 import { JobsTable } from "@/components/jobs/JobsTable";
-import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { Pagination } from "@/components/common/Pagination";
 import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 
 type SortColumn =
@@ -92,7 +92,7 @@ export function MachinePbsTasksTab({
             onSort={onJobsSort}
             hideMachineColumn={true}
           />
-          <JobsPagination
+          <Pagination
             currentPage={jobsPage}
             totalPages={jobsTotalPages}
             onPageChange={onJobsPageChange}

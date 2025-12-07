@@ -22,6 +22,8 @@ import "@/i18n";
 import "@/app.css";
 import { QsubAssemblerPage } from "@/pages/QsubAssemblerPage.tsx";
 import { StorageSpacesPage } from "@/pages/StorageSpacesPage";
+import { ProjectsPage } from "@/pages/ProjectsPage";
+import { ProjectDetailPage } from "@/pages/ProjectDetailPage";
 
 export default function App() {
   return (
@@ -48,6 +50,8 @@ export default function App() {
             <Route path="users/:userId" element={<UserDetailPage />} />
             <Route path="groups" element={<GroupsPage />} />
             <Route path="groups/:groupName" element={<GroupDetailPage />} />
+            <Route path="projects" element={<ProjectsPage />} />
+            <Route path="projects/:projectId" element={<ProjectDetailPage />} />
           </Route>
         </Routes>
       </Router>

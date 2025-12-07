@@ -7,7 +7,7 @@ import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 import { JobsTable } from "@/components/jobs/JobsTable";
 import { WaitingJobsTable } from "@/components/jobs/WaitingJobsTable";
 import { WaitingJobsSummary } from "@/components/jobs/WaitingJobsSummary";
-import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { Pagination } from "@/components/common/Pagination";
 import { Tabs } from "@/components/common/Tabs";
 
 type SortColumn =
@@ -260,7 +260,7 @@ export function JobsPage() {
                 onSort={handleMyJobsSort}
                 hideUserColumn={true}
               />
-              <JobsPagination
+              <Pagination
                 currentPage={myJobsPage}
                 totalPages={myJobsTotalPages}
                 onPageChange={handleMyJobsPageChange}
@@ -306,7 +306,7 @@ export function JobsPage() {
                 sortDirection={allJobsOrder}
                 onSort={handleAllJobsSort}
               />
-              <JobsPagination
+              <Pagination
                 currentPage={allJobsPage}
                 totalPages={allJobsTotalPages}
                 onPageChange={handleAllJobsPageChange}
@@ -359,7 +359,7 @@ export function JobsPage() {
                 sortDirection={waitingJobsOrder}
                 onSort={handleWaitingJobsSort}
               />
-              <JobsPagination
+              <Pagination
                 currentPage={waitingJobsPage}
                 totalPages={waitingJobsTotalPages}
                 onPageChange={handleWaitingJobsPageChange}

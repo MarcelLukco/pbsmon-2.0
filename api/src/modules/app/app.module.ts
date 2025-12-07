@@ -12,6 +12,7 @@ import { NewsModule } from '@/modules/news/news.module';
 import { StatusModule } from '@/modules/status/status.module';
 import { DataCollectionModule } from '@/modules/data-collection/data-collection.module';
 import { AccountingModule } from '@/modules/accounting/accounting.module';
+import { ProjectsModule } from '@/modules/projects/projects.module';
 import configuration, {
   prometheusConfig,
   perunConfig,
@@ -44,6 +45,7 @@ import configuration, {
     StatusModule,
     DataCollectionModule,
     AccountingModule,
+    ProjectsModule,
   ],
 })
 export class AppModule {}

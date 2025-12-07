@@ -1,16 +1,16 @@
 import { useTranslation } from "react-i18next";
 
-interface JobsPaginationProps {
+interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-export function JobsPagination({
+export function Pagination({
   currentPage,
   totalPages,
   onPageChange,
-}: JobsPaginationProps) {
+}: PaginationProps) {
   const { t } = useTranslation();
 
   if (totalPages <= 1) {

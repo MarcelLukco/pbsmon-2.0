@@ -6,7 +6,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useImpersonation } from "@/contexts/ImpersonationContext";
 import { UsersSearchBar } from "@/components/users/UsersSearchBar";
 import { UsersTable } from "@/components/users/UsersTable";
-import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { Pagination } from "@/components/common/Pagination";
 import type { SortColumn } from "@/components/users/types";
 
 export function UsersPage() {
@@ -114,7 +114,7 @@ export function UsersPage() {
               isAdmin={isAdmin}
               onImpersonate={handleImpersonate}
             />
-            <JobsPagination
+            <Pagination
               currentPage={page}
               totalPages={totalPages}
               onPageChange={handlePageChange}

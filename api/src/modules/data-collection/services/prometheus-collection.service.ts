@@ -60,6 +60,16 @@ export class PrometheusCollectionService {
       description: 'Number of VMs per hypervisor',
       query: 'count by(hostname)(libvirtd_domain_domain_state)',
     },
+    {
+      name: 'OpenStack Projects',
+      description: 'List of OpenStack projects (id + name)',
+      query: 'openstack_identity_project_info',
+    },
+    {
+      name: 'OpenStack Servers',
+      description: 'List of OpenStack servers/VMs (id, name, project_id)',
+      query: 'custom_openstack_server_info',
+    },
   ];
 
   constructor(private readonly prometheusClient: PrometheusClient) {}

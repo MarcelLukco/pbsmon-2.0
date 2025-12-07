@@ -49,6 +49,7 @@ export class UserContextGuard implements CanActivate {
       // For now, allow requests without auth by providing default context
       // This should be replaced with proper authentication
       request.userContext = {
+        id: '', // todo: retrievie this from perun_machines.json
         username: 'anonymous',
         role: UserRole.USER,
         groups: [],
@@ -86,6 +87,7 @@ export class UserContextGuard implements CanActivate {
       // Create impersonated user context
       // Keep role as USER so admins can see what regular users see
       request.userContext = {
+        id: '', // todo: retrievie this from perun_machines.json
         username: impersonatedUsername.trim(),
         role: UserRole.USER,
         groups: userContext.groups || [],
@@ -109,6 +111,7 @@ export class UserContextGuard implements CanActivate {
     // TODO: Remove this once authentication is implemented
     if (this.isDevelopment || true) {
       return {
+        id: 'a026f632ac52748f0e007190fc59241d83783226@einfra.cesnet.cz',
         username: 'admin',
         role: UserRole.ADMIN,
         groups: [], // Admin has access to everything, groups not needed

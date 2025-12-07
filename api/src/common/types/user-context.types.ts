@@ -11,6 +11,7 @@ export enum UserRole {
  * Contains essential user information extracted from access token
  */
 export interface UserContext {
+  id: string;
   username: string;
   role: UserRole;
   groups?: string[]; // Derived from role/username if needed

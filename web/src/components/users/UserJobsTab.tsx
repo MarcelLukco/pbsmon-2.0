@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { JobsTable } from "@/components/jobs/JobsTable";
-import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { Pagination } from "@/components/common/Pagination";
 import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 import type { JobsListDTO, MetaDto } from "@/lib/generated-api";
 
@@ -82,7 +82,7 @@ export function UserJobsTab({
             sortDirection={jobsOrder}
             onSort={onSort}
           />
-          <JobsPagination
+          <Pagination
             currentPage={jobsPage}
             totalPages={jobsTotalPages}
             onPageChange={onPageChange}

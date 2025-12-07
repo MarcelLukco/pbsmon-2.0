@@ -4,7 +4,7 @@ import { useJobs } from "@/hooks/useJobs";
 import { JobsSearchBar } from "@/components/jobs/JobsSearchBar";
 import { WaitingJobsTable } from "@/components/jobs/WaitingJobsTable";
 import { WaitingJobsSummary } from "@/components/jobs/WaitingJobsSummary";
-import { JobsPagination } from "@/components/jobs/JobsPagination";
+import { Pagination } from "@/components/common/Pagination";
 
 type SortColumn =
   | "id"
@@ -132,7 +132,7 @@ export function WaitingJobsPage() {
               sortDirection={order}
               onSort={handleSort}
             />
-            <JobsPagination
+            <Pagination
               currentPage={page}
               totalPages={totalPages}
               onPageChange={handlePageChange}
