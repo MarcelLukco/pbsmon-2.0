@@ -291,6 +291,54 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                   </div>
                 </div>
               )}
+              {/* Cloud Node Information */}
+              {node.ostack !== null && node.ostack !== undefined && (
+                <>
+                  <div className="col-span-2 pt-2 mt-2 border-t border-gray-200">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Icon
+                        icon="mdi:cloud"
+                        className="w-5 h-5 text-gray-500"
+                      />
+                      <h3 className="text-sm font-semibold text-gray-700">
+                        {t("machines.cloudNode") || "Cloud Node Information"}
+                      </h3>
+                    </div>
+                  </div>
+                  {node.ostack.cpuCount !== null &&
+                    node.ostack.cpuCount !== undefined && (
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          {t("machines.cloudCpu") || "Cloud CPU Count"}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {node.ostack.cpuCount}
+                        </div>
+                      </div>
+                    )}
+                  {node.ostack.vmCount !== null &&
+                    node.ostack.vmCount !== undefined && (
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          {t("machines.vmCount") || "VM Count"}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {node.ostack.vmCount}
+                        </div>
+                      </div>
+                    )}
+                  {node.ostack.cpuModel && (
+                    <div>
+                      <div className="text-sm text-gray-500">
+                        {t("machines.cpuModel") || "CPU Model"}
+                      </div>
+                      <div className="text-lg font-medium text-gray-900">
+                        {node.ostack.cpuModel}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>

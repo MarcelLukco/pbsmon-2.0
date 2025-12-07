@@ -339,6 +339,10 @@ i18n.use(initReactI18next).init({
           noPbs: "No PBS",
           nodes: "Nodes",
           clusterNotFound: "Cluster not found",
+          cloudNode: "Cloud Node Information",
+          cloudCpu: "Cloud CPU Count",
+          vmCount: "VM Count",
+          cpuModel: "CPU Model",
         },
         storageSpaces: {
           scratchStorage: {
@@ -748,6 +752,10 @@ i18n.use(initReactI18next).init({
           noPbs: "Bez PBS",
           nodes: "Uzly",
           clusterNotFound: "Cluster nenalezen",
+          cloudNode: "Informace o cloudovém uzlu",
+          cloudCpu: "Počet CPU v cloudu",
+          vmCount: "Počet VM",
+          cpuModel: "Model CPU",
         },
         storageSpaces: {
           scratchStorage: {

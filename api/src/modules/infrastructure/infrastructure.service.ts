@@ -20,6 +20,7 @@ import {
 import { InfrastructureListMetaDto } from './dto/infrastructure-list-meta.dto';
 import { PbsNode, PbsQueue } from '@/modules/data-collection/types/pbs.types';
 import { QueueListDTO } from '@/modules/queues/dto/queue-list.dto';
+import { PrometheusResponse } from '@/modules/data-collection/clients/prometheus.client';
 
 @Injectable()
 export class InfrastructureService {
@@ -456,6 +457,102 @@ export class InfrastructureService {
   }
 
   /**
+   * Get set of hostnames from Prometheus queries that contain hostname field
+   * These are the queries that are collected and contain hostname: CPU Info, Network Info, VM Count
+   */
+  private getPrometheusHostnames(): Set<string> {
+    const hostnames = new Set<string>();
+    try {
+      const prometheusData = this.dataCollectionService.getPrometheusData();
+
+      // Check queries that are collected and contain hostname field
+      const queriesWithHostname = ['CPU Info', 'Network Info', 'VM Count'];
+
+      for (const queryName of queriesWithHostname) {
+        const response = prometheusData?.[queryName] as
+          | PrometheusResponse
+          | undefined;
+
+        if (response?.data?.result) {
+          for (const item of response.data.result) {
+            const hostname = item.metric?.hostname;
+            if (hostname) {
+              hostnames.add(hostname);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      // Silently fail - if Prometheus data is not available, return empty set
+    }
+    return hostnames;
+  }
+
+  /**
+   * Get cloud node information from Prometheus for a specific hostname
+   */
+  private getCloudNodeInfo(hostname: string): {
+    cpuCount: number | null;
+    vmCount: number | null;
+    cpuModel: string | null;
+  } {
+    const info = {
+      cpuCount: null as number | null,
+      vmCount: null as number | null,
+      cpuModel: null as string | null,
+    };
+
+    try {
+      const prometheusData = this.dataCollectionService.getPrometheusData();
+
+      // Get CPU Info
+      const cpuInfoResponse = prometheusData?.['CPU Info'] as
+        | PrometheusResponse
+        | undefined;
+      if (cpuInfoResponse?.data?.result) {
+        for (const item of cpuInfoResponse.data.result) {
+          if (item.metric?.hostname === hostname) {
+            const cores = parseInt(item.metric?.cores || '0', 10);
+            const threads = parseInt(item.metric?.threads || '0', 10);
+            // Use threads if available, otherwise cores
+            info.cpuCount = threads > 0 ? threads : cores > 0 ? cores : null;
+            info.cpuModel = item.metric?.model || null;
+            break;
+          }
+        }
+      }
+
+      // Get VM Count
+      const vmCountResponse = prometheusData?.['VM Count'] as
+        | PrometheusResponse
+        | undefined;
+      if (vmCountResponse?.data?.result) {
+        for (const item of vmCountResponse.data.result) {
+          if (item.metric?.hostname === hostname) {
+            const count = parseFloat(item.value?.[1] || '0');
+            info.vmCount = count > 0 ? Math.round(count) : null;
+            break;
+          }
+        }
+      }
+    } catch (error) {
+      // Silently fail - return partial info
+    }
+
+    return info;
+  }
+
+  /**
+   * Check if a node is a cloud node (OpenStack) by checking Prometheus hostname data
+   */
+  private isCloudNode(nodeName: string): boolean {
+    const hostnames = this.getPrometheusHostnames();
+
+    // Check for exact match
+    return hostnames.has(nodeName);
+  }
+
+  /**
    * Map node machine to list DTO
    */
   private mapNodeToList(
@@ -477,6 +574,10 @@ export class InfrastructureService {
         .filter(Boolean);
     }
 
+    // Check if node is a cloud node and get cloud info
+    const isCloud = this.isCloudNode(machine.name);
+    const cloudInfo = isCloud ? this.getCloudNodeInfo(machine.name) : null;
+
     return {
       name: machine.name,
       cpu: machine.cpu,
@@ -493,6 +594,7 @@ export class InfrastructureService {
       memoryUsed: pbsState.memoryUsed,
       memoryUsagePercent: pbsState.memoryUsagePercent,
       queueNames,
+      ostack: cloudInfo,
     };
   }
 
@@ -631,6 +733,10 @@ export class InfrastructureService {
         }
       : null;
 
+    // Check if node is a cloud node and get cloud info
+    const isCloud = this.isCloudNode(machine.name);
+    const cloudInfo = isCloud ? this.getCloudNodeInfo(machine.name) : null;
+
     return {
       name: machine.name,
       cpu: machine.cpu,
@@ -640,6 +746,7 @@ export class InfrastructureService {
         : null,
       clusterId: cluster?.id,
       owner: cluster?.owner,
+      ostack: cloudInfo,
     };
   }
 

@@ -137,9 +137,19 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
     >
       <div className="mb-3 sm:mb-4">
         <div className="flex items-start gap-2">
-          <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate flex-1 min-w-0 pr-2">
-            {shortNodeName}
-          </h3>
+          <div className="flex items-center gap-1.5 flex-1 min-w-0 pr-2">
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+              {shortNodeName}
+            </h3>
+            {node.ostack !== null && node.ostack !== undefined && (
+              <span title="Cloud node">
+                <Icon
+                  icon="mdi:cloud"
+                  className="w-4 h-4 text-gray-500 flex-shrink-0"
+                />
+              </span>
+            )}
+          </div>
           {stateInfo && (
             <span
               className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium text-white flex-shrink-0"
@@ -177,6 +187,37 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
                 <span>{gpuCount}</span>
                 <Icon icon="solar:gpu-bold" className="w-4 h-4 flex-shrink-0" />
               </span>
+            </div>
+          )}
+          {/* Cloud node info */}
+          {node.ostack !== null && node.ostack !== undefined && (
+            <div className="pt-2 mt-2 border-t border-gray-200">
+              <div className="flex items-center gap-1.5 mb-2">
+                <Icon icon="mdi:cloud" className="w-4 h-4 text-gray-500" />
+                <span className="text-xs font-medium text-gray-600">
+                  Cloud Node
+                </span>
+              </div>
+              {node.ostack.cpuCount !== null &&
+                node.ostack.cpuCount !== undefined && (
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="text-gray-600">Cloud CPU</span>
+                    <span className="flex items-center gap-1.5">
+                      <span>{node.ostack.cpuCount}</span>
+                      <Icon
+                        icon="solar:cpu-bold"
+                        className="w-3.5 h-3.5 flex-shrink-0"
+                      />
+                    </span>
+                  </div>
+                )}
+              {node.ostack.vmCount !== null &&
+                node.ostack.vmCount !== undefined && (
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="text-gray-600">VMs</span>
+                    <span>{node.ostack.vmCount}</span>
+                  </div>
+                )}
             </div>
           )}
         </div>
@@ -236,6 +277,38 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
                   color="#5D7085"
                 />
               )}
+
+            {/* Cloud node info */}
+            {node.ostack !== null && node.ostack !== undefined && (
+              <div className="pt-2 mt-2 border-t border-gray-200">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Icon icon="mdi:cloud" className="w-4 h-4 text-gray-500" />
+                  <span className="text-xs font-medium text-gray-600">
+                    Cloud Node
+                  </span>
+                </div>
+                {node.ostack.cpuCount !== null &&
+                  node.ostack.cpuCount !== undefined && (
+                    <div className="flex items-center justify-between gap-2 text-xs mb-1">
+                      <span className="text-gray-600">Cloud CPU</span>
+                      <span className="flex items-center gap-1.5">
+                        <span>{node.ostack.cpuCount}</span>
+                        <Icon
+                          icon="solar:cpu-bold"
+                          className="w-3.5 h-3.5 flex-shrink-0"
+                        />
+                      </span>
+                    </div>
+                  )}
+                {node.ostack.vmCount !== null &&
+                  node.ostack.vmCount !== undefined && (
+                    <div className="flex items-center justify-between gap-2 text-xs">
+                      <span className="text-gray-600">VMs</span>
+                      <span>{node.ostack.vmCount}</span>
+                    </div>
+                  )}
+              </div>
+            )}
           </div>
         )
       )}

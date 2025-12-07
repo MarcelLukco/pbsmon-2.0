@@ -289,6 +289,19 @@ export class InfrastructureNodeDetailDTO {
     required: false,
   })
   owner?: LocalizedStringDTO | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'OpenStack cloud node information (null if not a cloud node)',
+    type: Object,
+    nullable: true,
+    required: false,
+  })
+  ostack?: {
+    cpuCount?: number | null;
+    vmCount?: number | null;
+    cpuModel?: string | null;
+  } | null;
 }
 
 /**
