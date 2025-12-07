@@ -178,12 +178,109 @@ fi
 
 echo -e "${GREEN}✓ pbscaller binary verified: $(ls -lh api/bin/pbsprocaller | awk '{print $5}')${NC}"
 
-# Build and start containers (web and api services)
-echo -e "${YELLOW}Building and starting web and api containers...${NC}"
-if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web api; then
-    echo -e "${GREEN}✓ Containers started successfully${NC}"
+# Build and start API first (web depends on API for OpenAPI spec generation)
+echo -e "${YELLOW}Building and starting API container first...${NC}"
+if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build api; then
+    echo -e "${GREEN}✓ API container started${NC}"
 else
-    echo -e "${RED}✗ Failed to start containers${NC}"
+    echo -e "${RED}✗ Failed to start API container${NC}"
+    exit 1
+fi
+
+# Wait for API to be ready (check health endpoint)
+echo -e "${YELLOW}Waiting for API to be ready...${NC}"
+API_READY=false
+MAX_ATTEMPTS=30
+ATTEMPT=0
+
+# Try to connect to API health endpoint
+while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+    ATTEMPT=$((ATTEMPT + 1))
+    echo -e "${YELLOW}Attempt $ATTEMPT/$MAX_ATTEMPTS: Checking API health...${NC}"
+    
+    # Check if API container is running
+    if sudo docker ps | grep -q pbsmon-api; then
+        # Try to hit the health endpoint inside the container
+        if sudo docker exec pbsmon-api node -e "require('http').get('http://localhost:3000/status', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" 2>/dev/null; then
+            API_READY=true
+            echo -e "${GREEN}✓ API is ready${NC}"
+            break
+        fi
+    fi
+    
+    if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+        sleep 2
+    fi
+done
+
+if [ "$API_READY" = false ]; then
+    echo -e "${YELLOW}⚠️  API health check failed after $MAX_ATTEMPTS attempts${NC}"
+    echo -e "${YELLOW}   Continuing anyway - web build will try to fetch OpenAPI spec${NC}"
+fi
+
+# Generate API client locally before building web Docker image
+# This ensures the types are available during the Docker build
+echo -e "${YELLOW}Generating API client for web build...${NC}"
+
+# Check if Node.js is available on the host
+if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+    echo -e "${YELLOW}⚠️  Node.js/npm not found on host, skipping pre-generation${NC}"
+    echo -e "${YELLOW}   Docker build will generate API client during build${NC}"
+    echo -e "${YELLOW}   Make sure API_BASE_URL is set correctly for Docker build${NC}"
+else
+    # Get API URL - prefer API_BASE_URL from env, fallback to default
+    # The API should be accessible through the configured API_BASE_URL
+    API_URL_FOR_CLIENT="${API_BASE_URL:-http://localhost:3000}"
+    
+    # If API_BASE_URL is not set and API is running in Docker, try to construct URL
+    if [ -z "$API_BASE_URL" ]; then
+        # Check if we can access API through nginx (common setup)
+        # Try the production URL format
+        if [ -n "$FRONTEND_URL" ]; then
+            API_URL_FOR_CLIENT="${FRONTEND_URL}/api"
+        else
+            # Fallback: try to access API directly (if exposed)
+            API_URL_FOR_CLIENT="http://localhost:3000"
+        fi
+    fi
+    
+    echo -e "${YELLOW}Using API URL: ${API_URL_FOR_CLIENT}${NC}"
+    
+    # Set environment variables for API client generation
+    export API_BASE_URL="$API_URL_FOR_CLIENT"
+    export API_AUTH_USERNAME="${API_AUTH_USERNAME:-}"
+    export API_AUTH_PASSWORD="${API_AUTH_PASSWORD:-}"
+    
+    # Generate API client in web directory
+    if [ -d "web" ]; then
+        cd web
+        
+        # Check if node_modules exists, if not install dependencies first
+        if [ ! -d "node_modules" ]; then
+            echo -e "${YELLOW}Installing web dependencies...${NC}"
+            npm ci
+        fi
+        
+        if npm run generate:api; then
+            echo -e "${GREEN}✓ API client generated successfully on host${NC}"
+            cd ..
+        else
+            echo -e "${YELLOW}⚠️  Failed to generate API client on host${NC}"
+            echo -e "${YELLOW}   Docker build will try to generate it during build${NC}"
+            echo -e "${YELLOW}   Make sure API is accessible at: ${API_URL_FOR_CLIENT}/docs-json${NC}"
+            cd ..
+        fi
+    else
+        echo -e "${YELLOW}⚠️  web directory not found, skipping pre-generation${NC}"
+    fi
+fi
+
+# Now build and start web service
+echo -e "${YELLOW}Building and starting web container...${NC}"
+if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web; then
+    echo -e "${GREEN}✓ Web container started${NC}"
+else
+    echo -e "${RED}✗ Failed to start web container${NC}"
     exit 1
 fi
 
