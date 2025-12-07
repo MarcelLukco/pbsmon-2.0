@@ -595,6 +595,10 @@ export class InfrastructureService {
 
     const outages: Array<Record<string, any>> = [];
 
+    // Extract comment and comment_aux from PBS node attributes
+    const comment = pbsNodeData?.pbsNode?.attributes?.comment || null;
+    const commentAux = pbsNodeData?.pbsNode?.attributes?.comment_aux || null;
+
     const pbsData = pbsNodeData?.pbsNode
       ? {
           name: pbsNodeData.pbsNode.name,
@@ -614,6 +618,8 @@ export class InfrastructureService {
           queues: queues.length > 0 ? queues : null,
           rawPbsAttributes,
           outages: outages.length > 0 ? outages : null,
+          comment: comment || null,
+          commentAux: commentAux || null,
         }
       : null;
 
@@ -763,8 +769,118 @@ export class InfrastructureService {
   }
 
   /**
-   * Get node state from PBS data (future implementation)
-   * For now returns null/unknown, but structure is ready for PBS integration
+   * Get the "worse" state from state and state_aux
+   * Priority: not-available > maintenance > used > partially_used > free > unknown
+   */
+  private getWorseState(
+    state: string | null | undefined,
+    stateAux: string | null | undefined,
+  ): string {
+    const stateLower = (state || '').toLowerCase();
+    const stateAuxLower = (stateAux || '').toLowerCase();
+
+    // Helper to get state severity (higher = worse)
+    const getStateSeverity = (s: string): number => {
+      const sLower = s.toLowerCase();
+      // Unavailability states (worst)
+      if (
+        sLower.includes('down') ||
+        sLower.includes('stale') ||
+        sLower.includes('state-unknown') ||
+        sLower.includes('initializing') ||
+        sLower.includes('unresolvable') ||
+        sLower.includes('sleep')
+      ) {
+        return 5;
+      }
+      // Maintenance states
+      if (
+        sLower.includes('maintenance') ||
+        sLower.includes('offline') ||
+        sLower.includes('offline_by_mom')
+      ) {
+        return 4;
+      }
+      // Occupancy states (busy, job-busy, job-exclusive, resv-exclusive)
+      if (
+        sLower.includes('busy') ||
+        sLower.includes('job-busy') ||
+        sLower.includes('job-exclusive') ||
+        sLower.includes('resv-exclusive')
+      ) {
+        return 2;
+      }
+      // Free state
+      if (sLower.includes('free')) {
+        return 1;
+      }
+      // Unknown/default
+      return 3;
+    };
+
+    const stateSeverity = getStateSeverity(stateLower);
+    const stateAuxSeverity = getStateSeverity(stateAuxLower);
+
+    // Return the state with higher severity (worse state)
+    // If severities are equal, prefer state over state_aux
+    if (stateAuxSeverity > stateSeverity && stateAux && stateAux.trim()) {
+      return stateAux;
+    }
+    if (state && state.trim()) {
+      return state;
+    }
+    return stateAux || state || '';
+  }
+
+  /**
+   * Map PBS state string to our NodeState enum
+   */
+  private mapPbsStateToNodeState(pbsState: string): NodeState {
+    const stateLower = pbsState.toLowerCase();
+
+    // Unavailability states -> NOT_AVAILABLE
+    if (
+      stateLower.includes('down') ||
+      stateLower.includes('stale') ||
+      stateLower.includes('state-unknown') ||
+      stateLower.includes('initializing') ||
+      stateLower.includes('unresolvable') ||
+      stateLower.includes('sleep')
+    ) {
+      return NodeState.NOT_AVAILABLE;
+    }
+
+    // Maintenance states -> MAINTENANCE
+    if (
+      stateLower.includes('maintenance') ||
+      stateLower.includes('offline') ||
+      stateLower.includes('offline_by_mom')
+    ) {
+      return NodeState.MAINTENANCE;
+    }
+
+    // Occupancy states will be determined by usage, but we can check for specific ones
+    // These will be overridden by usage calculation unless in maintenance/not-available
+    // For now, return UNKNOWN and let usage calculation handle it
+    return NodeState.UNKNOWN;
+  }
+
+  /**
+   * Check if node is in maintenance or reserved queue
+   * Checks the 'queue' attribute directly
+   */
+  private isNodeInMaintenanceOrReservedQueue(pbsNode: PbsNode): boolean {
+    // Check if queue attribute exists
+    if (!pbsNode.attributes.queue) {
+      return false;
+    }
+
+    const queue = pbsNode.attributes.queue.toLowerCase().trim();
+    return queue === 'maintenance' || queue === 'reserved';
+  }
+
+  /**
+   * Get node state from PBS data
    */
   private getNodeStateFromPbs(nodeName: string): {
     state: NodeState | null;
@@ -867,16 +983,9 @@ export class InfrastructureService {
         ? (memoryUsed / memoryTotal) * 100
         : null;
 
-    // Check PBS node state attribute first (for maintenance, down, offline, etc.)
-    const pbsState = pbsNode.attributes.state || '';
-    const pbsStateLower = pbsState.toLowerCase();
-
-    if (
-      pbsStateLower.includes('maintenance') ||
-      pbsStateLower.includes('down') ||
-      pbsStateLower.includes('offline') ||
-      pbsStateLower.includes('state-unknown')
-    ) {
+    // Check if node is in maintenance or reserved queue FIRST - this overrides everything
+    // This must be checked before state/state_aux processing
+    if (this.isNodeInMaintenanceOrReservedQueue(pbsNode)) {
       return {
         state: NodeState.MAINTENANCE,
         cpuUsage: null, // Don't show usage during maintenance
@@ -893,13 +1002,56 @@ export class InfrastructureService {
       };
     }
 
-    // Calculate usage percentages
+    // Get state and state_aux, take the "worse" one
+    const pbsState = pbsNode.attributes.state || '';
+    const pbsStateAux = pbsNode.attributes.state_aux || '';
+    const worseState = this.getWorseState(pbsState, pbsStateAux);
+
+    // Map PBS state to our NodeState
+    const mappedState = this.mapPbsStateToNodeState(worseState);
+
+    // If mapped to maintenance or not-available, return early
+    if (mappedState === NodeState.MAINTENANCE) {
+      return {
+        state: NodeState.MAINTENANCE,
+        cpuUsage: null,
+        cpuAssigned: null,
+        gpuUsage: null,
+        gpuCount: availableGpus > 0 ? availableGpus : null,
+        gpuAssigned: null,
+        gpuCapability,
+        gpuMemory,
+        cudaVersion,
+        memoryTotal,
+        memoryUsed: null,
+        memoryUsagePercent: null,
+      };
+    }
+
+    if (mappedState === NodeState.NOT_AVAILABLE) {
+      return {
+        state: NodeState.NOT_AVAILABLE,
+        cpuUsage: null,
+        cpuAssigned: null,
+        gpuUsage: null,
+        gpuCount: availableGpus > 0 ? availableGpus : null,
+        gpuAssigned: null,
+        gpuCapability,
+        gpuMemory,
+        cudaVersion,
+        memoryTotal,
+        memoryUsed: null,
+        memoryUsagePercent: null,
+      };
+    }
+
+    // Calculate usage percentages for occupancy states
     const cpuUsage =
       availableCpus > 0 ? (assignedCpus / availableCpus) * 100 : null;
     const gpuUsage =
       availableGpus > 0 ? (assignedGpus / availableGpus) * 100 : null;
 
-    // Determine state based on usage
+    // Determine state based on usage (free, partially_used, used)
     let state: NodeState = NodeState.UNKNOWN;
     if (cpuUsage !== null) {
       if (cpuUsage === 0) {

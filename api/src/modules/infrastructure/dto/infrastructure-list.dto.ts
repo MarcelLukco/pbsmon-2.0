@@ -10,6 +10,7 @@ export enum NodeState {
   USED = 'used',
   UNKNOWN = 'unknown',
   MAINTENANCE = 'maintenance',
+  NOT_AVAILABLE = 'not-available',
 }
 
 /**

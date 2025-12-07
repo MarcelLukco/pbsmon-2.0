@@ -159,6 +159,22 @@ export class InfrastructureNodePbsDTO {
     required: false,
   })
   outages?: Array<Record<string, any>> | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Node comment (error message)',
+    nullable: true,
+    required: false,
+  })
+  comment?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Node comment_aux (auxiliary error message)',
+    nullable: true,
+    required: false,
+  })
+  commentAux?: string | null;
 }
 
 /**

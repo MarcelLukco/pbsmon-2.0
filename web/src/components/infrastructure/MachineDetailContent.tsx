@@ -64,6 +64,11 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
           label: t("machines.nodeState.maintenance") || "Maintenance",
           color: "#f59e0b",
         };
+      case "not-available":
+        return {
+          label: t("machines.nodeState.notAvailable") || "Not Available",
+          color: "#ef4444",
+        };
       case "unknown":
       default:
         return {
@@ -192,6 +197,11 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
       ]
     : [];
 
+  // Extract comments for error banner
+  const comment = node.pbs?.comment || null;
+  const commentAux = node.pbs?.commentAux || null;
+  const hasComments = comment || commentAux;
+
   return (
     <>
       <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -202,6 +212,28 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
         </div>
       </header>
       <div className="p-6 space-y-6">
+        {/* Error Banner - Show comments at the top */}
+        {hasComments && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-start gap-2">
+              <Icon
+                icon="mdi:alert-circle"
+                className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+              />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-red-800 mb-2">
+                  {t("machines.errorMessages") || "Error Messages"}
+                </h3>
+                {comment && (
+                  <div className="text-sm text-red-700 mb-2">{comment}</div>
+                )}
+                {commentAux && (
+                  <div className="text-sm text-red-700">{commentAux}</div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
         {/* Basic Information from PERUN (always present) */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">

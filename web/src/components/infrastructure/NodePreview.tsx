@@ -64,6 +64,11 @@ export function NodePreview({ node, clusterName }: NodePreviewProps) {
           label: t("machines.nodeState.maintenance") || "Maintenance",
           color: "#f59e0b",
         };
+      case "not-available":
+        return {
+          label: t("machines.nodeState.notAvailable") || "Not Available",
+          color: "#ef4444",
+        };
       case "unknown":
       default:
         return {

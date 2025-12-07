@@ -69,6 +69,7 @@ export function ClusterDetailContent({ cluster }: ClusterDetailContentProps) {
       partially_used: 0,
       used: 0,
       maintenance: 0,
+      "not-available": 0,
       unknown: 0,
       noPbs: 0,
     };
@@ -306,6 +307,16 @@ export function ClusterDetailContent({ cluster }: ClusterDetailContentProps) {
                   </div>
                   <div className="text-lg font-medium text-gray-900">
                     {clusterStats.stateCounts.maintenance}
+                  </div>
+                </div>
+              )}
+              {clusterStats.stateCounts["not-available"] > 0 && (
+                <div>
+                  <div className="text-sm text-gray-500">
+                    {t("machines.nodeState.notAvailable") || "Not Available"}
+                  </div>
+                  <div className="text-lg font-medium text-gray-900">
+                    {clusterStats.stateCounts["not-available"]}
                   </div>
                 </div>
               )}
