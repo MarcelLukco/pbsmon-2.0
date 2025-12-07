@@ -1,23 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { Icon } from "@iconify/react";
-
-type ProjectDetail = {
-  id: string;
-  name: string;
-  description?: string | null;
-  status: "active" | "expired";
-  reservedResources: {
-    vmCount: number;
-    vcpus: number;
-    memoryGb: number;
-  };
-  createdAt?: string | null;
-  isPersonal: boolean;
-  isMyProject: boolean;
-};
+import type { ProjectDetailDTO } from "@/lib/generated-api";
 
 interface ProjectBasicInfoProps {
-  project: ProjectDetail;
+  project: ProjectDetailDTO;
 }
 
 export function ProjectBasicInfo({ project }: ProjectBasicInfoProps) {

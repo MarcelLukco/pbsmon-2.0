@@ -1,25 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-client";
+import {
+  apiClient,
+  type ProjectsListDTO,
+  type MetaDto,
+} from "@/lib/api-client";
 
 type ProjectsListResponse = {
-  data: {
-    projects: Array<{
-      id: string;
-      name: string;
-      description?: string | null;
-      status: "active" | "expired";
-      reservedResources: {
-        vmCount: number;
-        vcpus: number;
-        memoryGb: number;
-      };
-      createdAt?: string | null;
-      isPersonal: boolean;
-    }>;
-  };
-  meta?: {
-    totalCount: number;
-  };
+  data: ProjectsListDTO;
+  meta?: MetaDto;
 };
 
 interface UseProjectsParams {

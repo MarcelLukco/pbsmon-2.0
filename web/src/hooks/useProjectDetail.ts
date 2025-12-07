@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-client";
-import type { ProjectDetailDTO, MetaDto } from "@/lib/generated-api";
+import {
+  apiClient,
+  type ProjectDetailDTO,
+  type MetaDto,
+} from "@/lib/api-client";
 
 type ProjectDetailResponse = {
   data: ProjectDetailDTO;

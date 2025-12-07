@@ -271,8 +271,28 @@ export function PersonalViewPage() {
           bValue = b.status;
           break;
         case "createdAt":
-          aValue = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-          bValue = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          aValue = a.createdAt
+            ? (() => {
+                const dateValue =
+                  typeof a.createdAt === "string"
+                    ? a.createdAt
+                    : typeof a.createdAt === "number"
+                      ? new Date(a.createdAt).toISOString()
+                      : null;
+                return dateValue ? new Date(dateValue).getTime() : 0;
+              })()
+            : 0;
+          bValue = b.createdAt
+            ? (() => {
+                const dateValue =
+                  typeof b.createdAt === "string"
+                    ? b.createdAt
+                    : typeof b.createdAt === "number"
+                      ? new Date(b.createdAt).toISOString()
+                      : null;
+                return dateValue ? new Date(dateValue).getTime() : 0;
+              })()
+            : 0;
           break;
         case "vmCount":
           aValue = a.reservedResources.vmCount;

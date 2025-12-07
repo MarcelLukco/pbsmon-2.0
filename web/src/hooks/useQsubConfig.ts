@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-client";
-import type { QsubConfigResponseDto } from "@/lib/generated-api";
+import { apiClient, type QsubConfigResponseDto } from "@/lib/api-client";
 
 export function useQsubConfig() {
   return useQuery<QsubConfigResponseDto>({

@@ -70,9 +70,7 @@ export function ProjectsPage() {
   const totalPages = totalCount ? Math.ceil(totalCount / limit) : 0;
 
   const projects: Project[] =
-    data && typeof data === "object" && "data" in data
-      ? (data.data as { projects?: Project[] })?.projects || []
-      : [];
+    data?.data?.projects || [];
 
   return (
     <>

@@ -6,16 +6,5 @@ export type SortColumn =
   | "vcpus"
   | "memoryGb";
 
-export type Project = {
-  id: string;
-  name: string;
-  status: "active" | "expired";
-  reservedResources: {
-    vmCount: number;
-    vcpus: number;
-    memoryGb: number;
-  };
-  createdAt?: string | null;
-  isPersonal: boolean;
-  isMyProject: boolean;
-};
+// Re-export ProjectDTO as Project for convenience
+export type { ProjectDTO as Project } from "@/lib/generated-api";

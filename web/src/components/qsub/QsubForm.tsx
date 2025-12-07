@@ -5,6 +5,7 @@ import { useQsubConfig } from "@/hooks/useQsubConfig";
 import Select from "react-select";
 import { Tooltip } from "react-tooltip";
 import { Icon } from "@iconify/react";
+import type { QsubFieldConfigDto } from "@/lib/generated-api";
 
 interface QsubFormValues {
   [key: string]: any;
@@ -20,7 +21,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
   const currentLang = (i18n.language || "en").split("-")[0] as "en" | "cs";
 
   const defaultValues =
-    config?.fields.reduce((acc, field) => {
+    config?.fields.reduce((acc: QsubFormValues, field: QsubFieldConfigDto) => {
       if (field.default !== undefined && field.default !== null) {
         acc[field.name] = field.default;
       }
@@ -44,7 +45,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
   // Reset form with default values when config loads
   useEffect(() => {
     if (config) {
-      const newDefaults = config.fields.reduce((acc, field) => {
+      const newDefaults = config.fields.reduce((acc: QsubFormValues, field: QsubFieldConfigDto) => {
         if (field.default !== undefined && field.default !== null) {
           acc[field.name] = field.default;
         }
@@ -70,8 +71,8 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
     );
   }
 
-  const basicFields = config.fields.filter((f) => f.category === "basic");
-  const advancedFields = config.fields.filter((f) => f.category === "advanced");
+  const basicFields = config.fields.filter((f: QsubFieldConfigDto) => f.category === "basic");
+  const advancedFields = config.fields.filter((f: QsubFieldConfigDto) => f.category === "advanced");
   const allFields = [...basicFields, ...advancedFields];
 
   const getLabel = (field: (typeof config.fields)[0]) => {
@@ -89,7 +90,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
     const tooltipId = `tooltip-${field.name}`;
     const isVisible =
       !field.dependsOn ||
-      field.dependsOn.every((dep) => {
+      field.dependsOn.every((dep: string) => {
         const depValue = watchedValues[dep];
         return depValue !== undefined && depValue !== null && depValue !== "";
       });
@@ -136,7 +137,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
                 field.name === "scratch_type" ? null : (
                   <option value="">-- Select --</option>
                 )}
-                {field.options?.map((option) => {
+                {field.options?.map((option: Record<string, any> | string) => {
                   const optionValue =
                     typeof option === "string" ? option : option.value;
                   const optionLabel =
@@ -168,7 +169,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
                 rules={{ required: field.required }}
                 render={({ field: formField }) => {
                   const options =
-                    field.options?.map((option) => {
+                    field.options?.map((option: Record<string, any> | string) => {
                       const optionValue =
                         typeof option === "string" ? option : option.value;
                       const optionLabel =
@@ -189,7 +190,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
                     <Select
                       isMulti
                       options={options}
-                      value={options.filter((opt) =>
+                      value={options.filter((opt: { value: string; label: string }) =>
                         selectedValues.includes(opt.value)
                       )}
                       onChange={(selected) => {
@@ -514,7 +515,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
                 {currentLang === "cs" ? "Základní nastavení" : "Basic Settings"}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {basicFields.map((field) => renderField(field))}
+                {basicFields.map((field: QsubFieldConfigDto) => renderField(field))}
               </div>
             </div>
           )}
@@ -528,7 +529,7 @@ export function QsubForm({ onSubmit }: QsubFormProps) {
                   : "Advanced Settings"}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {advancedFields.map((field) => renderField(field))}
+                {advancedFields.map((field: QsubFieldConfigDto) => renderField(field))}
               </div>
             </div>
           )}
