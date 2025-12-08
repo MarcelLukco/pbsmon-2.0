@@ -24,10 +24,11 @@ EOF
 
 chmod +x /app/cron-wrapper.sh
 
-# Set up cron job to run every minute
-echo "* * * * * /app/cron-wrapper.sh" | crontab -
+# Set up cron job to run every 2 minutes to avoid conflicts
+# Collection takes ~26 seconds, so 2 minute interval gives plenty of buffer
+echo "*/2 * * * * /app/cron-wrapper.sh" | crontab -
 
-log "Cron job configured to run every minute"
+log "Cron job configured to run every 2 minutes"
 
 # Run initial collection immediately (don't wait for first cron run)
 log "Running initial PBS data collection..."

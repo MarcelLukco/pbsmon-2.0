@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # PBS Data Collection Script
-# This script runs every minute to collect PBS data from the server
+# This script runs periodically to collect PBS data from the server
 # and store it in the configured output directory
+# Uses file locking to prevent concurrent runs
 
 set -e
 
@@ -14,6 +15,10 @@ PBSCALLER_PATH=/app/pbscollector
 KEYTAB_PATH="${KEYTAB_PATH:-/pbsmon.keytab}"
 KEYTAB_USER="${KEYTAB_USER:-karilub@META}"
 
+# Lock file to prevent concurrent runs
+LOCK_FILE="/var/log/pbs-collector/pbs-collector.lock"
+LOCK_TIMEOUT=120  # Consider lock stale after 2 minutes
+
 # Create output directory for this server
 SERVER_OUTPUT_DIR="${OUTPUT_DIR}/${SERVER_NAME}"
 mkdir -p "${SERVER_OUTPUT_DIR}"
@@ -22,6 +27,54 @@ mkdir -p "${SERVER_OUTPUT_DIR}"
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
+
+# Cleanup function to remove lock file on exit
+cleanup() {
+    if [ -f "${LOCK_FILE}" ]; then
+        rm -f "${LOCK_FILE}"
+        log "Lock file removed"
+    fi
+}
+
+# Set trap to cleanup on exit
+trap cleanup EXIT
+
+# Check for existing lock file
+if [ -f "${LOCK_FILE}" ]; then
+    # Get lock file modification time (seconds since epoch)
+    if command -v stat >/dev/null 2>&1; then
+        # Try GNU stat first (stat -c)
+        LOCK_MTIME=$(stat -c %Y "${LOCK_FILE}" 2>/dev/null || stat -f %m "${LOCK_FILE}" 2>/dev/null || echo 0)
+    else
+        LOCK_MTIME=0
+    fi
+    
+    if [ "${LOCK_MTIME}" -gt 0 ]; then
+        CURRENT_TIME=$(date +%s)
+        LOCK_AGE=$((CURRENT_TIME - LOCK_MTIME))
+        
+        if [ "${LOCK_AGE}" -lt "${LOCK_TIMEOUT}" ]; then
+            log "Another collection is already running (lock file exists, age: ${LOCK_AGE}s). Skipping this run."
+            exit 0
+        else
+            log "Stale lock file detected (age: ${LOCK_AGE}s). Removing and continuing..."
+            rm -f "${LOCK_FILE}"
+        fi
+    else
+        # Can't determine age, but file exists - assume it's recent and skip
+        log "Lock file exists but cannot determine age. Skipping this run to be safe."
+        exit 0
+    fi
+fi
+
+# Create lock file
+touch "${LOCK_FILE}"
+log "Lock file created"
+
+# Wait 10 seconds to avoid collision with API service
+# API reads data at :00, :02, :04, etc., so this delay ensures we start writing after API has finished reading
+log "Waiting 10 seconds to avoid collision with API service..."
+sleep 10
 
 log "Starting PBS data collection for server: ${FULL_SERVER_NAME}"
 

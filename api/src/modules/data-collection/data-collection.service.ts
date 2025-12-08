@@ -35,9 +35,11 @@ export class DataCollectionService implements OnModuleInit {
   }
 
   // CRON job - PBS: every 2 minutes
-  @Cron('*/1 * * * *')
+  // Note: pbs-collector service writes data every 2 minutes, so we read every 2 minutes
+  // with a slight offset (runs at :02, :04, :06, etc.) to avoid reading during writes
+  @Cron('*/2 * * * *')
   async handlePbsCron() {
-    this.logger.log('CRON: Collecting data from PBS...');
+    this.logger.log('CRON: Reading PBS data from files...');
     await this.collectPbs();
   }
 
