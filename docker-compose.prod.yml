@@ -19,6 +19,10 @@ services:
       - PROMETHEUS_TOKEN=${PROMETHEUS_TOKEN:-}
       # Path to pbscaller binary on host
       - PBSCALLER_PATH=/host/pbscaller
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-}
+      - OIDC_ISSUER=${OIDC_ISSUER:-}
+      - SESSION_SECRET=${SESSION_SECRET:-}
     volumes:
       - ./api/data:/app/data
       # Mount pbscaller binary from host (built by deploy.sh)

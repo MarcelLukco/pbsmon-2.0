@@ -4,9 +4,34 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { AppConfig } from './config/app.config';
+import * as cookieParser from 'cookie-parser';
+import './common/types/session.types';
+
+const session = require('express-session');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Cookie parser middleware
+  app.use(cookieParser());
+
+  if (!process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET is not set');
+  }
+
+  // Session middleware
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      },
+    }),
+  );
 
   // Enable CORS
   const frontendUrl = process.env.FRONTEND_URL;

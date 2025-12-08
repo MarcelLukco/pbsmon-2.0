@@ -13,11 +13,13 @@ import { StatusModule } from '@/modules/status/status.module';
 import { DataCollectionModule } from '@/modules/data-collection/data-collection.module';
 import { AccountingModule } from '@/modules/accounting/accounting.module';
 import { ProjectsModule } from '@/modules/projects/projects.module';
+import { AuthModule } from '@/modules/auth/auth.module';
 import configuration, {
   prometheusConfig,
   perunConfig,
   pbsConfig,
   accountingConfig,
+  oidcConfig,
 } from '@/config/configuration';
 
 @Module({
@@ -30,6 +32,7 @@ import configuration, {
         perunConfig,
         pbsConfig,
         accountingConfig,
+        oidcConfig,
       ],
       envFilePath: '.env',
     }),
@@ -46,6 +49,7 @@ import configuration, {
     DataCollectionModule,
     AccountingModule,
     ProjectsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

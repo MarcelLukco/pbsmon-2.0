@@ -4,10 +4,12 @@ import {
   ExecutionContext,
   ForbiddenException,
   SetMetadata,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { UserContext, UserRole } from '@/common/types/user-context.types';
+import { OidcConfig } from '@/config/oidc.config';
 
 /**
  * Metadata key for user context
@@ -43,11 +45,10 @@ export class UserContextGuard implements CanActivate {
 
     const userContext = this.extractUserContext(request);
 
-    // If no user context, provide a default admin context for now
-    // TODO: Implement proper authentication in production
+    // If no user context and not mocked, we should have been redirected by AuthGuard
+    // But for backwards compatibility, still allow anonymous access
+    // (AuthGuard will handle redirects for protected endpoints)
     if (!userContext) {
-      // For now, allow requests without auth by providing default context
-      // This should be replaced with proper authentication
       request.userContext = {
         id: '', // todo: retrievie this from perun_machines.json
         username: 'anonymous',
@@ -104,59 +105,111 @@ export class UserContextGuard implements CanActivate {
 
   /**
    * Extract user context from request
-   * In dev mode: returns admin context
-   * In production: extracts from access token
+   * Priority:
+   * 1. MOCK_ADMIN config (if enabled)
+   * 2. Session user (from OIDC authentication)
+   * 3. Bearer token (for API calls)
    */
   private extractUserContext(request: any): UserContext | null {
-    // TODO: Remove this once authentication is implemented
-    if (this.isDevelopment || true) {
+    const oidcConfig = this.configService.get<OidcConfig>('oidc');
+
+    // 1. Check MOCK_ADMIN config
+    if (oidcConfig?.mockAdmin) {
       return {
         id: 'a026f632ac52748f0e007190fc59241d83783226@einfra.cesnet.cz',
         username: 'admin',
         role: UserRole.ADMIN,
-        groups: [], // Admin has access to everything, groups not needed
+        groups: [],
         hostname: undefined,
       };
     }
 
-    // Production mode: extract from access token
-    const authHeader = request.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return null;
+    // 2. Check session (from OIDC login)
+    if (request.session?.user) {
+      const sessionUser = request.session.user;
+      return {
+        id: sessionUser.id || sessionUser.sub || '',
+        username:
+          sessionUser.username ||
+          sessionUser.preferred_username ||
+          sessionUser.email ||
+          'unknown',
+        role: this.determineUserRole(sessionUser),
+        groups: sessionUser.groups || [],
+        hostname: undefined,
+      };
     }
 
-    const token = authHeader.substring(7);
+    // 3. Check Bearer token (for API calls)
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const decodedToken = this.validateAndDecodeToken(token);
+      if (decodedToken) {
+        return {
+          id: decodedToken.sub || decodedToken.id || '',
+          username:
+            decodedToken.preferred_username ||
+            decodedToken.username ||
+            decodedToken.email ||
+            'unknown',
+          role: this.determineUserRole(decodedToken),
+          groups: decodedToken.groups || [],
+          hostname: undefined,
+        };
+      }
+    }
 
-    // TODO: Implement token parsing and validation
-    // const decodedToken = this.validateAndDecodeToken(token);
-    // if (!decodedToken) {
-    //   return null;
-    // }
-
-    // Extract user information from token claims
-    // return {
-    //   username: decodedToken.username,
-    //   role: decodedToken.role as UserRole,
-    //   groups: decodedToken.groups || [],
-    //   hostname: decodedToken.hostname,
-    // };
-
-    // For now, if token is provided but we can't parse it, deny access
-    // This will be implemented when authentication is added
     return null;
   }
 
   /**
-   * Validate and decode access token
-   * TODO: Implement OIDC token validation
+   * Determine user role from user object/claims
    */
-  // private validateAndDecodeToken(token: string): any | null {
-  //   try {
-  //     // Validate token signature, expiration, etc.
-  //     // Decode and return token claims
-  //     return false
-  //   } catch (error) {
-  //     return null;
-  //   }
-  // }
+  private determineUserRole(user: any): UserRole {
+    // Check if user is admin based on groups or other claims
+    const groups = user.groups || [];
+    const roles = user.roles || [];
+
+    if (
+      groups.includes('admin') ||
+      groups.includes('administrators') ||
+      roles.includes('admin') ||
+      roles.includes('administrator') ||
+      user.role === 'admin' ||
+      user.role === 'administrator'
+    ) {
+      return UserRole.ADMIN;
+    }
+    return UserRole.USER;
+  }
+
+  /**
+   * Validate and decode access token
+   * For now, we decode the JWT without verification (for development)
+   * In production, you should verify the token signature against the OIDC issuer
+   */
+  private validateAndDecodeToken(token: string): any | null {
+    try {
+      // Simple JWT decoding (without verification)
+      // In production, use a library like jwks-rsa to verify tokens
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        return null;
+      }
+
+      const payload = JSON.parse(
+        Buffer.from(parts[1], 'base64url').toString('utf-8'),
+      );
+
+      // Check expiration
+      if (payload.exp && payload.exp < Date.now() / 1000) {
+        return null;
+      }
+
+      return payload;
+    } catch (error) {
+      return null;
+    }
+  }
 }
