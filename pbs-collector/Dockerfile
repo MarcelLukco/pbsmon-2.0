@@ -7,8 +7,6 @@ RUN apt-get update && \
     apt-get install -y gcc krb5-user wget gnupg2 cron ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy pbscaller source
-COPY pbscaller.c .
 
 # TODO - in the future mount it
 COPY krb5.conf /etc/krb5.conf
@@ -20,6 +18,9 @@ RUN apt-key add key.asc
 RUN printf "deb https://repo.metacentrum.cz/ all main pilot\ndeb https://repo.metacentrum.cz/ bookworm main pilot\n" > /etc/apt/sources.list.d/meta_repo.list
 
 RUN apt-get update && apt-get install -y libopenpbs libopenpbs-dev
+
+# Copy pbscaller source
+COPY pbscaller.c .
 
 RUN gcc -g -L/usr/lib pbscaller.c -o /app/pbscollector -lpbs
 
