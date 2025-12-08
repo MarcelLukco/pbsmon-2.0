@@ -2,9 +2,9 @@ FROM debian:bookworm-slim
 
 WORKDIR /app
 
-# Install build tools
+# Install build tools and runtime dependencies
 RUN apt-get update && \
-    apt-get install -y gcc krb5-user wget gnupg2 && \
+    apt-get install -y gcc krb5-user wget gnupg2 cron ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy pbscaller source
