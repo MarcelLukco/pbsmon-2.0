@@ -100,14 +100,27 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
 
       {/* GPU Column */}
       <div className="text-sm">
-        <div className="flex items-center gap-1">
-          <span className="text-gray-900">
-            {typeof job.gpuReserved === "number"
+        {(() => {
+          const gpuReserved =
+            typeof job.gpuReserved === "number"
               ? job.gpuReserved
-              : Number(job.gpuReserved) || 0}
-          </span>
-          <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
-        </div>
+              : Number(job.gpuReserved) || 0;
+
+          // Show "no GPU" in gray if gpuReserved is 0
+          if (gpuReserved === 0) {
+            return (
+              <div className="text-gray-400 text-sm">{t("jobs.noGpu")}</div>
+            );
+          }
+
+          // Show gpu count
+          return (
+            <div className="flex items-center gap-1">
+              <span className="text-gray-900">{gpuReserved}</span>
+              <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
+            </div>
+          );
+        })()}
       </div>
 
       {/* RAM Column */}
