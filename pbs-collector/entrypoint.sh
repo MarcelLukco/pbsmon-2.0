@@ -19,7 +19,6 @@ export PBS_DATA_PATH="${PBS_DATA_PATH}"
 export PBSCALLER_PATH="${PBSCALLER_PATH}"
 export KEYTAB_PATH="${KEYTAB_PATH}"
 export KEYTAB_USER="${KEYTAB_USER}"
-export LD_LIBRARY_PATH="/host/usr/lib:\${LD_LIBRARY_PATH:-}"
 /app/collect-pbs-data.sh >> /var/log/pbs-collector/collect.log 2>&1
 EOF
 

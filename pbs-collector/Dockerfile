@@ -8,7 +8,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy pbscaller source
-COPY pbs-collector/pbscaller.c ./pbscaller.c
+COPY ./pbscaller.c ./app/pbscaller.c
 
 COPY krb5.conf /etc/krb5.conf
 

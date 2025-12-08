@@ -73,7 +73,6 @@ services:
     environment:
       - PBS_SERVER_NAME=${PBS_SERVER_NAME:-pbs-m1}
       - PBS_DATA_PATH=/app/data/pbs
-      - PBSCALLER_PATH=/host/pbscaller
       - KEYTAB_PATH=/pbsmon.keytab
       - KEYTAB_USER=${KEYTAB_USER:-karilub@META}
     volumes:

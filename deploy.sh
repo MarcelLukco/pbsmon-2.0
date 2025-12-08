@@ -120,63 +120,6 @@ if [ "$API_READY" = false ]; then
     echo -e "${YELLOW}   Continuing anyway - web build will try to fetch OpenAPI spec${NC}"
 fi
 
-# Generate API client locally before building web Docker image
-# This ensures the types are available during the Docker build
-echo -e "${YELLOW}Generating API client for web build...${NC}"
-
-# Check if Node.js is available on the host
-if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
-    echo -e "${YELLOW}⚠️  Node.js/npm not found on host, skipping pre-generation${NC}"
-    echo -e "${YELLOW}   Docker build will generate API client during build${NC}"
-    echo -e "${YELLOW}   Make sure API_BASE_URL is set correctly for Docker build${NC}"
-else
-    # Get API URL - prefer API_BASE_URL from env, fallback to default
-    # The API should be accessible through the configured API_BASE_URL
-    API_URL_FOR_CLIENT="${API_BASE_URL:-http://localhost:3000}"
-    
-    # If API_BASE_URL is not set and API is running in Docker, try to construct URL
-    if [ -z "$API_BASE_URL" ]; then
-        # Check if we can access API through nginx (common setup)
-        # Try the production URL format
-        if [ -n "$FRONTEND_URL" ]; then
-            API_URL_FOR_CLIENT="${FRONTEND_URL}/api"
-        else
-            # Fallback: try to access API directly (if exposed)
-            API_URL_FOR_CLIENT="http://localhost:3000"
-        fi
-    fi
-    
-    echo -e "${YELLOW}Using API URL: ${API_URL_FOR_CLIENT}${NC}"
-    
-    # Set environment variables for API client generation
-    export API_BASE_URL="$API_URL_FOR_CLIENT"
-    export API_AUTH_USERNAME="${API_AUTH_USERNAME:-}"
-    export API_AUTH_PASSWORD="${API_AUTH_PASSWORD:-}"
-    
-    # Generate API client in web directory
-    if [ -d "web" ]; then
-        cd web
-        
-        # Check if node_modules exists, if not install dependencies first
-        if [ ! -d "node_modules" ]; then
-            echo -e "${YELLOW}Installing web dependencies...${NC}"
-            npm ci
-        fi
-        
-        if npm run generate:api; then
-            echo -e "${GREEN}✓ API client generated successfully on host${NC}"
-            cd ..
-        else
-            echo -e "${YELLOW}⚠️  Failed to generate API client on host${NC}"
-            echo -e "${YELLOW}   Docker build will try to generate it during build${NC}"
-            echo -e "${YELLOW}   Make sure API is accessible at: ${API_URL_FOR_CLIENT}/docs-json${NC}"
-            cd ..
-        fi
-    else
-        echo -e "${YELLOW}⚠️  web directory not found, skipping pre-generation${NC}"
-    fi
-fi
-
 # Now build and start web service
 echo -e "${YELLOW}Building and starting web container...${NC}"
 if sudo $DOCKER_COMPOSE -f "$COMPOSE_FILE" up -d --build web; then
