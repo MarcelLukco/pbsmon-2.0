@@ -189,26 +189,46 @@ export class PbsCollectionService {
   private async loadEntityFile<T extends PbsEntity>(
     filePath: string,
     entityType: string,
+    retries: number = 2,
   ): Promise<PbsCollection<T> | null> {
-    try {
-      const content = await fs.readFile(filePath, 'utf-8');
-      const data: PbsCollection<T> = JSON.parse(content);
-      this.logger.debug(
-        `Loaded ${entityType} data from ${filePath} (${data.count} items)`,
-      );
-      return data;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      if (errorMessage.includes('ENOENT')) {
-        this.logger.warn(
-          `PBS ${entityType} file not found: ${filePath}. Skipping ${entityType}.`,
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const content = await fs.readFile(filePath, 'utf-8');
+        const data: PbsCollection<T> = JSON.parse(content);
+        this.logger.debug(
+          `Loaded ${entityType} data from ${filePath} (${data.count} items)`,
         );
-      } else {
+        return data;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes('ENOENT')) {
+          this.logger.warn(
+            `PBS ${entityType} file not found: ${filePath}. Skipping ${entityType}.`,
+          );
+          return null;
+        }
+
+        // If JSON parse error and we have retries left, wait a bit and retry
+        // This handles race conditions when files are being written
+        if (
+          (errorMessage.includes('JSON') ||
+            errorMessage.includes('Unexpected') ||
+            errorMessage.includes('Unterminated')) &&
+          attempt < retries
+        ) {
+          this.logger.debug(
+            `Failed to parse ${entityType} file (attempt ${attempt + 1}/${retries + 1}), retrying in 100ms...`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          continue;
+        }
+
         this.logger.warn(`Failed to load ${entityType} file: ${errorMessage}`);
+        return null;
       }
-      return null;
     }
+    return null;
   }
 
   private async loadFairshareFile(

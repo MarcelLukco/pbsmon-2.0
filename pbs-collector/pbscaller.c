@@ -125,11 +125,15 @@ int process_data_json(struct batch_status *bs, char *type, const char* output_di
     struct attrl *atp;
     int count = 0;
     char filename[512];
+    char temp_filename[512];
 
     snprintf(filename, sizeof(filename), "%s/%s.json", output_dir, type);
-    FILE *fp = fopen(filename, "w");
+    snprintf(temp_filename, sizeof(temp_filename), "%s/%s.json.tmp", output_dir, type);
+    
+    /* Write to temporary file first for atomic updates */
+    FILE *fp = fopen(temp_filename, "w");
     if (!fp) {
-        fprintf(stderr, "Failed to open file %s for writing\n", filename);
+        fprintf(stderr, "Failed to open temporary file %s for writing\n", temp_filename);
         return -1;
     }
 
@@ -178,6 +182,15 @@ int process_data_json(struct batch_status *bs, char *type, const char* output_di
     fprintf(fp, "}\n");
 
     fclose(fp);
+    
+    /* Atomically rename temp file to final filename */
+    if (rename(temp_filename, filename) != 0) {
+        fprintf(stderr, "Failed to rename %s to %s\n", temp_filename, filename);
+        unlink(temp_filename); /* Clean up temp file on error */
+        pbs_statfree(bs);
+        return -1;
+    }
+    
     pbs_statfree(bs);
     return 0;
 }
