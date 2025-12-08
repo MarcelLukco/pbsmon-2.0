@@ -8,8 +8,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy pbscaller source
-COPY ./pbscaller.c ./app/pbscaller.c
+COPY ./pbscaller.c ./pbscaller.c
 
+# TODO - in the future mount it
 COPY krb5.conf /etc/krb5.conf
 
 RUN wget http://repo.grid.cesnet.cz/key.asc
@@ -21,9 +22,6 @@ RUN printf "deb https://repo.metacentrum.cz/ all main pilot\ndeb https://repo.me
 RUN apt-get update && apt-get install -y libopenpbs libopenpbs-dev
 
 RUN gcc -g -L/usr/lib pbscaller.c -o /app/pbscollector -lpbs
-
-# Copy krb5.conf if it exists (optional)
-# COPY krb5.conf /etc/krb5.conf
 
 # Copy collection script
 COPY collect-pbs-data.sh /app/collect-pbs-data.sh
