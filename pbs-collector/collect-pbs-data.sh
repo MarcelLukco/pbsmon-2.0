@@ -71,11 +71,6 @@ fi
 touch "${LOCK_FILE}"
 log "Lock file created"
 
-# Wait 10 seconds to avoid collision with API service
-# API reads data at :00, :02, :04, etc., so this delay ensures we start writing after API has finished reading
-log "Waiting 10 seconds to avoid collision with API service..."
-sleep 10
-
 log "Starting PBS data collection for server: ${FULL_SERVER_NAME}"
 
 # Check if pbscaller binary exists
