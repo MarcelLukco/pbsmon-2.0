@@ -144,3 +144,5 @@ temp
 
 # Nginx basic auth password file
 nginx/.htpasswd
+
+*.keytab

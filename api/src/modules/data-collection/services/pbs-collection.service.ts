@@ -2,11 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import { PbsConfig } from '@/config/pbs.config';
-
-const execAsync = promisify(exec);
 import {
   PbsData,
   PbsServerData,
@@ -45,11 +41,14 @@ export class PbsCollectionService {
       const serversData: Record<string, PbsServerData> = {};
       const basePath = this.config.dataPath;
 
-      // Call pbscaller if not using mock data
-      if (!this.config.mockData) {
-        await this.callPbscaller();
+      // PBS data collection is now handled by a separate service (pbs-collector)
+      // This service only reads the data files that are updated by pbs-collector
+      if (this.config.mockData) {
+        this.logger.log('MOCK_PBS_DATA is true, using mock data');
       } else {
-        this.logger.log('MOCK_PBS_DATA is true, skipping pbscaller execution');
+        this.logger.log(
+          'Reading PBS data from files (collected by pbs-collector service)',
+        );
       }
 
       // Check if the base directory exists
@@ -263,88 +262,9 @@ export class PbsCollectionService {
     }
   }
 
-  private async callPbscaller(): Promise<void> {
-    try {
-      const serverName = this.config.serverName;
-      const fullServerName = `${serverName}.metacentrum.cz`;
-      const outputDir = path.join(this.config.dataPath, serverName);
-      const pbscallerPath = process.env.PBSCALLER_PATH || '/host/pbscaller';
-
-      // Check if pbscaller binary exists and is executable
-      try {
-        const stats = await fs.stat(pbscallerPath);
-        if (stats.isDirectory()) {
-          this.logger.error(
-            `pbscaller path is a directory, not a file: ${pbscallerPath}. This usually means api/bin/pbsprocaller didn't exist when the container started. Docker created a directory instead. Please ensure the file exists on the host and restart the container.`,
-          );
-          return;
-        }
-        if (!stats.isFile()) {
-          this.logger.error(
-            `pbscaller path exists but is not a file: ${pbscallerPath}. Make sure api/bin/pbsprocaller exists on the host.`,
-          );
-          return;
-        }
-        // Check if file is executable
-        const mode = stats.mode;
-        const isExecutable = (mode & parseInt('111', 8)) !== 0;
-        if (!isExecutable) {
-          this.logger.warn(
-            `pbscaller binary exists but is not executable. Attempting to continue anyway.`,
-          );
-        }
-        this.logger.debug(
-          `pbscaller binary found at ${pbscallerPath}, size: ${stats.size} bytes`,
-        );
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        if (errorMessage.includes('ENOENT')) {
-          this.logger.error(
-            `pbscaller binary not found at ${pbscallerPath}. Make sure api/bin/pbsprocaller exists on the host and is mounted correctly. The file must exist before starting the container.`,
-          );
-          return;
-        }
-        this.logger.error(`Error checking pbscaller binary: ${errorMessage}`);
-        return;
-      }
-
-      // Ensure output directory exists
-      await fs.mkdir(outputDir, { recursive: true });
-
-      this.logger.log(
-        `Calling pbscaller on host for server ${fullServerName}, output directory: ${outputDir}`,
-      );
-
-      // Set LD_LIBRARY_PATH to use PBS libraries from host
-      const env = {
-        ...process.env,
-        LD_LIBRARY_PATH: '/host/usr/lib:' + (process.env.LD_LIBRARY_PATH || ''),
-      };
-
-      // Execute pbscaller binary mounted from host
-      const { stdout, stderr } = await execAsync(
-        `"${pbscallerPath}" "${fullServerName}" "${outputDir}"`,
-        { env },
-      );
-
-      if (stdout) {
-        this.logger.debug(`pbscaller stdout: ${stdout}`);
-      }
-      if (stderr) {
-        this.logger.warn(`pbscaller stderr: ${stderr}`);
-      }
-
-      this.logger.log('pbscaller execution completed successfully');
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(
-        `Failed to execute pbscaller: ${errorMessage}. Continuing with existing data files.`,
-      );
-      // Don't throw - allow collection to continue with existing files
-    }
-  }
+  // Removed callPbscaller() method - PBS data collection is now handled by
+  // the separate pbs-collector service that runs every minute.
+  // This service only reads the data files from the shared volume.
 
   getData(): PbsData | null {
     return this.pbsData;

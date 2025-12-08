@@ -17,14 +17,8 @@ services:
       - PROMETHEUS_USERNAME=${PROMETHEUS_USERNAME:-}
       - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-}
       - PROMETHEUS_TOKEN=${PROMETHEUS_TOKEN:-}
-      # Path to pbscaller binary on host
-      - PBSCALLER_PATH=/host/pbscaller
     volumes:
       - ./api/data:/app/data
-      # Mount pbscaller binary from host (built by deploy.sh)
-      - ./api/bin/pbsprocaller:/host/pbscaller:ro
-      # Mount PBS libraries from host for pbscaller runtime
-      - /usr/lib:/host/usr/lib:ro
     networks:
       - pbsmon-network
     healthcheck:
@@ -66,6 +60,45 @@ services:
           "http://localhost:80",
         ]
       interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  pbs-collector:
+    build:
+      context: ./pbs-collector
+      dockerfile: Dockerfile
+    container_name: pbsmon-pbs-collector
+    restart: unless-stopped
+    environment:
+      - PBS_SERVER_NAME=${PBS_SERVER_NAME:-pbs-m1}
+      - PBS_DATA_PATH=/app/data/pbs
+      - PBSCALLER_PATH=/host/pbscaller
+      - KEYTAB_PATH=/pbsmon.keytab
+      - KEYTAB_USER=${KEYTAB_USER:-karilub@META}
+    volumes:
+      # Shared data directory with API service
+      - ./api/data:/app/data
+      # Mount PBS config from host
+      - /etc/pbs.conf:/etc/pbs.conf:ro
+      # Mount keytab for Kerberos authentication
+      - ./pbsmon.keytab:/pbsmon.keytab:ro
+    networks:
+      - pbsmon-network
+    # Resource limits for this microservice
+    # Using deploy.resources for Docker Compose v3+ (works with docker compose)
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+    # Healthcheck - verify cron is running
+    healthcheck:
+      test: ["CMD", "pgrep", "-x", "cron"]
+      interval: 60s
       timeout: 10s
       retries: 3
       start_period: 10s
