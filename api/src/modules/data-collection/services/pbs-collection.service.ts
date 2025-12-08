@@ -137,19 +137,36 @@ export class PbsCollectionService {
           serverName = fullServerName.split('.')[0] || serverDir;
         }
 
-        serversData[serverName] = {
-          timestamp: new Date().toISOString(),
-          serverName,
-          jobs,
-          queues,
-          nodes,
-          servers,
-          resources,
-          reservations,
-          schedulers,
-          hooks,
-          fairshare,
-        };
+        if (!serversData[serverName]) {
+          serversData[serverName] = {
+            timestamp: new Date().toISOString(),
+            serverName,
+            jobs,
+            queues,
+            nodes,
+            servers,
+            resources,
+            reservations,
+            schedulers,
+            hooks,
+            fairshare,
+          };
+        } else {
+          // Update only successfully loaded data, preserve previous values for failed reads
+          serversData[serverName] = {
+            timestamp: new Date().toISOString(),
+            serverName,
+            jobs: jobs ?? serversData[serverName].jobs,
+            queues: queues ?? serversData[serverName].queues,
+            nodes: nodes ?? serversData[serverName].nodes,
+            servers: servers ?? serversData[serverName].servers,
+            resources: resources ?? serversData[serverName].resources,
+            reservations: reservations ?? serversData[serverName].reservations,
+            schedulers: schedulers ?? serversData[serverName].schedulers,
+            hooks: hooks ?? serversData[serverName].hooks,
+            fairshare: fairshare ?? serversData[serverName].fairshare,
+          };
+        }
 
         const loadedEntities = [
           jobs && 'Jobs',
@@ -189,46 +206,28 @@ export class PbsCollectionService {
   private async loadEntityFile<T extends PbsEntity>(
     filePath: string,
     entityType: string,
-    retries: number = 2,
   ): Promise<PbsCollection<T> | null> {
-    for (let attempt = 0; attempt <= retries; attempt++) {
-      try {
-        const content = await fs.readFile(filePath, 'utf-8');
-        const data: PbsCollection<T> = JSON.parse(content);
-        this.logger.debug(
-          `Loaded ${entityType} data from ${filePath} (${data.count} items)`,
+    try {
+      const content = await fs.readFile(filePath, 'utf-8');
+      const data: PbsCollection<T> = JSON.parse(content);
+      this.logger.debug(
+        `Loaded ${entityType} data from ${filePath} (${data.count} items)`,
+      );
+      return data;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('ENOENT')) {
+        this.logger.warn(
+          `PBS ${entityType} file not found: ${filePath}. Will preserve previous state if available.`,
         );
-        return data;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        if (errorMessage.includes('ENOENT')) {
-          this.logger.warn(
-            `PBS ${entityType} file not found: ${filePath}. Skipping ${entityType}.`,
-          );
-          return null;
-        }
-
-        // If JSON parse error and we have retries left, wait a bit and retry
-        // This handles race conditions when files are being written
-        if (
-          (errorMessage.includes('JSON') ||
-            errorMessage.includes('Unexpected') ||
-            errorMessage.includes('Unterminated')) &&
-          attempt < retries
-        ) {
-          this.logger.debug(
-            `Failed to parse ${entityType} file (attempt ${attempt + 1}/${retries + 1}), retrying in 100ms...`,
-          );
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          continue;
-        }
-
-        this.logger.warn(`Failed to load ${entityType} file: ${errorMessage}`);
-        return null;
+      } else {
+        this.logger.warn(
+          `Failed to load ${entityType} file: ${errorMessage}. Will preserve previous state if available.`,
+        );
       }
+      return null;
     }
-    return null;
   }
 
   private async loadFairshareFile(
