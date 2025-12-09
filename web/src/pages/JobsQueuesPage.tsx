@@ -9,7 +9,7 @@ type SortColumn = "name" | "priority" | "totalJobs" | "fairshare";
 
 function filterEnabledAndStartedQueues(queues: QueueListDTO[]): QueueListDTO[] {
   return queues
-    .filter((queue) => queue.enabled && queue.started)
+    .filter((queue) => queue.enabled && (queue.started || queue.hasReservation))
     .map((queue) => {
       const filteredQueue: QueueListDTO = { ...queue };
       if (queue.children && queue.children.length > 0) {

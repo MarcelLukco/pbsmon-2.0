@@ -57,6 +57,7 @@ export function QueueDetailContent({
       started: child.started,
       hasAccess: child.hasAccess,
       canBeDirectlySubmitted: true,
+      hasReservation: !!child.reservation,
       children: child.children
         ? child.children.map((c) => ({
             name: c.name,
@@ -73,6 +74,7 @@ export function QueueDetailContent({
             started: c.started,
             hasAccess: c.hasAccess,
             canBeDirectlySubmitted: true,
+            hasReservation: !!c.reservation,
             children: undefined,
           }))
         : undefined,
@@ -331,6 +333,172 @@ export function QueueDetailContent({
                   );
                 }
               })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reservation Information */}
+      {queue.reservation && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              {t("queues.reservation")}
+            </h2>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                {queue.reservation.displayName &&
+                  typeof queue.reservation.displayName === "string" && (
+                    <div>
+                      <div className="text-sm text-gray-500">
+                        {t("queues.reservationName")}
+                      </div>
+                      <div className="text-lg font-medium text-gray-900">
+                        {queue.reservation.displayName}
+                      </div>
+                    </div>
+                  )}
+                {queue.reservation.owner &&
+                  typeof queue.reservation.owner === "string" && (
+                    <div>
+                      <div className="text-sm text-gray-500">
+                        {t("queues.reservationOwner")}
+                      </div>
+                      <div className="text-lg font-medium text-gray-900">
+                        <Link
+                          to={`/users/${encodeURIComponent(queue.reservation.owner)}`}
+                          className="text-primary-600 hover:text-primary-800"
+                        >
+                          {queue.reservation.owner}
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                {queue.reservation.startTime &&
+                  typeof queue.reservation.startTime === "number" && (
+                    <div>
+                      <div className="text-sm text-gray-500">
+                        {t("queues.reservationStart")}
+                      </div>
+                      <div className="text-lg font-medium text-gray-900">
+                        {new Date(
+                          queue.reservation.startTime * 1000
+                        ).toLocaleString()}
+                      </div>
+                    </div>
+                  )}
+                {queue.reservation.endTime &&
+                  typeof queue.reservation.endTime === "number" && (
+                    <div>
+                      <div className="text-sm text-gray-500">
+                        {t("queues.reservationEnd")}
+                      </div>
+                      <div className="text-lg font-medium text-gray-900">
+                        {new Date(
+                          queue.reservation.endTime * 1000
+                        ).toLocaleString()}
+                      </div>
+                    </div>
+                  )}
+              </div>
+              {((queue.reservation.resourceMem &&
+                typeof queue.reservation.resourceMem === "string") ||
+                (queue.reservation.resourceNcpus &&
+                  typeof queue.reservation.resourceNcpus === "string") ||
+                (queue.reservation.resourceNgpus &&
+                  typeof queue.reservation.resourceNgpus === "string") ||
+                (queue.reservation.resourceNodect &&
+                  typeof queue.reservation.resourceNodect === "string")) && (
+                <div>
+                  <div className="text-sm text-gray-500 mb-2">
+                    {t("queues.reservationResources")}
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {queue.reservation.resourceMem &&
+                      typeof queue.reservation.resourceMem === "string" && (
+                        <div>
+                          <div className="text-xs text-gray-500">
+                            {t("queues.memory")}
+                          </div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {queue.reservation.resourceMem}
+                          </div>
+                        </div>
+                      )}
+                    {queue.reservation.resourceNcpus &&
+                      typeof queue.reservation.resourceNcpus === "string" && (
+                        <div>
+                          <div className="text-xs text-gray-500">
+                            {t("queues.cpus")}
+                          </div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {queue.reservation.resourceNcpus}
+                          </div>
+                        </div>
+                      )}
+                    {queue.reservation.resourceNgpus &&
+                      typeof queue.reservation.resourceNgpus === "string" && (
+                        <div>
+                          <div className="text-xs text-gray-500">
+                            {t("queues.gpus")}
+                          </div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {queue.reservation.resourceNgpus}
+                          </div>
+                        </div>
+                      )}
+                    {queue.reservation.resourceNodect &&
+                      typeof queue.reservation.resourceNodect === "string" && (
+                        <div>
+                          <div className="text-xs text-gray-500">
+                            {t("queues.nodes")}
+                          </div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {queue.reservation.resourceNodect}
+                          </div>
+                        </div>
+                      )}
+                  </div>
+                </div>
+              )}
+              {queue.reservation.authorizedUsers &&
+                queue.reservation.authorizedUsers.length > 0 && (
+                  <div>
+                    <div className="text-sm text-gray-500 mb-2">
+                      {t("queues.reservationAuthorizedUsers")}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {queue.reservation.authorizedUsers.map((user) => (
+                        <Link
+                          key={user}
+                          to={`/users/${encodeURIComponent(user)}`}
+                          className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
+                        >
+                          {user}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              {queue.reservation.nodes &&
+                queue.reservation.nodes.length > 0 && (
+                  <div>
+                    <div className="text-sm text-gray-500 mb-2">
+                      {t("queues.reservationNodes")}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {queue.reservation.nodes.map((node) => (
+                        <Link
+                          key={node}
+                          to={`/machines/${node}`}
+                          className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 hover:text-blue-800"
+                        >
+                          {node}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
             </div>
           </div>
         </div>

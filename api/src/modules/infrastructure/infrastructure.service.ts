@@ -564,14 +564,38 @@ export class InfrastructureService {
 
     // Extract queue names from PBS node attributes
     let queueNames: string[] | null = null;
+    const queueNamesSet = new Set<string>();
+
+    // Get queues from queue_list attribute
     if (pbsNodeData?.pbsNode?.attributes['resources_available.queue_list']) {
       const queuesStr =
         pbsNodeData.pbsNode.attributes['resources_available.queue_list'];
       // Queues format: "q_2h,q_4h,q_1d,q_gpu,..."
-      queueNames = queuesStr
+      const queuesFromList = queuesStr
         .split(',')
         .map((q) => q.trim())
         .filter(Boolean);
+      queuesFromList.forEach((q) => queueNamesSet.add(q));
+    }
+
+    // Get queue from reservation if node has a reservation
+    if (pbsNodeData?.pbsNode?.attributes.resv && pbsNodeData.serverName) {
+      const reservationName = pbsNodeData.pbsNode.attributes.resv;
+      const pbsData = this.dataCollectionService.getPbsData();
+      const serverData = pbsData?.servers?.[pbsNodeData.serverName];
+
+      if (serverData?.reservations?.items) {
+        const reservation = serverData.reservations.items.find(
+          (r) => r.name === reservationName,
+        );
+        if (reservation?.attributes.queue) {
+          queueNamesSet.add(reservation.attributes.queue);
+        }
+      }
+    }
+
+    if (queueNamesSet.size > 0) {
+      queueNames = Array.from(queueNamesSet);
     }
 
     // Check if node is a cloud node and get cloud info
