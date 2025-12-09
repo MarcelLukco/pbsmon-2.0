@@ -611,15 +611,17 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                         {t("machines.reservationAuthorizedUsers")}
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {node.pbs.reservation.authorizedUsers.map((user) => (
-                          <Link
-                            key={user}
-                            to={`/users/${encodeURIComponent(user)}`}
-                            className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
-                          >
-                            {user}
-                          </Link>
-                        ))}
+                        {node.pbs.reservation.authorizedUsers.map(
+                          (user: string) => (
+                            <Link
+                              key={user}
+                              to={`/users/${encodeURIComponent(user)}`}
+                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
+                            >
+                              {user}
+                            </Link>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
