@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+html {
+  font-size: 14px;
+}
+@media (min-width: 1200px) {
+  html {
+    font-size: 15px;
+  }
+}
+@media (min-width: 1650px) {
+  html {
+    font-size: 16px;
+  }
+}
+
 @theme {
   /* Primary colors - Gray-blue */
   --color-primary: #82909e;
