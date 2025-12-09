@@ -239,6 +239,30 @@ export class InfrastructureNodePbsDTO {
     required: false,
   })
   scratchShmAvailable?: boolean | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Reservation information if this node is reserved',
+    type: Object,
+    nullable: true,
+    required: false,
+  })
+  reservation?: {
+    name: string;
+    displayName?: string | null;
+    owner?: string | null;
+    state?: string | null;
+    startTime?: number | null;
+    endTime?: number | null;
+    duration?: number | null;
+    resourceMem?: string | null;
+    resourceNcpus?: string | null;
+    resourceNgpus?: string | null;
+    resourceNodect?: string | null;
+    authorizedUsers?: string[] | null;
+    queue?: string | null;
+    isStarted?: boolean | null;
+  } | null;
 }
 
 /**

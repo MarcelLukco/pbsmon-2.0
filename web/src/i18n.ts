@@ -359,6 +359,16 @@ i18n.use(initReactI18next).init({
           cloudCpu: "Cloud CPU Count",
           vmCount: "VM Count",
           cpuModel: "CPU Model",
+          reservation: "Reservation",
+          reservationName: "Reservation Name",
+          reservationOwner: "Reservation Owner",
+          reservationStart: "Start Time",
+          reservationEnd: "End Time",
+          reservationResources: "Resources",
+          reservationAuthorizedUsers: "Authorized Users",
+          reservationQueue: "Queue",
+          reservationStarted: "Started",
+          reservationNotStarted: "Not Started",
         },
         storageSpaces: {
           scratchStorage: {
@@ -788,6 +798,16 @@ i18n.use(initReactI18next).init({
           cloudCpu: "Počet CPU v cloudu",
           vmCount: "Počet VM",
           cpuModel: "Model CPU",
+          reservation: "Rezervace",
+          reservationName: "Název rezervace",
+          reservationOwner: "Vlastník rezervace",
+          reservationStart: "Čas začátku",
+          reservationEnd: "Čas konce",
+          reservationResources: "Prostředky",
+          reservationAuthorizedUsers: "Autorizovaní uživatelé",
+          reservationQueue: "Fronta",
+          reservationStarted: "Spuštěno",
+          reservationNotStarted: "Nespuštěno",
         },
         storageSpaces: {
           scratchStorage: {

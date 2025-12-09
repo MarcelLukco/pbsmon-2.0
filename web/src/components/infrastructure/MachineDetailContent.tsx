@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import { Link } from "react-router-dom";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { Tabs } from "@/components/common/Tabs";
 import { Icon } from "@iconify/react";
@@ -427,6 +428,201 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
               </h2>
               <div className="text-sm text-gray-500">
                 {t("machines.nodeState.maintenance")}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Reservation Information */}
+        {node.pbs?.reservation && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center gap-2 mb-4">
+                <Icon
+                  icon={
+                    node.pbs.reservation.isStarted
+                      ? "mdi:calendar-clock"
+                      : "mdi:calendar-clock-outline"
+                  }
+                  className={`w-6 h-6 ${
+                    node.pbs.reservation.isStarted
+                      ? "text-purple-600"
+                      : "text-orange-600"
+                  }`}
+                />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {t("machines.reservation")}
+                </h2>
+                <div
+                  className={`px-3 py-1 text-xs font-medium rounded ${
+                    node.pbs.reservation.isStarted
+                      ? "bg-purple-100 text-purple-800"
+                      : "bg-orange-100 text-orange-800"
+                  }`}
+                >
+                  {node.pbs.reservation.isStarted
+                    ? t("machines.reservationStarted")
+                    : t("machines.reservationNotStarted")}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {node.pbs.reservation.displayName &&
+                    typeof node.pbs.reservation.displayName === "string" && (
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          {t("machines.reservationName")}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {node.pbs.reservation.displayName}
+                        </div>
+                      </div>
+                    )}
+                  {node.pbs.reservation.owner &&
+                    typeof node.pbs.reservation.owner === "string" && (
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          {t("machines.reservationOwner")}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          <Link
+                            to={`/users/${encodeURIComponent(
+                              node.pbs.reservation.owner
+                            )}`}
+                            className="text-primary-600 hover:text-primary-800"
+                          >
+                            {node.pbs.reservation.owner}
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  {node.pbs.reservation.startTime &&
+                    typeof node.pbs.reservation.startTime === "number" && (
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          {t("machines.reservationStart")}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {new Date(
+                            node.pbs.reservation.startTime * 1000
+                          ).toLocaleString()}
+                        </div>
+                      </div>
+                    )}
+                  {node.pbs.reservation.endTime &&
+                    typeof node.pbs.reservation.endTime === "number" && (
+                      <div>
+                        <div className="text-sm text-gray-500">
+                          {t("machines.reservationEnd")}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {new Date(
+                            node.pbs.reservation.endTime * 1000
+                          ).toLocaleString()}
+                        </div>
+                      </div>
+                    )}
+                </div>
+                {(node.pbs.reservation.resourceMem ||
+                  node.pbs.reservation.resourceNcpus ||
+                  node.pbs.reservation.resourceNgpus ||
+                  node.pbs.reservation.resourceNodect) && (
+                  <div>
+                    <div className="text-sm text-gray-500 mb-2">
+                      {t("machines.reservationResources")}
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {node.pbs.reservation.resourceMem &&
+                        typeof node.pbs.reservation.resourceMem ===
+                          "string" && (
+                          <div>
+                            <div className="text-xs text-gray-500">
+                              {t("machines.memory")}
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {node.pbs.reservation.resourceMem}
+                            </div>
+                          </div>
+                        )}
+                      {node.pbs.reservation.resourceNcpus &&
+                        typeof node.pbs.reservation.resourceNcpus ===
+                          "string" && (
+                          <div>
+                            <div className="text-xs text-gray-500">
+                              {t("machines.cpus")}
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {node.pbs.reservation.resourceNcpus}
+                            </div>
+                          </div>
+                        )}
+                      {node.pbs.reservation.resourceNgpus &&
+                        typeof node.pbs.reservation.resourceNgpus ===
+                          "string" && (
+                          <div>
+                            <div className="text-xs text-gray-500">
+                              {t("machines.gpus")}
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {node.pbs.reservation.resourceNgpus}
+                            </div>
+                          </div>
+                        )}
+                      {node.pbs.reservation.resourceNodect &&
+                        typeof node.pbs.reservation.resourceNodect ===
+                          "string" && (
+                          <div>
+                            <div className="text-xs text-gray-500">
+                              {t("machines.nodes")}
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {node.pbs.reservation.resourceNodect}
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                )}
+                {node.pbs.reservation.queue &&
+                  typeof node.pbs.reservation.queue === "string" && (
+                    <div>
+                      <div className="text-sm text-gray-500 mb-2">
+                        {t("machines.reservationQueue")}
+                      </div>
+                      <div>
+                        <Link
+                          to={`/queues/${node.pbs.reservation.queue}${
+                            node.pbs.reservation.queue.includes("@")
+                              ? ""
+                              : "@pbs-m1.metacentrum.cz"
+                          }`}
+                          className="text-primary-600 hover:text-primary-800 font-medium"
+                        >
+                          {node.pbs.reservation.queue}
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                {node.pbs.reservation.authorizedUsers &&
+                  Array.isArray(node.pbs.reservation.authorizedUsers) &&
+                  node.pbs.reservation.authorizedUsers.length > 0 && (
+                    <div>
+                      <div className="text-sm text-gray-500 mb-2">
+                        {t("machines.reservationAuthorizedUsers")}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {node.pbs.reservation.authorizedUsers.map((user) => (
+                          <Link
+                            key={user}
+                            to={`/users/${encodeURIComponent(user)}`}
+                            className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
+                          >
+                            {user}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
           </div>

@@ -725,6 +725,12 @@ export class InfrastructureService {
     const comment = pbsNodeData?.pbsNode?.attributes?.comment || null;
     const commentAux = pbsNodeData?.pbsNode?.attributes?.comment_aux || null;
 
+    // Parse reservation information if node has a reservation
+    const reservation = this.parseNodeReservation(
+      pbsNodeData?.pbsNode,
+      pbsNodeData?.serverName || undefined,
+    );
+
     const pbsData = pbsNodeData?.pbsNode
       ? {
           name: pbsNodeData.pbsNode.name,
@@ -754,6 +760,7 @@ export class InfrastructureService {
           scratchSsdAvailable: pbsState.scratchSsdAvailable,
           scratchSharedTotal: pbsState.scratchSharedTotal,
           scratchShmAvailable: pbsState.scratchShmAvailable,
+          reservation,
         }
       : null;
 
@@ -771,6 +778,88 @@ export class InfrastructureService {
       clusterId: cluster?.id,
       owner: cluster?.owner,
       ostack: cloudInfo,
+    };
+  }
+
+  /**
+   * Parse reservation information for a node
+   */
+  private parseNodeReservation(
+    pbsNode: PbsNode | null | undefined,
+    serverName: string | undefined,
+  ): {
+    name: string;
+    displayName?: string | null;
+    owner?: string | null;
+    state?: string | null;
+    startTime?: number | null;
+    endTime?: number | null;
+    duration?: number | null;
+    resourceMem?: string | null;
+    resourceNcpus?: string | null;
+    resourceNgpus?: string | null;
+    resourceNodect?: string | null;
+    authorizedUsers?: string[] | null;
+    queue?: string | null;
+    isStarted?: boolean | null;
+  } | null {
+    if (!pbsNode?.attributes?.resv || !serverName) {
+      return null;
+    }
+
+    const reservationName = pbsNode.attributes.resv;
+    const pbsData = this.dataCollectionService.getPbsData();
+    const serverData = pbsData?.servers?.[serverName];
+
+    if (!serverData?.reservations?.items) {
+      return null;
+    }
+
+    const reservation = serverData.reservations.items.find(
+      (r) => r.name === reservationName,
+    );
+
+    if (!reservation) {
+      return null;
+    }
+
+    // Check if reservation has started
+    // Reservation state 5 typically means "RESV_RUNNING" (started)
+    const isStarted = reservation.attributes.reserve_state === '5';
+
+    // Parse authorized users
+    const authorizedUsers = reservation.attributes.Authorized_Users
+      ? reservation.attributes.Authorized_Users.split(',')
+          .map((u) => u.trim())
+          .filter(Boolean)
+      : null;
+
+    // Parse reservation start/end times
+    const startTime = reservation.attributes.reserve_start
+      ? parseInt(reservation.attributes.reserve_start, 10)
+      : null;
+    const endTime = reservation.attributes.reserve_end
+      ? parseInt(reservation.attributes.reserve_end, 10)
+      : null;
+    const duration = reservation.attributes.reserve_duration
+      ? parseInt(reservation.attributes.reserve_duration, 10)
+      : null;
+
+    return {
+      name: reservation.name,
+      displayName: reservation.attributes.Reserve_Name || null,
+      owner: reservation.attributes.Reserve_Owner || null,
+      state: reservation.attributes.reserve_state || null,
+      startTime,
+      endTime,
+      duration,
+      resourceMem: reservation.attributes['Resource_List.mem'] || null,
+      resourceNcpus: reservation.attributes['Resource_List.ncpus'] || null,
+      resourceNgpus: reservation.attributes['Resource_List.ngpus'] || null,
+      resourceNodect: reservation.attributes['Resource_List.nodect'] || null,
+      authorizedUsers,
+      queue: reservation.attributes.queue || null,
+      isStarted,
     };
   }
 
