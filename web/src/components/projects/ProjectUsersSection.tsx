@@ -2,17 +2,10 @@ import { useTranslation } from "react-i18next";
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
-
-type ProjectUser = {
-  logname: string;
-  name: string;
-  org?: string | null;
-  id?: string | null;
-  foundInPerun?: boolean;
-};
+import type { ProjectUserDTO } from "@/lib/generated-api";
 
 interface ProjectUsersSectionProps {
-  users: ProjectUser[];
+  users: ProjectUserDTO[];
 }
 
 export function ProjectUsersSection({ users }: ProjectUsersSectionProps) {
@@ -60,22 +53,43 @@ export function ProjectUsersSection({ users }: ProjectUsersSectionProps) {
               const isFoundInPerun = user.foundInPerun !== false;
               const tooltipId = `user-not-found-${index}`;
 
+              const orgString =
+                typeof user.org === "string"
+                  ? user.org
+                  : user.org === null
+                    ? null
+                    : String(user.org);
+              const idString =
+                typeof user.id === "string"
+                  ? user.id
+                  : user.id === null
+                    ? null
+                    : String(user.id);
+              const nameString =
+                typeof user.name === "string" ? user.name : String(user.name);
+              const lognameString =
+                typeof user.logname === "string"
+                  ? user.logname
+                  : String(user.logname);
+
+              const userKey = lognameString || idString || index;
+
               return (
                 <tr
-                  key={user.logname || user.id || index}
+                  key={userKey}
                   className="hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     {isFoundInPerun ? (
                       <Link
-                        to={`/users/${encodeURIComponent(user.logname)}`}
+                        to={`/users/${encodeURIComponent(lognameString)}`}
                         className="flex items-center text-sm font-medium text-primary-700 hover:text-primary-900"
                       >
                         <Icon
                           icon="mdi:account"
                           className="w-5 h-5 text-gray-400 mr-2"
                         />
-                        <span>{user.name}</span>
+                        <span>{nameString}</span>
                       </Link>
                     ) : (
                       <>
@@ -91,7 +105,7 @@ export function ProjectUsersSection({ users }: ProjectUsersSectionProps) {
                             className="w-5 h-5 text-gray-400 mr-2"
                           />
                           <code className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                            {user.id || user.name}
+                            {idString || nameString}
                           </code>
                         </div>
                         <Tooltip
@@ -103,12 +117,12 @@ export function ProjectUsersSection({ users }: ProjectUsersSectionProps) {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <code className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                      {user.logname || "-"}
+                      {lognameString || "-"}
                     </code>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm text-gray-900">
-                      {user.org || "-"}
+                      {orgString || "-"}
                     </span>
                   </td>
                 </tr>
