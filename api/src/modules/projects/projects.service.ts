@@ -132,26 +132,35 @@ export class ProjectsService {
 
   /**
    * Get user project names by OIDC sub
-   * Query: count by (ostack_project) (aai_dump_user_resource_capability_info{id="<oidc-sub>"})
+   * Uses cached aai_dump_user_info data collected from Prometheus
    * Returns set of project names the user has access to
    */
   async getUserProjectIds(oidcSub: string): Promise<Set<string>> {
     try {
-      // Query user projects
-      const query = `count by (ostack_project) (aai_dump_user_resource_capability_info{id="${oidcSub}"})`;
+      const prometheusData = this.dataCollectionService.getPrometheusData();
 
-      console.log('query', query);
-      const response = await this.prometheusClient.queryInstant(query);
+      // Get OpenStack Users from cached data (always available)
+      if (!prometheusData || !('OpenStack Users' in prometheusData)) {
+        this.logger.error('OpenStack Users data not found in cache');
+        return new Set<string>();
+      }
 
+      const usersResponse = prometheusData[
+        'OpenStack Users'
+      ] as PrometheusResponse;
       const projectNames = new Set<string>();
       let hasIndividualsAccess = false;
 
-      // Extract project names from the result (ostack_project contains project names)
-      if (response.data?.result) {
-        for (const item of response.data.result) {
+      if (usersResponse?.data?.result) {
+        for (const item of usersResponse.data.result) {
+          const userId = item.metric?.id;
+          const userOidcSub = userId.replace('@einfra.cesnet.cz', '');
+          if (userId !== oidcSub && userOidcSub !== oidcSub) {
+            continue;
+          }
+
           const projectName = item.metric?.ostack_project;
           if (projectName) {
-            // Check if "individuals" is in the result (indicates personal project access)
             if (projectName === 'individuals') {
               hasIndividualsAccess = true;
             } else {
@@ -174,8 +183,6 @@ export class ProjectsService {
           projectNames.add(personalProject.name);
         }
       }
-
-      console.log('getUserProjectIds', projectNames);
 
       return projectNames;
     } catch (error) {
