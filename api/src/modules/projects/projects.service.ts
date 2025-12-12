@@ -16,6 +16,8 @@ import {
 @Injectable()
 export class ProjectsService {
   private readonly logger = new Logger(ProjectsService.name);
+  // e-infra domain id
+  private readonly DOMAIN_ID = '3b5cb406d60249508d0ddab2a80502b5';
 
   constructor(
     private readonly dataCollectionService: DataCollectionService,
@@ -151,6 +153,9 @@ export class ProjectsService {
       const projectNames = new Set<string>();
       let hasIndividualsAccess = false;
 
+      const allProjects = await this.getAllProjects();
+      const validProjectNames = new Set(allProjects.map((p) => p.name));
+
       if (usersResponse?.data?.result) {
         for (const item of usersResponse.data.result) {
           const userId = item.metric?.id;
@@ -164,7 +169,9 @@ export class ProjectsService {
             if (projectName === 'individuals') {
               hasIndividualsAccess = true;
             } else {
-              projectNames.add(projectName);
+              if (validProjectNames.has(projectName)) {
+                projectNames.add(projectName);
+              }
             }
           }
         }
@@ -172,7 +179,6 @@ export class ProjectsService {
 
       // If user has "individuals" access, find their personal project
       if (hasIndividualsAccess) {
-        const allProjects = await this.getAllProjects();
         const personalProject = allProjects.find(
           (p) =>
             p.name === `${oidcSub}@einfra.cesnet.cz` ||
@@ -195,6 +201,7 @@ export class ProjectsService {
 
   /**
    * Parse Prometheus response to ProjectDTO array
+   * Gets only projects from e-infra domain
    */
   private async parseProjectsFromResponse(
     response: PrometheusResponse,
@@ -206,6 +213,11 @@ export class ProjectsService {
       for (const item of response.data.result) {
         const projectId = item.metric?.id || item.metric?.project_id;
         const projectName = item.metric?.name;
+        const domainId = item.metric?.domain_id;
+
+        if (domainId !== this.DOMAIN_ID) {
+          continue;
+        }
 
         if (projectId && projectName) {
           const enabled = item.metric?.enabled === 'true';
