@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DataCollectionService } from '@/modules/data-collection/data-collection.service';
-import {
-  PrometheusClient,
-  PrometheusResponse,
-} from '@/modules/data-collection/clients/prometheus.client';
+import { PrometheusResponse } from '@/modules/data-collection/clients/prometheus.client';
 import { UserContext, UserRole } from '@/common/types/user-context.types';
 import {
   ProjectDTO,
@@ -19,10 +16,7 @@ export class ProjectsService {
   // e-infra domain id
   private readonly DOMAIN_ID = '3b5cb406d60249508d0ddab2a80502b5';
 
-  constructor(
-    private readonly dataCollectionService: DataCollectionService,
-    private readonly prometheusClient: PrometheusClient,
-  ) {}
+  constructor(private readonly dataCollectionService: DataCollectionService) {}
 
   /**
    * Get all projects accessible to the user with pagination, search, and sorting
@@ -106,24 +100,22 @@ export class ProjectsService {
   }
 
   /**
-   * Get all OpenStack projects from Prometheus
+   * Get all OpenStack projects from cached data
    */
   private async getAllProjects(): Promise<ProjectDTO[]> {
     try {
       const prometheusData = this.dataCollectionService.getPrometheusData();
 
-      // Check if we have OpenStack projects in cached data
-      if (prometheusData && 'OpenStack Projects' in prometheusData) {
-        const projectsResponse = prometheusData[
-          'OpenStack Projects'
-        ] as PrometheusResponse;
-        return await this.parseProjectsFromResponse(projectsResponse);
+      // Get OpenStack projects from cached data (always available)
+      if (!prometheusData || !('OpenStack Projects' in prometheusData)) {
+        this.logger.error('OpenStack Projects data not found in cache');
+        return [];
       }
 
-      // If not in cache, query directly
-      const query = 'openstack_identity_project_info';
-      const response = await this.prometheusClient.query(query);
-      return await this.parseProjectsFromResponse(response);
+      const projectsResponse = prometheusData[
+        'OpenStack Projects'
+      ] as PrometheusResponse;
+      return await this.parseProjectsFromResponse(projectsResponse);
     } catch (error) {
       this.logger.error(
         `Failed to get all projects: ${error instanceof Error ? error.message : String(error)}`,
@@ -251,7 +243,7 @@ export class ProjectsService {
   }
 
   /**
-   * Calculate reserved resources per project from OpenStack servers
+   * Calculate reserved resources per project from cached OpenStack servers data
    */
   private async calculateReservedResources(): Promise<
     Map<string, ProjectReservedResourcesDTO>
@@ -260,18 +252,16 @@ export class ProjectsService {
 
     try {
       const prometheusData = this.dataCollectionService.getPrometheusData();
-      let serversResponse: PrometheusResponse | null = null;
 
-      // Check if we have OpenStack servers in cached data
-      if (prometheusData && 'OpenStack Servers' in prometheusData) {
-        serversResponse = prometheusData[
-          'OpenStack Servers'
-        ] as PrometheusResponse;
-      } else {
-        // If not in cache, query directly
-        const query = 'custom_openstack_server_info';
-        serversResponse = await this.prometheusClient.query(query);
+      // Get OpenStack servers from cached data (always available)
+      if (!prometheusData || !('OpenStack Servers' in prometheusData)) {
+        this.logger.error('OpenStack Servers data not found in cache');
+        return resourcesMap;
       }
+
+      const serversResponse = prometheusData[
+        'OpenStack Servers'
+      ] as PrometheusResponse;
 
       if (serversResponse?.data?.result) {
         for (const item of serversResponse.data.result) {
@@ -425,26 +415,25 @@ export class ProjectsService {
   }
 
   /**
-   * Get VMs/servers for a specific project
+   * Get VMs/servers for a specific project from cached data
    */
   private async getProjectVms(projectId: string): Promise<ProjectVmDTO[]> {
     const vms: ProjectVmDTO[] = [];
 
     try {
       const prometheusData = this.dataCollectionService.getPrometheusData();
-      let serversResponse: PrometheusResponse | null = null;
 
-      // Check if we have OpenStack servers in cached data
-      if (prometheusData && 'OpenStack Servers' in prometheusData) {
-        serversResponse = prometheusData[
-          'OpenStack Servers'
-        ] as PrometheusResponse;
-      } else {
-        // If not in cache, query directly
-        const query = `custom_openstack_server_info{project_id="${projectId}"}`;
-        serversResponse = await this.prometheusClient.queryInstant(query);
+      // Get OpenStack servers from cached data (always available)
+      if (!prometheusData || !('OpenStack Servers' in prometheusData)) {
+        this.logger.error('OpenStack Servers data not found in cache');
+        return vms;
       }
 
+      const serversResponse = prometheusData[
+        'OpenStack Servers'
+      ] as PrometheusResponse;
+
+      // Filter servers by project_id from cached data
       if (serversResponse?.data?.result) {
         for (const item of serversResponse.data.result) {
           const serverProjectId = item.metric?.project_id;
