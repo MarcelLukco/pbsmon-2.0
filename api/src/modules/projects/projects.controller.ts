@@ -48,7 +48,7 @@ export class ProjectsController {
     required: false,
     type: String,
     description:
-      'Sort column (name, status, createdAt, vmCount, vcpus, memoryGb). Default: name',
+      'Sort column (name, status, vmCount, vcpus, memoryGb). Default: name',
   })
   @ApiQuery({
     name: 'order',

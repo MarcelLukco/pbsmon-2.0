@@ -54,13 +54,6 @@ export class ProjectDTO {
 
   @Expose()
   @ApiProperty({
-    description: 'Project creation date (ISO 8601)',
-    nullable: true,
-  })
-  createdAt?: string | null;
-
-  @Expose()
-  @ApiProperty({
     description: 'Whether this is a personal project (named after OIDC sub)',
     default: false,
   })

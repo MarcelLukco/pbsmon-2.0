@@ -58,24 +58,6 @@ export function ProjectBasicInfo({ project }: ProjectBasicInfoProps) {
             </span>
           </div>
         </div>
-        {project.createdAt && (
-          <div>
-            <div className="text-sm text-gray-500">
-              {t("projects.createdAt")}
-            </div>
-            <div className="text-lg font-medium text-gray-900">
-              {(() => {
-                if (typeof project.createdAt === "string") {
-                  return new Date(project.createdAt).toLocaleDateString();
-                }
-                if (typeof project.createdAt === "number") {
-                  return new Date(project.createdAt).toLocaleDateString();
-                }
-                return t("projects.noDate");
-              })()}
-            </div>
-          </div>
-        )}
         <div>
           <div className="text-sm text-gray-500">
             {t("projects.reservedResources")}

@@ -240,7 +240,6 @@ export class ProjectsService {
             description: item.metric?.description || null,
             status: enabled ? 'active' : 'expired',
             reservedResources,
-            createdAt,
             isPersonal: false,
             isMyProject: false,
           });
@@ -345,10 +344,6 @@ export class ProjectsService {
         case 'status':
           aValue = a.status;
           bValue = b.status;
-          break;
-        case 'createdAt':
-          aValue = a.createdAt || '';
-          bValue = b.createdAt || '';
           break;
         case 'vmCount':
           aValue = a.reservedResources.vmCount;
