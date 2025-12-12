@@ -7,8 +7,6 @@ import { InfrastructureModule } from '@/modules/infrastructure/infrastructure.mo
 import { UsersModule } from '@/modules/users/users.module';
 import { GroupsModule } from '@/modules/groups/groups.module';
 import { JobsModule } from '@/modules/jobs/jobs.module';
-import { OutagesModule } from '@/modules/outages/outages.module';
-import { NewsModule } from '@/modules/news/news.module';
 import { StatusModule } from '@/modules/status/status.module';
 import { DataCollectionModule } from '@/modules/data-collection/data-collection.module';
 import { AccountingModule } from '@/modules/accounting/accounting.module';
@@ -40,8 +38,6 @@ import configuration, {
     UsersModule,
     GroupsModule,
     JobsModule,
-    OutagesModule,
-    NewsModule,
     StatusModule,
     DataCollectionModule,
     AccountingModule,
