@@ -503,9 +503,18 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                           {t("machines.reservationStart")}
                         </div>
                         <div className="text-lg font-medium text-gray-900">
-                          {new Date(
-                            node.pbs.reservation.startTime * 1000
-                          ).toLocaleString()}
+                          {(() => {
+                            const date = new Date(
+                              node.pbs.reservation.startTime * 1000
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                            const year = date.getFullYear();
+                            const hours = String(date.getHours()).padStart(2, "0");
+                            const minutes = String(date.getMinutes()).padStart(2, "0");
+                            const seconds = String(date.getSeconds()).padStart(2, "0");
+                            return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+                          })()}
                         </div>
                       </div>
                     )}
@@ -516,9 +525,18 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                           {t("machines.reservationEnd")}
                         </div>
                         <div className="text-lg font-medium text-gray-900">
-                          {new Date(
-                            node.pbs.reservation.endTime * 1000
-                          ).toLocaleString()}
+                          {(() => {
+                            const date = new Date(
+                              node.pbs.reservation.endTime * 1000
+                            );
+                            const day = String(date.getDate()).padStart(2, "0");
+                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                            const year = date.getFullYear();
+                            const hours = String(date.getHours()).padStart(2, "0");
+                            const minutes = String(date.getMinutes()).padStart(2, "0");
+                            const seconds = String(date.getSeconds()).padStart(2, "0");
+                            return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+                          })()}
                         </div>
                       </div>
                     )}
