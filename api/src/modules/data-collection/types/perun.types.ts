@@ -81,6 +81,7 @@ export interface PerunUserPublications {
  * Perun User
  */
 export interface PerunUser {
+  id?: string;
   logname: string;
   name: string;
   org: string;

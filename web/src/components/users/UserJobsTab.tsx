@@ -89,15 +89,6 @@ export function UserJobsTab({
           />
         </>
       )}
-
-      {!isLoading &&
-        !error &&
-        jobsData?.data &&
-        jobsData.data.jobs.length === 0 && (
-          <div className="text-gray-500 py-8 text-center">
-            {t("jobs.noJobsFound")}
-          </div>
-        )}
     </div>
   );
 }

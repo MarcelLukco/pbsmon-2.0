@@ -93,7 +93,35 @@ export class ProjectVmDTO {
 }
 
 /**
- * Project Detail DTO (extends ProjectDTO with VMs list)
+ * User information for a project
+ */
+export class ProjectUserDTO {
+  @Expose()
+  @ApiProperty({ description: 'User login name (logname)' })
+  logname: string;
+
+  @Expose()
+  @ApiProperty({ description: 'User full name' })
+  name: string;
+
+  @Expose()
+  @ApiProperty({ description: 'User organization', nullable: true })
+  org?: string | null;
+
+  @Expose()
+  @ApiProperty({ description: 'AAI user id', nullable: true })
+  id?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Whether user was found in Perun data',
+    default: true,
+  })
+  foundInPerun: boolean;
+}
+
+/**
+ * Project Detail DTO (extends ProjectDTO with VMs and users lists)
  */
 export class ProjectDetailDTO extends ProjectDTO {
   @Expose()
@@ -103,6 +131,14 @@ export class ProjectDetailDTO extends ProjectDTO {
     type: [ProjectVmDTO],
   })
   vms: ProjectVmDTO[];
+
+  @Expose()
+  @Type(() => ProjectUserDTO)
+  @ApiProperty({
+    description: 'List of users in the project',
+    type: [ProjectUserDTO],
+  })
+  users: ProjectUserDTO[];
 }
 
 /**

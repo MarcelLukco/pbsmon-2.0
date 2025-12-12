@@ -8,7 +8,9 @@ import {
   ProjectDetailDTO,
   ProjectReservedResourcesDTO,
   ProjectVmDTO,
+  ProjectUserDTO,
 } from './dto/project.dto';
+import { PerunUsers } from '@/modules/data-collection/types/perun.types';
 
 @Injectable()
 export class ProjectsService {
@@ -34,35 +36,29 @@ export class ProjectsService {
     let allProjects = await this.getAllProjects();
 
     // Get user's project names (for both admin and non-admin)
-    const userProjectNames = await this.getUserProjectIds(userContext.id);
-    const userOidcSub = `${userContext.id}@einfra.cesnet.cz`;
+    // Handle both formats: id can be "id@einfra.cesnet.cz" or just "id"
+    const userOidcSub = userContext.id.includes('@')
+      ? userContext.id
+      : `${userContext.id}@einfra.cesnet.cz`;
+    const userProjectNames = await this.getUserProjectIds(userOidcSub);
 
-    // Mark personal projects for non-admin users
-    if (userContext.role !== UserRole.ADMIN) {
-      const personalProject = allProjects.find(
-        (p) =>
-          (p.name === userContext.username ||
-            p.description?.includes(userContext.username) ||
-            p.id === userContext.username) &&
-          userProjectNames.has(p.name),
-      );
-      if (personalProject) {
-        personalProject.isPersonal = true;
-      }
+    // Mark personal projects (individual projects that belong only to this user)
+    // Personal projects are those where the project name matches the user's OIDC sub
+    const personalProject = allProjects.find(
+      (p) => p.name === userOidcSub || p.name === userContext.id,
+    );
+    if (personalProject) {
+      personalProject.isPersonal = true;
     }
 
-    // Mark "my project" for admins
-    if (userContext.role === UserRole.ADMIN) {
-      for (const project of allProjects) {
-        // Mark as "my project" if:
-        // 1. Project name is in user's project names list
-        // 2. OR project name matches user's OIDC sub format
-        if (
-          userProjectNames.has(project.name) ||
-          project.name === userOidcSub
-        ) {
-          project.isMyProject = true;
-        }
+    // Mark "my project" for all users (admin and non-admin)
+    // This includes all projects the user has access to
+    for (const project of allProjects) {
+      // Mark as "my project" if:
+      // 1. Project name is in user's project names list
+      // 2. OR project name matches user's OIDC sub format
+      if (userProjectNames.has(project.name) || project.name === userOidcSub) {
+        project.isMyProject = true;
       }
     }
 
@@ -151,8 +147,23 @@ export class ProjectsService {
       if (usersResponse?.data?.result) {
         for (const item of usersResponse.data.result) {
           const userId = item.metric?.id;
-          const userOidcSub = userId.replace('@einfra.cesnet.cz', '');
-          if (userId !== oidcSub && userOidcSub !== oidcSub) {
+          if (!userId) continue;
+
+          // Normalize for comparison
+          // userId from metric is always in format "id@einfra.cesnet.cz"
+          // oidcSub parameter might be "id@einfra.cesnet.cz" or just "id"
+          const oidcSubNormalized = oidcSub.includes('@')
+            ? oidcSub
+            : `${oidcSub}@einfra.cesnet.cz`;
+          const oidcSubBase = oidcSub.replace('@einfra.cesnet.cz', '');
+          const userIdBase = userId.replace('@einfra.cesnet.cz', '');
+
+          // Match if userId matches oidcSub (full match or base match)
+          if (
+            userId !== oidcSubNormalized &&
+            userIdBase !== oidcSubBase &&
+            userId !== oidcSub
+          ) {
             continue;
           }
 
@@ -377,8 +388,11 @@ export class ProjectsService {
     }
 
     // Get user's project names
-    const userProjectNames = await this.getUserProjectIds(userContext.id);
-    const userOidcSub = `${userContext.id}@einfra.cesnet.cz`;
+    // Handle both formats: id can be "id@einfra.cesnet.cz" or just "id"
+    const userOidcSub = userContext.id.includes('@')
+      ? userContext.id
+      : `${userContext.id}@einfra.cesnet.cz`;
+    const userProjectNames = await this.getUserProjectIds(userOidcSub);
 
     // Check access: admin can see all, regular users can only see their projects
     if (userContext.role !== UserRole.ADMIN) {
@@ -387,30 +401,28 @@ export class ProjectsService {
       }
     }
 
-    // Mark as "my project" for admins
-    if (userContext.role === UserRole.ADMIN) {
-      if (userProjectNames.has(project.name) || project.name === userOidcSub) {
-        project.isMyProject = true;
-      }
+    // Mark personal projects (individual projects that belong only to this user)
+    // Personal projects are those where the project name matches the user's OIDC sub
+    if (project.name === userOidcSub || project.name === userContext.id) {
+      project.isPersonal = true;
     }
 
-    // Mark as personal for non-admin users
-    if (userContext.role !== UserRole.ADMIN) {
-      if (
-        project.name === userContext.username ||
-        project.description?.includes(userContext.username) ||
-        project.id === userContext.username
-      ) {
-        project.isPersonal = true;
-      }
+    // Mark "my project" for all users (admin and non-admin)
+    // This includes all projects the user has access to
+    if (userProjectNames.has(project.name) || project.name === userOidcSub) {
+      project.isMyProject = true;
     }
 
     // Get VMs for this project
     const vms = await this.getProjectVms(projectId);
 
+    // Get users for this project
+    const users = await this.getProjectUsers(project.name);
+
     return {
       ...project,
       vms,
+      users,
     };
   }
 
@@ -464,5 +476,194 @@ export class ProjectsService {
     }
 
     return vms;
+  }
+
+  /**
+   * Get users for a specific project from OpenStack Users metric and match with pbsmon_users.json
+   */
+  private async getProjectUsers(
+    projectName: string,
+  ): Promise<ProjectUserDTO[]> {
+    const users: ProjectUserDTO[] = [];
+
+    try {
+      const prometheusData = this.dataCollectionService.getPrometheusData();
+      const perunData = this.dataCollectionService.getPerunData();
+
+      // Get OpenStack Users from cached data
+      if (!prometheusData || !('OpenStack Users' in prometheusData)) {
+        this.logger.error('OpenStack Users data not found in cache');
+        return users;
+      }
+
+      const usersResponse = prometheusData[
+        'OpenStack Users'
+      ] as PrometheusResponse;
+
+      // Build a map of AAI id -> user info from pbsmon_users.json
+      // Also create a reverse map of logname -> user for fallback lookup
+      const perunUsersMap = new Map<
+        string,
+        { logname: string; name: string; org?: string | null }
+      >();
+      const perunUsersByLognameMap = new Map<
+        string,
+        { logname: string; name: string; org?: string | null; id?: string }
+      >();
+
+      if (perunData?.users?.users) {
+        for (const perunUser of perunData.users.users) {
+          if (perunUser.id) {
+            // Store by full ID
+            perunUsersMap.set(perunUser.id, {
+              logname: perunUser.logname,
+              name: perunUser.name,
+              org: perunUser.org,
+            });
+            // Also store by ID without domain for flexible lookup
+            const idBase = perunUser.id.replace('@einfra.cesnet.cz', '');
+            if (idBase !== perunUser.id) {
+              perunUsersMap.set(idBase, {
+                logname: perunUser.logname,
+                name: perunUser.name,
+                org: perunUser.org,
+              });
+            }
+          }
+          // Also index by logname for fallback
+          if (perunUser.logname) {
+            perunUsersByLognameMap.set(perunUser.logname, {
+              logname: perunUser.logname,
+              name: perunUser.name,
+              org: perunUser.org,
+              id: perunUser.id,
+            });
+          }
+        }
+      }
+
+      // Check if project name is itself a user ID (OIDC sub format) - personal project
+      // For personal projects, the project name equals the user's id in pbsmon_users.json
+      const projectNameIsUserId = projectName.includes('@einfra.cesnet.cz');
+
+      if (projectNameIsUserId) {
+        // For personal projects, find the user directly by matching project name with id in pbsmon_users.json
+        const personalUser = perunUsersMap.get(projectName);
+        if (personalUser) {
+          users.push({
+            logname: personalUser.logname,
+            name: personalUser.name,
+            org: personalUser.org,
+            id: projectName,
+            foundInPerun: true,
+          });
+          // For personal projects, return early - there's only one user (the owner)
+          return users;
+        } else {
+          // If not found, try without domain
+          const projectNameBase = projectName.replace('@einfra.cesnet.cz', '');
+          const personalUserBase = perunUsersMap.get(projectNameBase);
+          if (personalUserBase) {
+            users.push({
+              logname: personalUserBase.logname,
+              name: personalUserBase.name,
+              org: personalUserBase.org,
+              id: projectName,
+              foundInPerun: true,
+            });
+            return users;
+          }
+          // User not found in Perun - return with ID only
+          const logname = projectName.includes('@')
+            ? projectName.split('@')[0]
+            : projectName;
+          users.push({
+            logname,
+            name: projectName, // Use ID as name when not found
+            org: null,
+            id: projectName,
+            foundInPerun: false,
+          });
+          this.logger.warn(
+            `Personal project user with ID ${projectName} not found in pbsmon_users.json`,
+          );
+          return users;
+        }
+      }
+
+      // For non-personal projects, get users from OpenStack Users metric
+      const userIds = new Set<string>();
+      if (usersResponse?.data?.result) {
+        for (const item of usersResponse.data.result) {
+          const userProjectName = item.metric?.ostack_project;
+          if (userProjectName === projectName) {
+            const userId = item.metric?.id;
+            if (userId) {
+              userIds.add(userId);
+            }
+          }
+        }
+      }
+
+      // Match with pbsmon_users.json and build user list
+      for (const userId of userIds) {
+        // Try to find user by ID (with or without domain)
+        let perunUser = perunUsersMap.get(userId);
+
+        if (!perunUser) {
+          // Try without domain
+          const userIdBase = userId.replace('@einfra.cesnet.cz', '');
+          if (userIdBase !== userId) {
+            perunUser = perunUsersMap.get(userIdBase);
+          }
+        }
+
+        if (!perunUser) {
+          // Try to extract logname and look up by logname
+          const logname = userId.includes('@') ? userId.split('@')[0] : userId;
+          const userByLogname = perunUsersByLognameMap.get(logname);
+          if (userByLogname) {
+            perunUser = {
+              logname: userByLogname.logname,
+              name: userByLogname.name,
+              org: userByLogname.org,
+            };
+          }
+        }
+
+        if (perunUser) {
+          users.push({
+            logname: perunUser.logname,
+            name: perunUser.name,
+            org: perunUser.org,
+            id: userId,
+            foundInPerun: true,
+          });
+        } else {
+          // If user not found in pbsmon_users.json, still add them with minimal info
+          // Extract logname from userId if possible (userId format: "logname@einfra.cesnet.cz")
+          const logname = userId.includes('@') ? userId.split('@')[0] : userId;
+          users.push({
+            logname,
+            name: userId, // Use ID as name when not found
+            org: null,
+            id: userId,
+            foundInPerun: false,
+          });
+          this.logger.warn(
+            `User with ID ${userId} not found in pbsmon_users.json for project ${projectName}`,
+          );
+        }
+      }
+
+      // Sort users by name
+      users.sort((a, b) => a.name.localeCompare(b.name));
+    } catch (error) {
+      this.logger.warn(
+        `Failed to get users for project ${projectName}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
+    return users;
   }
 }

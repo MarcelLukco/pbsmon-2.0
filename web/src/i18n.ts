@@ -401,6 +401,8 @@ i18n.use(initReactI18next).init({
           description: "Description",
           type: "Type",
           personal: "Personal",
+          personalTooltip:
+            "This is a personal project that belongs only to you. You are the only member.",
           myProject: "My Project",
           shared: "Shared",
           noDescription: "No description",
@@ -422,6 +424,12 @@ i18n.use(initReactI18next).init({
           flavor: "Flavor",
           noVms: "No VMs found in this project",
           projectNotFound: "Project not found",
+          users: "Users",
+          noUsers: "No users found in this project",
+          userName: "Name",
+          userLogname: "Login Name",
+          userOrg: "Organization",
+          userNotFoundInPerun: "User with this ID was not found in Perun data",
         },
         personalView: {
           totalStatistics: "Total Statistics",
@@ -840,6 +848,8 @@ i18n.use(initReactI18next).init({
           description: "Popis",
           type: "Typ",
           personal: "Osobní",
+          personalTooltip:
+            "Toto je osobní projekt, který patří pouze vám. Jste jediný člen.",
           myProject: "Můj projekt",
           shared: "Sdílený",
           noDescription: "Bez popisu",
@@ -861,6 +871,13 @@ i18n.use(initReactI18next).init({
           flavor: "Flavor",
           noVms: "V tomto projektu nebyly nalezeny žádné VM",
           projectNotFound: "Projekt nenalezen",
+          users: "Uživatelé",
+          noUsers: "V tomto projektu nebyli nalezeni žádní uživatelé",
+          userName: "Jméno",
+          userLogname: "Přihlašovací jméno",
+          userOrg: "Organizace",
+          userNotFoundInPerun:
+            "Uživatel s tímto ID nebyl nalezen v Perun datech",
         },
         personalView: {
           totalStatistics: "Celkové statistiky",
