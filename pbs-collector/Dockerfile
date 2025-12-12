@@ -1,15 +1,12 @@
 FROM debian:bookworm-slim
 
 WORKDIR /app
-
+ENV DEBIAN_FRONTEND=noninteractive
 # Install build tools and runtime dependencies
 RUN apt-get update && \
     apt-get install -y gcc krb5-user wget gnupg2 cron ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-
-# TODO - in the future mount it
-COPY krb5.conf /etc/krb5.conf
 
 RUN wget http://repo.grid.cesnet.cz/key.asc
 
@@ -17,7 +14,7 @@ RUN apt-key add key.asc
 
 RUN printf "deb https://repo.metacentrum.cz/ all main pilot\ndeb https://repo.metacentrum.cz/ bookworm main pilot\n" > /etc/apt/sources.list.d/meta_repo.list
 
-RUN apt-get update && apt-get install -y libopenpbs libopenpbs-dev
+RUN apt-get update && apt-get install -y libopenpbs libopenpbs-dev pbs-cache-client
 
 # Copy pbscaller source
 COPY pbscaller.c .

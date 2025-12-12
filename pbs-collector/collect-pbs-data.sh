@@ -106,5 +106,14 @@ else
     exit 1
 fi
 
+log "Executing list_cache for ${FULL_SERVER_NAME} -> ${SERVER_OUTPUT_DIR}"
+
+if list_cache "${FULL_SERVER_NAME}" fairshare > "${SERVER_OUTPUT_DIR}/default_fairshare.txt"; then
+    log "Fairshare PBS data collection completed successfully"
+else
+    log "ERROR: Fairshare PBS data collection failed with exit code $?"
+    exit 1
+fi
+
 log "PBS data collection finished"
 

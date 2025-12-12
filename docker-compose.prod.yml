@@ -80,6 +80,8 @@ services:
       - ./api/data:/app/data
       # Mount PBS config from host
       - /etc/pbs.conf:/etc/pbs.conf:ro
+      # Mount krb5.conf
+      - /etc/krb5.conf:/etc/krb5.conf:ro
       # Mount keytab for Kerberos authentication
       - ./pbsmon.keytab:/pbsmon.keytab:ro
     networks:
