@@ -124,17 +124,6 @@ export function SidebarLayout() {
     new Set(["resource-status"])
   );
 
-  const isUnauthorized =
-    error instanceof ApiError && (error.status === 401 || error.status === 403);
-
-  // Redirect to OIDC login when unauthorized
-  useEffect(() => {
-    if (isUnauthorized && error instanceof ApiError && error.status === 401) {
-      // Redirect browser to OIDC login initiation endpoint
-      window.location.href = "/api/auth/login";
-    }
-  }, [isUnauthorized, error]);
-
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-screen bg-primary-600">
