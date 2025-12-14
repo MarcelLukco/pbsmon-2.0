@@ -450,11 +450,7 @@ export class JobsService {
    */
   private getUserGroups(userContext: UserContext): string[] {
     const perunData = this.dataCollectionService.getPerunData();
-    if (
-      !perunData?.etcGroups ||
-      !userContext.groups ||
-      userContext.groups.length === 0
-    ) {
+    if (!perunData?.etcGroups) {
       return [];
     }
 

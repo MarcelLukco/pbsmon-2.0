@@ -864,25 +864,6 @@ export class QueuesService {
       }
     }
 
-    // Check host ACL (only for current user context, not target user)
-    if (hostEnable && userContext.hostname && !targetUsername) {
-      const allowedHosts = queue.attributes.acl_hosts
-        ? queue.attributes.acl_hosts.split(',').map((h) => h.trim())
-        : [];
-
-      if (
-        allowedHosts.some((host) => {
-          // Simple hostname matching (can be extended for wildcards)
-          return (
-            host === userContext.hostname ||
-            userContext.hostname?.endsWith(host)
-          );
-        })
-      ) {
-        return true;
-      }
-    }
-
     // If ACL is enabled but no match found, deny access
     return false;
   }
