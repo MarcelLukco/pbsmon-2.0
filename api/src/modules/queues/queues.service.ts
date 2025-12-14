@@ -14,6 +14,7 @@ import {
   QueueDetailDTO,
   QueueStateCountDTO,
   QueueAclDTO,
+  QueueAclGroupDTO,
   QueueResourcesDTO,
   QueueReservationDTO,
 } from './dto/queue-detail.dto';
@@ -486,7 +487,7 @@ export class QueuesService {
     const stateCount = this.parseStateCount(queue.attributes.state_count);
     const acl = this.parseAcl(queue, userContext);
     const resources = this.parseResources(queue);
-    const reservation = this.parseReservation(queue, serverName);
+    const reservation = this.parseReservation(queue, serverName, userContext);
 
     // Get additional attributes (exclude already mapped ones)
     const excludedKeys = new Set([
@@ -599,7 +600,25 @@ export class QueuesService {
     }
 
     if (groupEnable && queue.attributes.acl_groups) {
-      acl.groups = queue.attributes.acl_groups.split(',').map((g) => g.trim());
+      const groupNames = queue.attributes.acl_groups
+        .split(',')
+        .map((g) => g.trim());
+
+      // Get user's groups to check access
+      const userGroups = new Set<string>();
+      if (userContext.role !== UserRole.ADMIN) {
+        const userGroupsList = this.getUserGroups(userContext.username);
+        userGroupsList.forEach((g) => userGroups.add(g));
+      }
+
+      acl.groups = groupNames.map((groupName) => {
+        const hasAccess =
+          userContext.role === UserRole.ADMIN || userGroups.has(groupName);
+        return {
+          name: groupName,
+          hasAccess,
+        } as QueueAclGroupDTO;
+      });
     }
 
     if (hostEnable && queue.attributes.acl_hosts) {
@@ -655,6 +674,7 @@ export class QueuesService {
   private parseReservation(
     queue: PbsQueue,
     serverName?: string,
+    userContext?: UserContext,
   ): QueueReservationDTO | null {
     const pbsData = this.dataCollectionService.getPbsData();
     if (!pbsData?.servers) {
@@ -695,6 +715,10 @@ export class QueuesService {
     // Use the first reservation (typically there's only one per queue)
     const reservation = reservations[0];
 
+    // Check if reservation has started
+    // Reservation state 5 typically means "RESV_RUNNING" (started)
+    const isStarted = reservation.attributes.reserve_state === '5';
+
     // Find nodes that have this reservation
     const nodes: string[] = [];
     if (serverData.nodes?.items) {
@@ -707,11 +731,76 @@ export class QueuesService {
     }
 
     // Parse authorized users
-    const authorizedUsers = reservation.attributes.Authorized_Users
+    const authorizedUsersRaw = reservation.attributes.Authorized_Users
       ? reservation.attributes.Authorized_Users.split(',')
           .map((u) => u.trim())
           .filter(Boolean)
       : null;
+
+    // Check if current user has access to the reservation
+    let hasAccess = true;
+    if (userContext && authorizedUsersRaw && authorizedUsersRaw.length > 0) {
+      if (userContext.role !== UserRole.ADMIN) {
+        const usernameBase = userContext.username.split('@')[0];
+        // Check if user is in authorized users list
+        hasAccess = authorizedUsersRaw.some((authUser) => {
+          const authUserBase = authUser.split('@')[0];
+          return (
+            authUser === userContext.username ||
+            authUserBase === usernameBase ||
+            authUser === usernameBase
+          );
+        });
+      }
+    }
+
+    // Format authorized users with access information
+    let authorizedUsers: Array<{
+      username: string;
+      hasAccess: boolean;
+    }> | null = null;
+    if (authorizedUsersRaw && authorizedUsersRaw.length > 0) {
+      // Get allowed usernames for checking access to each authorized user
+      const allowedUsernames = new Set<string>();
+      if (userContext) {
+        if (userContext.role === UserRole.ADMIN) {
+          // Admins can see all users
+          authorizedUsersRaw.forEach((u) => {
+            const username = u.split('@')[0];
+            allowedUsernames.add(u);
+            allowedUsernames.add(username);
+          });
+        } else {
+          const usernameBase = userContext.username.split('@')[0];
+          allowedUsernames.add(userContext.username);
+          allowedUsernames.add(usernameBase);
+
+          // Get users from groups the current user belongs to
+          const perunData = this.dataCollectionService.getPerunData();
+          const groupMembers = this.getUsersFromUserGroups(
+            perunData,
+            userContext.username,
+          );
+          for (const member of groupMembers) {
+            allowedUsernames.add(member);
+            allowedUsernames.add(member.split('@')[0]);
+          }
+        }
+      }
+
+      authorizedUsers = authorizedUsersRaw.map((authUser) => {
+        const username = authUser.split('@')[0];
+        const userHasAccess =
+          !userContext ||
+          userContext.role === UserRole.ADMIN ||
+          allowedUsernames.has(authUser) ||
+          allowedUsernames.has(username);
+        return {
+          username,
+          hasAccess: userHasAccess,
+        };
+      });
+    }
 
     // Parse reservation start/end times
     const startTime = reservation.attributes.reserve_start
@@ -724,10 +813,40 @@ export class QueuesService {
       ? parseInt(reservation.attributes.reserve_duration, 10)
       : null;
 
+    const owner = reservation.attributes.Reserve_Owner || null;
+
+    // Calculate if current user can see the reservation owner
+    let canSeeOwner = true;
+    if (userContext && owner) {
+      if (userContext.role !== UserRole.ADMIN) {
+        const usernameBase = userContext.username.split('@')[0];
+        const ownerBase = owner.split('@')[0];
+        const allowedUsernames = new Set<string>();
+        allowedUsernames.add(userContext.username);
+        allowedUsernames.add(usernameBase);
+
+        // Get users from groups the current user belongs to
+        const perunData = this.dataCollectionService.getPerunData();
+        const groupMembers = this.getUsersFromUserGroups(
+          perunData,
+          userContext.username,
+        );
+        for (const member of groupMembers) {
+          allowedUsernames.add(member);
+          allowedUsernames.add(member.split('@')[0]);
+        }
+
+        canSeeOwner =
+          allowedUsernames.has(owner) || allowedUsernames.has(ownerBase);
+      }
+    }
+
     return {
       name: reservation.name,
       displayName: reservation.attributes.Reserve_Name || null,
-      owner: reservation.attributes.Reserve_Owner || null,
+      owner: canSeeOwner ? owner : 'Anonym',
+      canSeeOwner,
+      hasAccess,
       state: reservation.attributes.reserve_state || null,
       startTime,
       endTime,
@@ -738,6 +857,8 @@ export class QueuesService {
       resourceNodect: reservation.attributes['Resource_List.nodect'] || null,
       authorizedUsers,
       nodes: nodes.length > 0 ? nodes : null,
+      isStarted,
+      queue: reservation.attributes.queue || null,
     };
   }
 

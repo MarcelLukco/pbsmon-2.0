@@ -220,13 +220,16 @@ export function QueueDetailContent({
 
               let message = "";
               if (queue.acl?.groups && queue.acl.groups.length > 0) {
+                const groupNames = queue.acl.groups.map((g) =>
+                  typeof g === "string" ? g : g.name,
+                );
                 message =
                   queue.hasAccess === false
                     ? t("queues.noAccessGroups", {
-                        groups: queue.acl.groups.join(", "),
+                        groups: groupNames.join(", "),
                       })
                     : t("queues.restrictedGroups", {
-                        groups: queue.acl.groups.join(", "),
+                        groups: groupNames.join(", "),
                       });
               } else if (queue.acl?.users && queue.acl.users.length > 0) {
                 message = t("queues.reservedForUsers", {
@@ -279,15 +282,33 @@ export function QueueDetailContent({
               {t("queues.aclGroups")}
             </h2>
             <div className="flex flex-wrap gap-2">
-              {queue.acl.groups.map((groupName) => (
-                <Link
-                  key={groupName}
-                  to={`/groups/${encodeURIComponent(groupName)}`}
-                  className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
-                >
-                  {groupName}
-                </Link>
-              ))}
+              {queue.acl.groups.map((group) => {
+                const groupName = typeof group === "string" ? group : group.name;
+                const hasAccess =
+                  typeof group === "string" ? true : group.hasAccess;
+
+                if (hasAccess) {
+                  return (
+                    <Link
+                      key={groupName}
+                      to={`/groups/${encodeURIComponent(groupName)}`}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
+                    >
+                      {groupName}
+                    </Link>
+                  );
+                } else {
+                  return (
+                    <span
+                      key={groupName}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md"
+                    >
+                      <Icon icon="bxs:lock" className="w-4 h-4 mr-1" />
+                      {groupName}
+                    </span>
+                  );
+                }
+              })}
             </div>
           </div>
         </div>
@@ -342,9 +363,38 @@ export function QueueDetailContent({
       {queue.reservation && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {t("queues.reservation")}
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Icon
+                  icon={
+                    queue.reservation.isStarted
+                      ? "bxs:check-circle"
+                      : "bxs:time-five"
+                  }
+                  className={`w-5 h-5 ${
+                    queue.reservation.isStarted
+                      ? "text-purple-600"
+                      : "text-orange-600"
+                  }`}
+                />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {t("queues.reservation")}
+                </h2>
+                {typeof queue.reservation.isStarted === "boolean" && (
+                  <div
+                    className={`px-3 py-1 text-xs font-medium rounded ${
+                      queue.reservation.isStarted
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-orange-100 text-orange-800"
+                    }`}
+                  >
+                    {queue.reservation.isStarted
+                      ? t("machines.reservationStarted")
+                      : t("machines.reservationNotStarted")}
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 {queue.reservation.displayName &&
@@ -365,12 +415,18 @@ export function QueueDetailContent({
                         {t("queues.reservationOwner")}
                       </div>
                       <div className="text-lg font-medium text-gray-900">
-                        <Link
-                          to={`/users/${encodeURIComponent(queue.reservation.owner)}`}
-                          className="text-primary-600 hover:text-primary-800"
-                        >
-                          {queue.reservation.owner}
-                        </Link>
+                        {queue.reservation.canSeeOwner ? (
+                          <Link
+                            to={`/users/${encodeURIComponent(
+                              queue.reservation.owner.split("@")[0]
+                            )}`}
+                            className="text-primary-600 hover:text-primary-800"
+                          >
+                            {queue.reservation.owner.split("@")[0]}
+                          </Link>
+                        ) : (
+                          <span>{t("jobs.anonym")}</span>
+                        )}
                       </div>
                     </div>
                   )}
@@ -479,22 +535,62 @@ export function QueueDetailContent({
                   </div>
                 </div>
               )}
+              {queue.reservation.queue &&
+                typeof queue.reservation.queue === "string" && (
+                  <div>
+                    <div className="text-sm text-gray-500 mb-2">
+                      {t("machines.reservationQueue")}
+                    </div>
+                    <div>
+                      <span className="text-lg font-medium text-gray-900">
+                        {queue.reservation.queue}
+                      </span>
+                    </div>
+                  </div>
+                )}
               {queue.reservation.authorizedUsers &&
-                queue.reservation.authorizedUsers.length > 0 && (
+                queue.reservation.authorizedUsers.length > 0 &&
+                queue.reservation.hasAccess === true && (
                   <div>
                     <div className="text-sm text-gray-500 mb-2">
                       {t("queues.reservationAuthorizedUsers")}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {queue.reservation.authorizedUsers.map((user) => (
-                        <Link
-                          key={user}
-                          to={`/users/${encodeURIComponent(user)}`}
-                          className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
-                        >
-                          {user}
-                        </Link>
-                      ))}
+                      {queue.reservation.authorizedUsers.map((user, index) => {
+                        // Handle both old format (string) and new format (object)
+                        const username =
+                          typeof user === "string"
+                            ? user.split("@")[0]
+                            : user.username;
+                        const hasAccess =
+                          typeof user === "string"
+                            ? false
+                            : user.hasAccess === true;
+                        const key =
+                          typeof user === "string" ? user : `${user.username}-${index}`;
+
+                        if (hasAccess) {
+                          return (
+                            <Link
+                              key={key}
+                              to={`/users/${encodeURIComponent(username)}`}
+                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
+                            >
+                              {username}
+                            </Link>
+                          );
+                        } else {
+                          return (
+                            <span
+                              key={key}
+                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md"
+                            >
+                              <Icon icon="bxs:lock" className="w-4 h-4 mr-1" />
+                              {username}
+                            </span>
+                          );
+                        }
+                      })}
                     </div>
                   </div>
                 )}

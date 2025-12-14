@@ -3,6 +3,22 @@ import { Expose, Type } from 'class-transformer';
 import { QueueAclUserDTO } from './queue-list.dto';
 
 /**
+ * ACL Group information
+ */
+export class QueueAclGroupDTO {
+  @Expose()
+  @ApiProperty({ description: 'Group name' })
+  name: string;
+
+  @Expose()
+  @ApiProperty({
+    description:
+      'Whether the current user has access to this group (true if admin or user is a member)',
+  })
+  hasAccess: boolean;
+}
+
+/**
  * Access Control List (ACL) information
  */
 export class QueueAclDTO {
@@ -16,12 +32,13 @@ export class QueueAclDTO {
   users?: QueueAclUserDTO[] | null;
 
   @Expose()
+  @Type(() => QueueAclGroupDTO)
   @ApiProperty({
     description: 'ACL groups (if acl_group_enable is true)',
-    type: [String],
+    type: [QueueAclGroupDTO],
     nullable: true,
   })
-  groups?: string[] | null;
+  groups?: QueueAclGroupDTO[] | null;
 
   @Expose()
   @ApiProperty({
@@ -185,6 +202,20 @@ export class QueueReservationDTO {
   owner?: string | null;
 
   @Expose()
+  @ApiProperty({
+    description:
+      'Whether the current user can see the reservation owner username (true if admin, same user, or in same group)',
+  })
+  canSeeOwner?: boolean;
+
+  @Expose()
+  @ApiProperty({
+    description:
+      'Whether the current user has access to this reservation (true if admin or user is in authorizedUsers)',
+  })
+  hasAccess?: boolean;
+
+  @Expose()
   @ApiProperty({ description: 'Reservation state', nullable: true })
   state?: string | null;
 
@@ -227,11 +258,11 @@ export class QueueReservationDTO {
 
   @Expose()
   @ApiProperty({
-    description: 'Authorized users',
-    type: [String],
+    description: 'Authorized users with access information',
+    type: [Object],
     nullable: true,
   })
-  authorizedUsers?: string[] | null;
+  authorizedUsers?: Array<{ username: string; hasAccess: boolean }> | null;
 
   @Expose()
   @ApiProperty({
@@ -240,6 +271,20 @@ export class QueueReservationDTO {
     nullable: true,
   })
   nodes?: string[] | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Whether the reservation has started (reserve_state === 5)',
+    nullable: true,
+  })
+  isStarted?: boolean | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Queue name associated with this reservation',
+    nullable: true,
+  })
+  queue?: string | null;
 }
 
 /**

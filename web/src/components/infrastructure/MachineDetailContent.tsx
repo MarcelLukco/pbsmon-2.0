@@ -485,14 +485,18 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                           {t("machines.reservationOwner")}
                         </div>
                         <div className="text-lg font-medium text-gray-900">
-                          <Link
-                            to={`/users/${encodeURIComponent(
-                              node.pbs.reservation.owner
-                            )}`}
-                            className="text-primary-600 hover:text-primary-800"
-                          >
-                            {node.pbs.reservation.owner}
-                          </Link>
+                          {node.pbs.reservation.canSeeOwner ? (
+                            <Link
+                              to={`/users/${encodeURIComponent(
+                                node.pbs.reservation.owner.split("@")[0]
+                              )}`}
+                              className="text-primary-600 hover:text-primary-800"
+                            >
+                              {node.pbs.reservation.owner.split("@")[0]}
+                            </Link>
+                          ) : (
+                            <span>{t("jobs.anonym")}</span>
+                          )}
                         </div>
                       </div>
                     )}
@@ -508,11 +512,23 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                               node.pbs.reservation.startTime * 1000
                             );
                             const day = String(date.getDate()).padStart(2, "0");
-                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                            const month = String(date.getMonth() + 1).padStart(
+                              2,
+                              "0"
+                            );
                             const year = date.getFullYear();
-                            const hours = String(date.getHours()).padStart(2, "0");
-                            const minutes = String(date.getMinutes()).padStart(2, "0");
-                            const seconds = String(date.getSeconds()).padStart(2, "0");
+                            const hours = String(date.getHours()).padStart(
+                              2,
+                              "0"
+                            );
+                            const minutes = String(date.getMinutes()).padStart(
+                              2,
+                              "0"
+                            );
+                            const seconds = String(date.getSeconds()).padStart(
+                              2,
+                              "0"
+                            );
                             return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
                           })()}
                         </div>
@@ -530,11 +546,23 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                               node.pbs.reservation.endTime * 1000
                             );
                             const day = String(date.getDate()).padStart(2, "0");
-                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                            const month = String(date.getMonth() + 1).padStart(
+                              2,
+                              "0"
+                            );
                             const year = date.getFullYear();
-                            const hours = String(date.getHours()).padStart(2, "0");
-                            const minutes = String(date.getMinutes()).padStart(2, "0");
-                            const seconds = String(date.getSeconds()).padStart(2, "0");
+                            const hours = String(date.getHours()).padStart(
+                              2,
+                              "0"
+                            );
+                            const minutes = String(date.getMinutes()).padStart(
+                              2,
+                              "0"
+                            );
+                            const seconds = String(date.getSeconds()).padStart(
+                              2,
+                              "0"
+                            );
                             return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
                           })()}
                         </div>
@@ -623,22 +651,54 @@ export function MachineDetailContent({ node }: MachineDetailContentProps) {
                   )}
                 {node.pbs.reservation.authorizedUsers &&
                   Array.isArray(node.pbs.reservation.authorizedUsers) &&
-                  node.pbs.reservation.authorizedUsers.length > 0 && (
+                  node.pbs.reservation.authorizedUsers.length > 0 &&
+                  node.pbs.reservation.hasAccess === true && (
                     <div>
                       <div className="text-sm text-gray-500 mb-2">
                         {t("machines.reservationAuthorizedUsers")}
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {node.pbs.reservation.authorizedUsers.map(
-                          (user: string) => (
-                            <Link
-                              key={user}
-                              to={`/users/${encodeURIComponent(user)}`}
-                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
-                            >
-                              {user}
-                            </Link>
-                          )
+                          (user: any, index: number) => {
+                            // Handle both old format (string) and new format (object)
+                            const username =
+                              typeof user === "string"
+                                ? user.split("@")[0]
+                                : user.username;
+                            const hasAccess =
+                              typeof user === "string"
+                                ? false
+                                : user.hasAccess === true;
+                            const key =
+                              typeof user === "string"
+                                ? user
+                                : `${user.username}-${index}`;
+
+                            if (hasAccess) {
+                              return (
+                                <Link
+                                  key={key}
+                                  to={`/users/${encodeURIComponent(username)}`}
+                                  className="inline-flex items-center px-3 py-1 text-sm font-medium text-primary-700 bg-primary-50 border border-primary-200 rounded-md hover:bg-primary-100 hover:text-primary-800"
+                                >
+                                  {username}
+                                </Link>
+                              );
+                            } else {
+                              return (
+                                <span
+                                  key={key}
+                                  className="inline-flex items-center px-3 py-1 text-sm font-medium text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md"
+                                >
+                                  <Icon
+                                    icon="bxs:lock"
+                                    className="w-4 h-4 mr-1"
+                                  />
+                                  {username}
+                                </span>
+                              );
+                            }
+                          }
                         )}
                       </div>
                     </div>

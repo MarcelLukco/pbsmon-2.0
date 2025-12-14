@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataCollectionService } from '@/modules/data-collection/data-collection.service';
+import { UserContext, UserRole } from '@/common/types/user-context.types';
 import {
   PerunPhysicalMachine,
   PerunResource,
@@ -260,8 +261,12 @@ export class InfrastructureService {
   /**
    * Get machine (node) detail by node name
    * @param nodeName - The node name (can be full FQDN or just hostname)
+   * @param userContext - User context for access control
    */
-  getMachineDetail(nodeName: string): InfrastructureDetailDTO {
+  getMachineDetail(
+    nodeName: string,
+    userContext?: any,
+  ): InfrastructureDetailDTO {
     const perunData = this.dataCollectionService.getPerunData();
 
     if (!perunData?.machines?.physical_machines) {
@@ -275,7 +280,7 @@ export class InfrastructureService {
     if (!node) {
       throw new NotFoundException(`Machine '${nodeName}' was not found`);
     }
-    return this.mapNodeToDetail(node);
+    return this.mapNodeToDetail(node, userContext);
   }
 
   /**
@@ -407,7 +412,13 @@ export class InfrastructureService {
     organization?: PerunPhysicalMachine,
   ): InfrastructureClusterDetailDTO {
     const machines = (resource.machines || []).map((machine) =>
-      this.mapNodeToDetailDTO(machine, resource.id, resource, organization),
+      this.mapNodeToDetailDTO(
+        machine,
+        resource.id,
+        resource,
+        organization,
+        undefined,
+      ),
     );
 
     return {
@@ -433,17 +444,21 @@ export class InfrastructureService {
   /**
    * Map node to detail DTO
    */
-  private mapNodeToDetail(node: {
-    machine: PerunMachine;
-    clusterId: string;
-    cluster: PerunResource;
-    organization: PerunPhysicalMachine;
-  }): InfrastructureDetailDTO {
+  private mapNodeToDetail(
+    node: {
+      machine: PerunMachine;
+      clusterId: string;
+      cluster: PerunResource;
+      organization: PerunPhysicalMachine;
+    },
+    userContext?: any,
+  ): InfrastructureDetailDTO {
     const nodeDetail = this.mapNodeToDetailDTO(
       node.machine,
       node.clusterId,
       node.cluster,
       node.organization,
+      userContext,
     );
 
     return {
@@ -630,6 +645,7 @@ export class InfrastructureService {
     clusterId: string,
     cluster?: PerunResource,
     organization?: PerunPhysicalMachine,
+    userContext?: UserContext,
   ): InfrastructureNodeDetailDTO {
     const pbsState = this.getNodeStateFromPbs(machine.name);
     const pbsNodeData = this.getPbsNodeData(machine.name);
@@ -729,6 +745,7 @@ export class InfrastructureService {
     const reservation = this.parseNodeReservation(
       pbsNodeData?.pbsNode,
       pbsNodeData?.serverName || undefined,
+      userContext,
     );
 
     const pbsData = pbsNodeData?.pbsNode
@@ -787,10 +804,13 @@ export class InfrastructureService {
   private parseNodeReservation(
     pbsNode: PbsNode | null | undefined,
     serverName: string | undefined,
+    userContext?: UserContext,
   ): {
     name: string;
     displayName?: string | null;
     owner?: string | null;
+    canSeeOwner?: boolean;
+    hasAccess?: boolean;
     state?: string | null;
     startTime?: number | null;
     endTime?: number | null;
@@ -799,7 +819,7 @@ export class InfrastructureService {
     resourceNcpus?: string | null;
     resourceNgpus?: string | null;
     resourceNodect?: string | null;
-    authorizedUsers?: string[] | null;
+    authorizedUsers?: Array<{ username: string; hasAccess: boolean }> | null;
     queue?: string | null;
     isStarted?: boolean | null;
   } | null {
@@ -828,11 +848,76 @@ export class InfrastructureService {
     const isStarted = reservation.attributes.reserve_state === '5';
 
     // Parse authorized users
-    const authorizedUsers = reservation.attributes.Authorized_Users
+    const authorizedUsersRaw = reservation.attributes.Authorized_Users
       ? reservation.attributes.Authorized_Users.split(',')
           .map((u) => u.trim())
           .filter(Boolean)
       : null;
+
+    // Check if current user has access to the reservation
+    let hasAccess = true;
+    if (userContext && authorizedUsersRaw && authorizedUsersRaw.length > 0) {
+      if (userContext.role !== UserRole.ADMIN) {
+        const usernameBase = userContext.username.split('@')[0];
+        // Check if user is in authorized users list
+        hasAccess = authorizedUsersRaw.some((authUser) => {
+          const authUserBase = authUser.split('@')[0];
+          return (
+            authUser === userContext.username ||
+            authUserBase === usernameBase ||
+            authUser === usernameBase
+          );
+        });
+      }
+    }
+
+    // Format authorized users with access information
+    let authorizedUsers: Array<{
+      username: string;
+      hasAccess: boolean;
+    }> | null = null;
+    if (authorizedUsersRaw && authorizedUsersRaw.length > 0) {
+      // Get allowed usernames for checking access to each authorized user
+      const allowedUsernames = new Set<string>();
+      if (userContext) {
+        if (userContext.role === UserRole.ADMIN) {
+          // Admins can see all users
+          authorizedUsersRaw.forEach((u) => {
+            const username = u.split('@')[0];
+            allowedUsernames.add(u);
+            allowedUsernames.add(username);
+          });
+        } else {
+          const usernameBase = userContext.username.split('@')[0];
+          allowedUsernames.add(userContext.username);
+          allowedUsernames.add(usernameBase);
+
+          // Get users from groups the current user belongs to
+          const perunData = this.dataCollectionService.getPerunData();
+          const groupMembers = this.getUsersFromUserGroups(
+            perunData,
+            userContext.username,
+          );
+          for (const member of groupMembers) {
+            allowedUsernames.add(member);
+            allowedUsernames.add(member.split('@')[0]);
+          }
+        }
+      }
+
+      authorizedUsers = authorizedUsersRaw.map((authUser) => {
+        const username = authUser.split('@')[0];
+        const userHasAccess =
+          !userContext ||
+          userContext.role === UserRole.ADMIN ||
+          allowedUsernames.has(authUser) ||
+          allowedUsernames.has(username);
+        return {
+          username,
+          hasAccess: userHasAccess,
+        };
+      });
+    }
 
     // Parse reservation start/end times
     const startTime = reservation.attributes.reserve_start
@@ -845,10 +930,40 @@ export class InfrastructureService {
       ? parseInt(reservation.attributes.reserve_duration, 10)
       : null;
 
+    const owner = reservation.attributes.Reserve_Owner || null;
+
+    // Calculate if current user can see the reservation owner
+    let canSeeOwner = true;
+    if (userContext && owner) {
+      if (userContext.role !== UserRole.ADMIN) {
+        const usernameBase = userContext.username.split('@')[0];
+        const ownerBase = owner.split('@')[0];
+        const allowedUsernames = new Set<string>();
+        allowedUsernames.add(userContext.username);
+        allowedUsernames.add(usernameBase);
+
+        // Get users from groups the current user belongs to
+        const perunData = this.dataCollectionService.getPerunData();
+        const groupMembers = this.getUsersFromUserGroups(
+          perunData,
+          userContext.username,
+        );
+        for (const member of groupMembers) {
+          allowedUsernames.add(member);
+          allowedUsernames.add(member.split('@')[0]);
+        }
+
+        canSeeOwner =
+          allowedUsernames.has(owner) || allowedUsernames.has(ownerBase);
+      }
+    }
+
     return {
       name: reservation.name,
       displayName: reservation.attributes.Reserve_Name || null,
-      owner: reservation.attributes.Reserve_Owner || null,
+      owner: canSeeOwner ? owner : 'Anonym',
+      canSeeOwner,
+      hasAccess,
       state: reservation.attributes.reserve_state || null,
       startTime,
       endTime,
@@ -1472,5 +1587,104 @@ export class InfrastructureService {
       }
     }
     return null;
+  }
+
+  /**
+   * Get all users from groups that the user belongs to
+   * Excludes system-wide groups that contain 80%+ of all Metacentrum users
+   * @param perunData Perun data
+   * @param username Username to find groups for
+   * @returns Set of usernames from relevant groups
+   */
+  private getUsersFromUserGroups(
+    perunData: any,
+    username: string,
+  ): Set<string> {
+    const result = new Set<string>();
+    const usernameBase = username.split('@')[0];
+
+    if (!perunData?.etcGroups || perunData.etcGroups.length === 0) {
+      return result;
+    }
+
+    // Calculate total unique users in the system
+    const allUsersSet = new Set<string>();
+    if (perunData?.users?.users) {
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          allUsersSet.add(lognameBase);
+          allUsersSet.add(perunUser.logname);
+        }
+      }
+    }
+    const totalUsers = allUsersSet.size;
+
+    // Step 1: First, collect all groups across all servers and merge them
+    const allGroupsMap = new Map<
+      string,
+      { gid: string; members: Set<string> }
+    >();
+
+    for (const serverGroups of perunData.etcGroups) {
+      for (const group of serverGroups.entries) {
+        // Merge group members across all servers
+        if (!allGroupsMap.has(group.groupname)) {
+          allGroupsMap.set(group.groupname, {
+            gid: group.gid,
+            members: new Set(group.members),
+          });
+        } else {
+          const existing = allGroupsMap.get(group.groupname)!;
+          for (const member of group.members) {
+            existing.members.add(member);
+          }
+        }
+      }
+    }
+
+    // Step 2: Filter out system-wide groups (80%+ of all users) BEFORE checking membership
+    const MAX_PERCENTAGE_OF_ALL_USERS = 0.8; // 80%
+    const filteredGroups = new Map<
+      string,
+      { gid: string; members: Set<string> }
+    >();
+
+    for (const [groupName, groupData] of allGroupsMap.entries()) {
+      if (totalUsers > 0) {
+        // Calculate unique base usernames in this group
+        const groupUniqueUsers = new Set<string>();
+        for (const member of groupData.members) {
+          const memberBase = member.split('@')[0];
+          groupUniqueUsers.add(memberBase);
+          groupUniqueUsers.add(member);
+        }
+        const percentage = groupUniqueUsers.size / totalUsers;
+        // Skip groups that contain too many users (system-wide groups)
+        if (percentage > MAX_PERCENTAGE_OF_ALL_USERS) {
+          continue;
+        }
+      }
+      filteredGroups.set(groupName, groupData);
+    }
+
+    // Step 3: Now iterate over filtered groups and check if user is a member
+    for (const [groupName, groupData] of filteredGroups.entries()) {
+      // Check if user is a member of this group
+      const isMember =
+        groupData.members.has(usernameBase) || groupData.members.has(username);
+      if (!isMember) {
+        continue;
+      }
+
+      // Step 4: Add all members from this group (except the user themselves)
+      for (const member of groupData.members) {
+        if (member !== usernameBase && member !== username) {
+          result.add(member);
+        }
+      }
+    }
+
+    return result;
   }
 }

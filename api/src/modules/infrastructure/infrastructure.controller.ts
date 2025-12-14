@@ -9,6 +9,8 @@ import { InfrastructureService } from './infrastructure.service';
 import { InfrastructureOrganizationListDTO } from './dto/infrastructure-list.dto';
 import { InfrastructureDetailDTO } from './dto/infrastructure-detail.dto';
 import { InfrastructureListMetaDto } from './dto/infrastructure-list-meta.dto';
+import { UserContextDecorator } from '@/common/decorators/user-context.decorator';
+import { UserContext } from '@/common/types/user-context.types';
 
 @ApiTags('infrastructure')
 @Controller('infrastructure')
@@ -72,8 +74,12 @@ export class InfrastructureController {
   @ApiNotFoundResponse({ description: 'Machine not found' })
   getMachineDetail(
     @Param('nodeName') nodeName: string,
+    @UserContextDecorator() userContext: UserContext,
   ): ApiResponse<InfrastructureDetailDTO> {
-    const data = this.infrastructureService.getMachineDetail(nodeName);
+    const data = this.infrastructureService.getMachineDetail(
+      nodeName,
+      userContext,
+    );
     return new ApiResponse(data);
   }
 

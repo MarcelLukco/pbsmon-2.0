@@ -251,6 +251,8 @@ export class InfrastructureNodePbsDTO {
     name: string;
     displayName?: string | null;
     owner?: string | null;
+    canSeeOwner?: boolean;
+    hasAccess?: boolean;
     state?: string | null;
     startTime?: number | null;
     endTime?: number | null;
@@ -259,7 +261,7 @@ export class InfrastructureNodePbsDTO {
     resourceNcpus?: string | null;
     resourceNgpus?: string | null;
     resourceNodect?: string | null;
-    authorizedUsers?: string[] | null;
+    authorizedUsers?: Array<{ username: string; hasAccess: boolean }> | null;
     queue?: string | null;
     isStarted?: boolean | null;
   } | null;
