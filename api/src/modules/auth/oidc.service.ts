@@ -24,9 +24,7 @@ export class OidcService implements OnModuleInit {
 
     try {
       // Discover the issuer and create configuration
-      const issuerUrl = oidcConfig.issuer.endsWith('/')
-        ? oidcConfig.issuer.slice(0, -1)
-        : oidcConfig.issuer;
+      const issuerUrl = oidcConfig.issuer;
 
       this.config = await client.discovery(
         new URL(issuerUrl),
