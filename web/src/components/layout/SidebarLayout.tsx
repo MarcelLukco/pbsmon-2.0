@@ -1,10 +1,9 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { ApiError } from "@/lib/generated-api/core/ApiError";
 import { ImpersonationBanner } from "@/components/common/ImpersonationBanner";
 import { useImpersonation } from "@/contexts/ImpersonationContext";
 
@@ -159,7 +158,7 @@ export function SidebarLayout() {
   }
 
   // Show error page
-  if (error && !isUnauthorized) {
+  if (error) {
     return (
       <div className="flex flex-col min-h-screen bg-primary-600">
         <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary flex items-center justify-end px-4 gap-2">
@@ -195,41 +194,6 @@ export function SidebarLayout() {
                 : t("common.unknownError")}
             </div>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isUnauthorized) {
-    // TODO: Redirect user to login page when authentication is implemented
-    return (
-      <div className="flex flex-col min-h-screen bg-primary-600">
-        <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary flex items-center justify-end px-4 gap-2">
-          <button
-            onClick={() => i18n.changeLanguage("cs")}
-            className={`p-1.5 rounded transition-opacity ${
-              i18n.language === "cs"
-                ? "opacity-100"
-                : "opacity-50 hover:opacity-75"
-            }`}
-            title={t("language.czech")}
-          >
-            <Icon icon="flag:cz-4x3" className="w-6 h-4" />
-          </button>
-          <button
-            onClick={() => i18n.changeLanguage("en")}
-            className={`p-1.5 rounded transition-opacity ${
-              i18n.language === "en"
-                ? "opacity-100"
-                : "opacity-50 hover:opacity-75"
-            }`}
-            title={t("language.english")}
-          >
-            <Icon icon="flag:gb-4x3" className="w-6 h-4" />
-          </button>
-        </nav>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-white text-lg">{t("common.notLoggedIn")}</div>
         </div>
       </div>
     );
