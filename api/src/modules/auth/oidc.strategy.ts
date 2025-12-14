@@ -24,7 +24,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
         clientID: 'dummy',
         clientSecret: 'dummy',
         callbackURL: '/login',
-        scope: 'openid profile email',
+        scope: 'openid profile eduperson_entitlement',
       });
       return;
     }
@@ -55,13 +55,16 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       clientID: oidcConfig.clientId,
       clientSecret: oidcConfig.clientSecret,
       callbackURL: callbackPath,
-      scope: 'openid profile email',
+      scope: 'openid profile eduperson_entitlement',
     });
   }
 
   async validate(issuer: string, sub: string, profile: any, tokens: any) {
     // This method is called after successful authentication
     // Return user object that will be attached to request.user
+    // eduperson_entitlement is typically an array of entitlement strings
+    const entitlements = profile.eduperson_entitlement || [];
+
     return {
       sub,
       id: sub,
@@ -70,6 +73,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       name: profile.name,
       groups: profile.groups || [],
       roles: profile.roles || [],
+      entitlements, // eduperson_entitlement from OIDC
+      eduperson_entitlement: entitlements, // Keep original field name too
       tokens, // Store tokens for later use
       ...profile, // Include all profile data
     };
