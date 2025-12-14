@@ -69,10 +69,8 @@ export class JobsService {
       // Admins can see all usernames
       // We'll set canSeeOwner to true for all jobs below
     } else {
-      const username = userContext.username.split('@')[0];
-      const usernameBase = username.split('@')[0];
+      const usernameBase = userContext.username.split('@')[0];
       allowedUsernames.add(userContext.username);
-      allowedUsernames.add(username);
       allowedUsernames.add(usernameBase);
 
       // Get users from groups the current user belongs to
@@ -91,8 +89,10 @@ export class JobsService {
         userContext.role === UserRole.ADMIN ||
         allowedUsernames.has(job.owner) ||
         allowedUsernames.has(jobOwner);
+
       return {
         ...job,
+        owner: canSeeOwner ? job.owner : 'Anonym',
         canSeeOwner,
       };
     });
@@ -447,32 +447,90 @@ export class JobsService {
   /**
    * Get user groups from Perun etc_groups data
    * Returns list of usernames that are in the same groups as the user
+   * Excludes system-wide groups that contain 80%+ of all users
    */
   private getUserGroups(userContext: UserContext): string[] {
     const perunData = this.dataCollectionService.getPerunData();
-    if (!perunData?.etcGroups) {
+    if (!perunData?.etcGroups || perunData.etcGroups.length === 0) {
       return [];
     }
 
-    const userGroups = new Set<string>();
     const username = userContext.username.split('@')[0];
+    const usernameBase = username;
 
-    // Find all groups the user belongs to across all servers
+    // Calculate total unique users in the system
+    const allUsersSet = new Set<string>();
+    if (perunData?.users?.users) {
+      for (const perunUser of perunData.users.users) {
+        if (perunUser.logname) {
+          const lognameBase = perunUser.logname.split('@')[0];
+          allUsersSet.add(lognameBase);
+          allUsersSet.add(perunUser.logname);
+        }
+      }
+    }
+    const totalUsers = allUsersSet.size;
+
+    const allGroupsMap = new Map<
+      string,
+      { gid: string; members: Set<string> }
+    >();
+
     for (const serverGroups of perunData.etcGroups) {
       for (const group of serverGroups.entries) {
-        // Check if user is a member of this group
-        if (group.members.includes(username)) {
-          // Add all members of this group (except the user themselves)
+        // Merge group members across all servers
+        if (!allGroupsMap.has(group.groupname)) {
+          allGroupsMap.set(group.groupname, {
+            gid: group.gid,
+            members: new Set(group.members),
+          });
+        } else {
+          const existing = allGroupsMap.get(group.groupname)!;
           for (const member of group.members) {
-            if (member !== username) {
-              userGroups.add(member);
-            }
+            existing.members.add(member);
           }
         }
       }
     }
 
-    return Array.from(userGroups);
+    // Filter out system-wide groups (80%+ of all users)
+    const MAX_PERCENTAGE_OF_ALL_USERS = 0.8; // 80%
+    const filteredGroups = new Map<
+      string,
+      { gid: string; members: Set<string> }
+    >();
+
+    for (const [groupName, groupData] of allGroupsMap.entries()) {
+      if (totalUsers > 0) {
+        const percentage = groupData.members.size / totalUsers;
+        // Skip groups that contain too many users (system-wide groups)
+        if (percentage > MAX_PERCENTAGE_OF_ALL_USERS) {
+          continue;
+        }
+      }
+      filteredGroups.set(groupName, groupData);
+    }
+
+    // Now iterate over filtered groups and check if user is a member
+    const result = new Set<string>();
+    for (const [groupName, groupData] of filteredGroups.entries()) {
+      // Check if user is a member of this group
+      const isMember =
+        groupData.members.has(usernameBase) ||
+        groupData.members.has(userContext.username);
+      if (!isMember) {
+        continue;
+      }
+
+      // Add all members from this group (except the user themselves)
+      for (const member of groupData.members) {
+        if (member !== usernameBase && member !== userContext.username) {
+          result.add(member);
+        }
+      }
+    }
+
+    return Array.from(result);
   }
 
   /**
@@ -510,11 +568,10 @@ export class JobsService {
 
     let canSeeOwner = true;
     if (userContext.role !== UserRole.ADMIN) {
-      const username = userContext.username.split('@')[0];
-      const usernameBase = username.split('@')[0];
+      const usernameBase = userContext.username.split('@')[0];
       const allowedUsernames = new Set<string>();
+      // Add both full username (if it contains @) and base username
       allowedUsernames.add(userContext.username);
-      allowedUsernames.add(username);
       allowedUsernames.add(usernameBase);
 
       // Get users from groups the current user belongs to
@@ -533,6 +590,7 @@ export class JobsService {
     const jobDetail = this.transformJobToDetailDTO(job, pbsData);
     return {
       ...jobDetail,
+      owner: canSeeOwner ? jobDetail.owner : 'Anonym',
       canSeeOwner,
     };
   }
