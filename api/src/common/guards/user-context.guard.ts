@@ -44,21 +44,31 @@ export class UserContextGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const path = request.path;
+
+    // Allow /login endpoint without authentication (OIDC callback)
+    // Also allow /auth/login (OIDC initiation) and other auth endpoints
+    if (
+      path === '/login' ||
+      path === '/auth/login' ||
+      path.startsWith('/auth/') ||
+      path === '/status' ||
+      path === '/health'
+    ) {
+      // For auth endpoints, still try to extract user context if available
+      // but don't require it
+      const userContext = this.extractUserContext(request);
+      if (userContext) {
+        request.userContext = userContext;
+      }
+      return true;
+    }
 
     const userContext = this.extractUserContext(request);
 
-    // If no user context and not mocked, we should have been redirected by AuthGuard
-    // But for backwards compatibility, still allow anonymous access
-    // (AuthGuard will handle redirects for protected endpoints)
+    // If no user context, return 401 Unauthorized
     if (!userContext) {
-      request.userContext = {
-        id: '', // todo: retrievie this from perun_machines.json
-        username: 'anonymous',
-        role: UserRole.USER,
-        groups: [],
-        hostname: undefined,
-      };
-      return true;
+      throw new UnauthorizedException('Authentication required');
     }
 
     // Handle impersonation: check if X-Impersonate-User header is present
