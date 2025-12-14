@@ -221,7 +221,7 @@ export function QueueDetailContent({
               let message = "";
               if (queue.acl?.groups && queue.acl.groups.length > 0) {
                 const groupNames = queue.acl.groups.map((g) =>
-                  typeof g === "string" ? g : g.name,
+                  typeof g === "string" ? g : g.name
                 );
                 message =
                   queue.hasAccess === false
@@ -283,7 +283,8 @@ export function QueueDetailContent({
             </h2>
             <div className="flex flex-wrap gap-2">
               {queue.acl.groups.map((group) => {
-                const groupName = typeof group === "string" ? group : group.name;
+                const groupName =
+                  typeof group === "string" ? group : group.name;
                 const hasAccess =
                   typeof group === "string" ? true : group.hasAccess;
 
@@ -415,18 +416,21 @@ export function QueueDetailContent({
                         {t("queues.reservationOwner")}
                       </div>
                       <div className="text-lg font-medium text-gray-900">
-                        {queue.reservation.canSeeOwner ? (
-                          <Link
-                            to={`/users/${encodeURIComponent(
-                              queue.reservation.owner.split("@")[0]
-                            )}`}
-                            className="text-primary-600 hover:text-primary-800"
-                          >
-                            {queue.reservation.owner.split("@")[0]}
-                          </Link>
-                        ) : (
-                          <span>{t("jobs.anonym")}</span>
-                        )}
+                        {(() => {
+                          const owner = queue.reservation.owner as string;
+                          return queue.reservation.canSeeOwner ? (
+                            <Link
+                              to={`/users/${encodeURIComponent(
+                                owner.split("@")[0]
+                              )}`}
+                              className="text-primary-600 hover:text-primary-800"
+                            >
+                              {owner.split("@")[0]}
+                            </Link>
+                          ) : (
+                            <span>{t("jobs.anonym")}</span>
+                          );
+                        })()}
                       </div>
                     </div>
                   )}
@@ -442,11 +446,23 @@ export function QueueDetailContent({
                             queue.reservation.startTime * 1000
                           );
                           const day = String(date.getDate()).padStart(2, "0");
-                          const month = String(date.getMonth() + 1).padStart(2, "0");
+                          const month = String(date.getMonth() + 1).padStart(
+                            2,
+                            "0"
+                          );
                           const year = date.getFullYear();
-                          const hours = String(date.getHours()).padStart(2, "0");
-                          const minutes = String(date.getMinutes()).padStart(2, "0");
-                          const seconds = String(date.getSeconds()).padStart(2, "0");
+                          const hours = String(date.getHours()).padStart(
+                            2,
+                            "0"
+                          );
+                          const minutes = String(date.getMinutes()).padStart(
+                            2,
+                            "0"
+                          );
+                          const seconds = String(date.getSeconds()).padStart(
+                            2,
+                            "0"
+                          );
                           return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
                         })()}
                       </div>
@@ -464,11 +480,23 @@ export function QueueDetailContent({
                             queue.reservation.endTime * 1000
                           );
                           const day = String(date.getDate()).padStart(2, "0");
-                          const month = String(date.getMonth() + 1).padStart(2, "0");
+                          const month = String(date.getMonth() + 1).padStart(
+                            2,
+                            "0"
+                          );
                           const year = date.getFullYear();
-                          const hours = String(date.getHours()).padStart(2, "0");
-                          const minutes = String(date.getMinutes()).padStart(2, "0");
-                          const seconds = String(date.getSeconds()).padStart(2, "0");
+                          const hours = String(date.getHours()).padStart(
+                            2,
+                            "0"
+                          );
+                          const minutes = String(date.getMinutes()).padStart(
+                            2,
+                            "0"
+                          );
+                          const seconds = String(date.getSeconds()).padStart(
+                            2,
+                            "0"
+                          );
                           return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
                         })()}
                       </div>
@@ -560,14 +588,16 @@ export function QueueDetailContent({
                         // Handle both old format (string) and new format (object)
                         const username =
                           typeof user === "string"
-                            ? user.split("@")[0]
-                            : user.username;
+                            ? (user as string).split("@")[0]
+                            : (user as { username: string }).username;
                         const hasAccess =
                           typeof user === "string"
                             ? false
                             : user.hasAccess === true;
                         const key =
-                          typeof user === "string" ? user : `${user.username}-${index}`;
+                          typeof user === "string"
+                            ? user
+                            : `${user.username}-${index}`;
 
                         if (hasAccess) {
                           return (
