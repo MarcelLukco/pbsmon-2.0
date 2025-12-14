@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -126,6 +126,14 @@ export function SidebarLayout() {
 
   const isUnauthorized =
     error instanceof ApiError && (error.status === 401 || error.status === 403);
+
+  // Redirect to OIDC login when unauthorized
+  useEffect(() => {
+    if (isUnauthorized && error instanceof ApiError && error.status === 401) {
+      // Redirect browser to OIDC login initiation endpoint
+      window.location.href = "/api/auth/login";
+    }
+  }, [isUnauthorized, error]);
 
   if (isLoading) {
     return (

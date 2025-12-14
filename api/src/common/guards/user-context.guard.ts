@@ -67,12 +67,10 @@ export class UserContextGuard implements CanActivate {
 
     const userContext = this.extractUserContext(request);
 
-    // If no user context, redirect to OIDC login
-    // This is better for web apps than returning 401
+    // If no user context, return 401 Unauthorized
+    // Frontend will handle redirecting to /api/auth/login
     if (!userContext) {
-      // Redirect to OIDC login initiation endpoint
-      response.redirect('/api/auth/login');
-      return false;
+      throw new UnauthorizedException('Authentication required');
     }
 
     // Handle impersonation: check if X-Impersonate-User header is present
