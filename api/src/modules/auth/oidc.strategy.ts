@@ -29,18 +29,9 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       return;
     }
 
-    // Extract callback path from redirect URI (nginx strips /api prefix)
-    // If redirectUri is https://domain.com/api/login, the backend receives /login
-    let callbackPath = '/login';
-    if (oidcConfig.redirectUri) {
-      try {
-        const url = new URL(oidcConfig.redirectUri);
-        callbackPath = url.pathname.replace(/^\/api/, '') || '/login';
-      } catch {
-        // If redirectUri is not a full URL, use it as-is
-        callbackPath = oidcConfig.redirectUri.replace(/^\/api/, '') || '/login';
-      }
-    }
+    const callbackURL =
+      oidcConfig.redirectUri ||
+      'https://mu-pub-245-82.flt.openstack.cloud.e-infra.cz/api/login';
 
     // Build OIDC endpoints from issuer
     const issuer = oidcConfig.issuer.endsWith('/')
@@ -54,7 +45,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       userInfoURL: `${issuer}/userinfo`,
       clientID: oidcConfig.clientId,
       clientSecret: oidcConfig.clientSecret,
-      callbackURL: callbackPath,
+      callbackURL: callbackURL,
       scope: 'openid profile eduperson_entitlement',
     });
   }

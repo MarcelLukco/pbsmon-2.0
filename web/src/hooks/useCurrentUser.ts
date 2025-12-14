@@ -10,7 +10,7 @@ export function useCurrentUser() {
   return useQuery({
     queryKey: ["currentUser"],
     queryFn: async () => {
-      const response = await apiClient.users.usersControllerGetCurrentUser();
+      const response = await apiClient.auth.authControllerGetCurrentUser();
       return response.data;
     },
   });

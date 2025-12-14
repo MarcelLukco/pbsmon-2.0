@@ -11,8 +11,15 @@ import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { OidcConfig } from '@/config/oidc.config';
 import { UserRole } from '@/common/types/user-context.types';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse as ApiResponseDto } from '@/common/dto/api-response.dto';
+import { ApiOkResponseModel } from '@/common/swagger/api-generic-response';
+import { CurrentUserDTO } from './dto/current-user.dto';
+import { UserContextDecorator } from '@/common/decorators/user-context.decorator';
+import { UserContext } from '@/common/types/user-context.types';
 import '@/common/types/session.types';
 
+@ApiTags('auth')
 @Controller()
 export class AuthController {
   constructor(private configService: ConfigService) {}
@@ -67,6 +74,24 @@ export class AuthController {
     const frontendUrl =
       process.env.FRONTEND_URL?.split(',')[0] || 'http://localhost:5173';
     res.redirect(frontendUrl);
+  }
+
+  @Get('auth/current-user')
+  @ApiOperation({
+    summary: 'Get current user information',
+    description:
+      'Returns the current authenticated user information including username and role.',
+  })
+  @ApiOkResponseModel(CurrentUserDTO, 'Current user')
+  @ApiResponse({ status: 401, description: 'Not authenticated' })
+  getCurrentUser(
+    @UserContextDecorator() userContext: UserContext,
+  ): ApiResponseDto<CurrentUserDTO> {
+    const data: CurrentUserDTO = {
+      username: userContext.username,
+      role: userContext.role,
+    };
+    return new ApiResponseDto(data);
   }
 
   @Get('user')

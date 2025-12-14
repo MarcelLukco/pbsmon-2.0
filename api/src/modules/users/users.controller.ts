@@ -12,7 +12,6 @@ import { UserContext, UserRole } from '@/common/types/user-context.types';
 import { UsersService } from './users.service';
 import { UserDetailDTO } from './dto/user-detail.dto';
 import { UsersListDTO } from './dto/user-list.dto';
-import { CurrentUserDTO } from './dto/current-user.dto';
 import { ApiOkResponseModel } from '@/common/swagger/api-generic-response';
 import { MetaDto } from '@/common/dto/meta.dto';
 
@@ -84,23 +83,6 @@ export class UsersController {
     );
 
     return new ApiResponseDto(data, { totalCount, maxFairshare });
-  }
-
-  @Get('current-user')
-  @ApiOperation({
-    summary: 'Get current user information',
-    description:
-      'Returns the current authenticated user information including username and role.',
-  })
-  @ApiOkResponseModel(CurrentUserDTO, 'Current user')
-  getCurrentUser(
-    @UserContextDecorator() userContext: UserContext,
-  ): ApiResponseDto<CurrentUserDTO> {
-    const data: CurrentUserDTO = {
-      username: userContext.username,
-      role: userContext.role,
-    };
-    return new ApiResponseDto(data);
   }
 
   @Get(':id')
