@@ -12,5 +12,7 @@ declare module 'express-session' {
       roles?: string[];
       [key: string]: any;
     };
+    oidcState?: string;
+    oidcCodeVerifier?: string;
   }
 }
