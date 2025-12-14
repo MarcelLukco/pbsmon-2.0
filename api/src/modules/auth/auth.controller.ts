@@ -89,12 +89,32 @@ export class AuthController {
     }
 
     try {
-      // Build the callback URL from the request
-      const protocol = req.protocol || (req.secure ? 'https' : 'http');
-      const host = req.get('host') || 'localhost';
-      const fullUrl = `${protocol}://${host}${req.originalUrl || req.url}`;
-      const callbackUrl = new URL(fullUrl);
-      
+      // Use the configured redirect URI to ensure it matches what was used in the authorization request
+      // The OAuth provider validates that the redirect URI in the callback matches exactly
+      const oidcConfig = this.configService.get<OidcConfig>('oidc')!;
+      const configuredRedirectUri = oidcConfig.redirectUri;
+
+      if (!configuredRedirectUri) {
+        throw new BadRequestException('OIDC redirect URI not configured');
+      }
+
+      // Build callback URL using the configured redirect URI, but preserve query parameters from the request
+      const callbackUrl = new URL(configuredRedirectUri);
+      // Copy query parameters from the actual request (code, state, etc.)
+      const requestUrl = new URL(
+        req.originalUrl || req.url,
+        `${req.protocol}://${req.get('host')}`,
+      );
+      requestUrl.searchParams.forEach((value, key) => {
+        callbackUrl.searchParams.set(key, value);
+      });
+
+      this.logger.log('OIDC callback: Using redirect URI', {
+        configured: configuredRedirectUri,
+        callbackUrl: callbackUrl.toString(),
+        requestUrl: requestUrl.toString(),
+      });
+
       // Handle the callback and get user info
       const user = await this.oidcService.handleCallback(
         callbackUrl,

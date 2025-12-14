@@ -108,6 +108,8 @@ export class OidcService implements OnModuleInit {
         client.skipSubjectCheck,
       );
 
+      console.log('OIDC client initialized successfully', userInfo);
+
       // Combine user info with token data
       return {
         id: userInfo.sub,
