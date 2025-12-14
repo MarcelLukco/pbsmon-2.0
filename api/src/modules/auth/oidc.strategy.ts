@@ -29,9 +29,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       return;
     }
 
-    const callbackURL =
-      oidcConfig.redirectUri ||
-      'https://mu-pub-245-82.flt.openstack.cloud.e-infra.cz/api/login';
+    const callbackURL = oidcConfig.redirectUri || '';
 
     // Build OIDC endpoints from issuer
     const issuer = oidcConfig.issuer.endsWith('/')
