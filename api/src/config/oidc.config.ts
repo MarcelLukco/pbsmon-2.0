@@ -27,7 +27,5 @@ export const getOidcConfig = (): OidcConfig => ({
   clientId: process.env.OIDC_CLIENT_ID,
   clientSecret: process.env.OIDC_CLIENT_SECRET,
   issuer: process.env.OIDC_ISSUER,
-  redirectUri:
-    process.env.OIDC_REDIRECT_URI ||
-    'https://mu-pub-245-82.flt.openstack.cloud.e-infra.cz/api/login',
+  redirectUri: process.env.OIDC_REDIRECT_URI || '',
 });
