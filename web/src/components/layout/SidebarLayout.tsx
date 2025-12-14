@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { ImpersonationBanner } from "@/components/common/ImpersonationBanner";
 import { useImpersonation } from "@/contexts/ImpersonationContext";
+import { ApiError } from "@/lib/generated-api/core/ApiError";
 
 type MenuItem = {
   id: string;
@@ -159,6 +160,8 @@ export function SidebarLayout() {
 
   // Show error page
   if (error) {
+    const isUnauthorized = error instanceof ApiError && error.status === 401;
+
     return (
       <div className="flex flex-col min-h-screen bg-primary-600">
         <nav className="h-[45px] bg-[#424441] border-b-[10px] border-secondary flex items-center justify-end px-4 gap-2">
@@ -188,10 +191,13 @@ export function SidebarLayout() {
         <div className="flex-1 flex items-center justify-center">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-4">
             <div className="text-red-800">
-              {t("common.errorLoading")}{" "}
-              {error instanceof Error
-                ? error.message
-                : t("common.unknownError")}
+              {isUnauthorized
+                ? t("common.redirectingToLogin")
+                : `${t("common.errorLoading")} ${
+                    error instanceof Error
+                      ? error.message
+                      : t("common.unknownError")
+                  }`}
             </div>
           </div>
         </div>
