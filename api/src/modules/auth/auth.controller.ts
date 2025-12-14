@@ -115,12 +115,14 @@ export class AuthController {
         storedCodeVerifier,
       );
 
+      const isAdmin = false;
+
       if (req.session) {
         (req.session as any).user = {
           id: user.id,
           username: user.username,
           name: user.name,
-          groups: [],
+          role: isAdmin ? 'admin' : 'user',
           eduperson_entitlement: user.eduperson_entitlement,
         };
 

@@ -14,6 +14,4 @@ export interface UserContext {
   id: string;
   username: string;
   role: UserRole;
-  groups?: string[]; // Derived from role/username if needed
-  hostname?: string; // Derived from role/username if needed
 }

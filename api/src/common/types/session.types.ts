@@ -4,12 +4,9 @@ declare module 'express-session' {
   export interface SessionData {
     user?: {
       id?: string;
-      sub?: string;
       username?: string;
-      email?: string;
       name?: string;
-      groups?: string[];
-      roles?: string[];
+      role?: string;
       [key: string]: any;
     };
     oidcState?: string;
