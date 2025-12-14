@@ -23,13 +23,8 @@ export class OidcService implements OnModuleInit {
     }
 
     try {
-      // Discover the issuer and create configuration
-      const issuerUrl = oidcConfig.issuer;
-
-      this.logger.log(`Discovering OIDC issuer ... ${issuerUrl}`);
-
       this.config = await client.discovery(
-        new URL(issuerUrl),
+        new URL(oidcConfig.issuer),
         oidcConfig.clientId,
         {
           redirect_uris: [oidcConfig.redirectUri || ''],
@@ -38,7 +33,7 @@ export class OidcService implements OnModuleInit {
         client.ClientSecretPost(oidcConfig.clientSecret),
       );
 
-      this.logger.log(`Discovered OIDC issuer: ${issuerUrl}`);
+      this.logger.log(`Discovered OIDC issuer: ${oidcConfig.issuer}`);
       this.logger.log('OIDC client initialized successfully');
     } catch (error) {
       this.logger.error('Failed to initialize OIDC client', error);
@@ -84,13 +79,12 @@ export class OidcService implements OnModuleInit {
     request: Request | URL,
     storedState: string,
     storedCodeVerifier: string,
-  ): Promise<any> {
+  ) {
     if (!this.config) {
       throw new Error('OIDC client not initialized');
     }
 
     try {
-      // Exchange code for tokens using authorization code grant
       const tokenSet = await client.authorizationCodeGrant(
         this.config,
         request,
@@ -100,31 +94,19 @@ export class OidcService implements OnModuleInit {
         },
       );
 
-      // Get user info - use skipSubjectCheck to avoid type issues
-      // The sub claim will be validated by the library from the userInfo response
       const userInfo = await client.fetchUserInfo(
         this.config,
         tokenSet.access_token!,
         client.skipSubjectCheck,
       );
 
-      console.log('OIDC client initialized successfully', userInfo);
-
-      // Combine user info with token data
       return {
         id: userInfo.sub,
-        username:
-          (userInfo as any).preferred_username ||
-          (userInfo as any).email ||
-          userInfo.sub,
-        email: (userInfo as any).email,
+        username: (userInfo as any).preferred_username || userInfo.sub,
         name: (userInfo as any).name,
-        groups: (userInfo as any).groups || [],
-        roles: (userInfo as any).roles || [],
-        entitlements: (userInfo as any).eduperson_entitlement || [],
+        locale: (userInfo as any).locale || null,
         eduperson_entitlement: (userInfo as any).eduperson_entitlement || [],
         tokens: tokenSet,
-        ...userInfo,
       };
     } catch (error) {
       this.logger.error('OIDC callback error', error);

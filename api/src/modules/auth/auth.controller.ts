@@ -11,7 +11,6 @@ import { SkipAuth } from '@/common/guards/user-context.guard';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { OidcConfig } from '@/config/oidc.config';
-import { UserRole } from '@/common/types/user-context.types';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiResponse as ApiResponseDto } from '@/common/dto/api-response.dto';
 import { ApiOkResponseModel } from '@/common/swagger/api-generic-response';
@@ -44,7 +43,6 @@ export class AuthController {
       throw new UnauthorizedException('Failed to generate authorization URL');
     }
 
-    // Store state and code verifier in session
     if (req.session) {
       (req.session as any).oidcState = authData.state;
       (req.session as any).oidcCodeVerifier = authData.codeVerifier;
@@ -89,8 +87,6 @@ export class AuthController {
     }
 
     try {
-      // Use the configured redirect URI to ensure it matches what was used in the authorization request
-      // The OAuth provider validates that the redirect URI in the callback matches exactly
       const oidcConfig = this.configService.get<OidcConfig>('oidc')!;
       const configuredRedirectUri = oidcConfig.redirectUri;
 
@@ -98,9 +94,7 @@ export class AuthController {
         throw new BadRequestException('OIDC redirect URI not configured');
       }
 
-      // Build callback URL using the configured redirect URI, but preserve query parameters from the request
       const callbackUrl = new URL(configuredRedirectUri);
-      // Copy query parameters from the actual request (code, state, etc.)
       const requestUrl = new URL(
         req.originalUrl || req.url,
         `${req.protocol}://${req.get('host')}`,
@@ -115,38 +109,25 @@ export class AuthController {
         requestUrl: requestUrl.toString(),
       });
 
-      // Handle the callback and get user info
       const user = await this.oidcService.handleCallback(
         callbackUrl,
         storedState,
         storedCodeVerifier,
       );
 
-      this.logger.log('OIDC callback: User authenticated', {
-        id: user.id,
-        username: user.username,
-      });
-
-      // Store user in session for future requests
       if (req.session) {
         (req.session as any).user = {
-          id: user.id || user.sub || '',
-          username:
-            user.username || user.preferred_username || user.email || 'unknown',
-          email: user.email,
+          id: user.id,
+          username: user.username,
           name: user.name,
-          groups: user.groups || [],
-          roles: user.roles || [],
-          sub: user.sub,
-          ...user, // Store all user data
+          groups: [],
+          eduperson_entitlement: user.eduperson_entitlement,
         };
 
-        // Clean up OIDC session data
         delete (req.session as any).oidcState;
         delete (req.session as any).oidcCodeVerifier;
       }
 
-      // Redirect to frontend after successful authentication
       const frontendUrl =
         process.env.FRONTEND_URL?.split(',')[0] || 'http://localhost:5173';
       res.redirect(`${frontendUrl}/?authenticated=true`);
@@ -158,7 +139,6 @@ export class AuthController {
 
   @Get('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    // Destroy session
     req.session?.destroy((err) => {
       if (err) {
         this.logger.error('Error destroying session:', err);
@@ -181,49 +161,10 @@ export class AuthController {
   getCurrentUser(
     @UserContextDecorator() userContext: UserContext,
   ): ApiResponseDto<CurrentUserDTO> {
-    if (!userContext) {
-      throw new UnauthorizedException('Not authenticated');
-    }
-
     const data: CurrentUserDTO = {
       username: userContext.username,
       role: userContext.role,
     };
     return new ApiResponseDto(data);
-  }
-
-  @Get('user')
-  async getUser(@Req() req: Request) {
-    // Check session first
-    if ((req.session as any)?.user) {
-      const sessionUser = (req.session as any).user;
-      const role = this.determineUserRole(sessionUser);
-      return {
-        id: sessionUser.id || sessionUser.sub || '',
-        username:
-          sessionUser.username ||
-          sessionUser.preferred_username ||
-          sessionUser.email ||
-          'unknown',
-        email: sessionUser.email,
-        name: sessionUser.name,
-        role,
-      };
-    }
-
-    // User should be in session if authenticated
-
-    throw new UnauthorizedException('Not authenticated');
-  }
-
-  private determineUserRole(user: any): UserRole {
-    // Check if user is admin based on groups or other claims
-    // This is a placeholder - adjust based on your OIDC provider's claims
-    const groups = user.groups || [];
-    this.logger.log('groups', groups);
-    if (groups.includes('admin') || groups.includes('administrators')) {
-      return UserRole.ADMIN;
-    }
-    return UserRole.USER;
   }
 }
