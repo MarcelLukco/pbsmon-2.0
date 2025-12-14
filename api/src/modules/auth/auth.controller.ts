@@ -87,6 +87,10 @@ export class AuthController {
   getCurrentUser(
     @UserContextDecorator() userContext: UserContext,
   ): ApiResponseDto<CurrentUserDTO> {
+    if (!userContext) {
+      throw new UnauthorizedException('Not authenticated');
+    }
+
     const data: CurrentUserDTO = {
       username: userContext.username,
       role: userContext.role,
