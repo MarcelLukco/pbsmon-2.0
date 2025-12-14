@@ -7,7 +7,6 @@ import { QueuesModule } from '@/modules/queues/queues.module';
 import { StorageSpacesModule } from '@/modules/storage-spaces/storage-spaces.module';
 import { InfrastructureModule } from '@/modules/infrastructure/infrastructure.module';
 import { UsersModule } from '@/modules/users/users.module';
-import { GroupsModule } from '@/modules/groups/groups.module';
 import { JobsModule } from '@/modules/jobs/jobs.module';
 import { StatusModule } from '@/modules/status/status.module';
 import { DataCollectionModule } from '@/modules/data-collection/data-collection.module';
@@ -41,7 +40,6 @@ import configuration, {
     StorageSpacesModule,
     InfrastructureModule,
     UsersModule,
-    GroupsModule,
     JobsModule,
     StatusModule,
     DataCollectionModule,
