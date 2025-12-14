@@ -6,6 +6,7 @@ import {
   UseGuards,
   UnauthorizedException,
 } from '@nestjs/common';
+import { SkipAuth } from '@/common/guards/user-context.guard';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
@@ -25,6 +26,7 @@ export class AuthController {
   constructor(private configService: ConfigService) {}
 
   @Get('auth/login')
+  @SkipAuth()
   @UseGuards(AuthGuard('oidc'))
   async login() {
     // This will redirect to OIDC provider
@@ -32,6 +34,7 @@ export class AuthController {
   }
 
   @Get('login')
+  @SkipAuth()
   @UseGuards(AuthGuard('oidc'))
   async callback(@Req() req: Request, @Res() res: Response) {
     // After successful authentication, user is attached to req.user by passport
@@ -40,6 +43,8 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Authentication failed');
     }
+
+    console.log('user in callback', user);
 
     // Store user in session for future requests
     if (req.session) {
@@ -138,6 +143,7 @@ export class AuthController {
     // Check if user is admin based on groups or other claims
     // This is a placeholder - adjust based on your OIDC provider's claims
     const groups = user.groups || [];
+    console.log('groups', groups);
     if (groups.includes('admin') || groups.includes('administrators')) {
       return UserRole.ADMIN;
     }

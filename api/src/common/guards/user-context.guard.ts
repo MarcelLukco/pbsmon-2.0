@@ -18,10 +18,20 @@ import { OidcConfig } from '@/config/oidc.config';
 export const USER_CONTEXT_KEY = 'userContext';
 
 /**
+ * Metadata key to skip authentication check
+ */
+export const SKIP_AUTH_KEY = 'skipAuth';
+
+/**
  * Decorator to mark endpoints that require user context
  * (Currently optional, will be required when authentication is implemented)
  */
 export const RequireUserContext = () => SetMetadata(USER_CONTEXT_KEY, true);
+
+/**
+ * Decorator to skip authentication check for an endpoint
+ */
+export const SkipAuth = () => SetMetadata(SKIP_AUTH_KEY, true);
 
 /**
  * Guard that extracts user context from request and enforces authorization
@@ -47,16 +57,13 @@ export class UserContextGuard implements CanActivate {
     const response = context.switchToHttp().getResponse();
     const path = request.path;
 
-    // Allow /login endpoint without authentication (OIDC callback)
-    // Also allow /auth/login (OIDC initiation) and other auth endpoints
-    if (
-      path === '/login' ||
-      path === '/auth/login' ||
-      path.startsWith('/auth/') ||
-      path === '/status' ||
-      path === '/health'
-    ) {
-      // For auth endpoints, still try to extract user context if available
+    // Check if endpoint is marked to skip auth
+    const skipAuth = this.reflector.get<boolean>(
+      SKIP_AUTH_KEY,
+      context.getHandler(),
+    );
+    if (skipAuth) {
+      // For endpoints that skip auth, still try to extract user context if available
       // but don't require it
       const userContext = this.extractUserContext(request);
       if (userContext) {
