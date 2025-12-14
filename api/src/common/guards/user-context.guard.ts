@@ -44,6 +44,7 @@ export class UserContextGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
     const path = request.path;
 
     // Allow /login endpoint without authentication (OIDC callback)
@@ -66,9 +67,12 @@ export class UserContextGuard implements CanActivate {
 
     const userContext = this.extractUserContext(request);
 
-    // If no user context, return 401 Unauthorized
+    // If no user context, redirect to OIDC login
+    // This is better for web apps than returning 401
     if (!userContext) {
-      throw new UnauthorizedException('Authentication required');
+      // Redirect to OIDC login initiation endpoint
+      response.redirect('/api/auth/login');
+      return false;
     }
 
     // Handle impersonation: check if X-Impersonate-User header is present
