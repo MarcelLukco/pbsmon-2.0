@@ -1,7 +1,6 @@
 export type SortColumn =
   | "name"
   | "status"
-  | "createdAt"
   | "vmCount"
   | "vcpus"
   | "memoryGb";

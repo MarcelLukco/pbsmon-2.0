@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataCollectionService } from '@/modules/data-collection/data-collection.service';
-import { PbsQueue } from '@/modules/data-collection/types/pbs.types';
+import {
+  PbsQueue,
+  PbsReservation,
+  PbsNode,
+} from '@/modules/data-collection/types/pbs.types';
 import {
   QueueListDTO,
   QueuesListDTO,
@@ -11,6 +15,7 @@ import {
   QueueStateCountDTO,
   QueueAclDTO,
   QueueResourcesDTO,
+  QueueReservationDTO,
 } from './dto/queue-detail.dto';
 import { UserContext, UserRole } from '@/common/types/user-context.types';
 
@@ -430,6 +435,9 @@ export class QueuesService {
     // Extract ACL users and resolve their names from Perun data
     const aclUsers = this.getAclUsers(queue, userContext);
 
+    // Check if queue has a reservation
+    const hasReservation = this.checkQueueHasReservation(queue, serverName);
+
     return {
       name: queue.name,
       server: serverName || null,
@@ -447,6 +455,7 @@ export class QueuesService {
       canBeDirectlySubmitted,
       aclGroups,
       aclUsers,
+      hasReservation,
       children: children.length > 0 ? children : undefined,
     };
   }
@@ -477,6 +486,7 @@ export class QueuesService {
     const stateCount = this.parseStateCount(queue.attributes.state_count);
     const acl = this.parseAcl(queue, userContext);
     const resources = this.parseResources(queue);
+    const reservation = this.parseReservation(queue, serverName);
 
     // Get additional attributes (exclude already mapped ones)
     const excludedKeys = new Set([
@@ -528,6 +538,7 @@ export class QueuesService {
       hasAccess: this.checkQueueAccess(queue, userContext),
       acl,
       resources,
+      reservation,
       children: children && children.length > 0 ? children : null,
       parent: parent,
       additionalAttributes:
@@ -596,6 +607,138 @@ export class QueuesService {
     }
 
     return acl;
+  }
+
+  /**
+   * Check if a queue has an associated reservation
+   */
+  private checkQueueHasReservation(
+    queue: PbsQueue,
+    serverName?: string | null,
+  ): boolean {
+    const pbsData = this.dataCollectionService.getPbsData();
+    if (!pbsData?.servers) {
+      return false;
+    }
+
+    // Find the server data
+    let serverData = serverName ? pbsData.servers[serverName] : null;
+    if (!serverData) {
+      // Search across all servers if serverName not provided
+      for (const [key, data] of Object.entries(pbsData.servers)) {
+        if (data.reservations?.items) {
+          const foundReservation = data.reservations.items.find(
+            (r) => r.attributes.queue === queue.name,
+          );
+          if (foundReservation) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    if (!serverData.reservations?.items) {
+      return false;
+    }
+
+    // Check if any reservation is linked to this queue
+    return serverData.reservations.items.some(
+      (r) => r.attributes.queue === queue.name,
+    );
+  }
+
+  /**
+   * Parse reservation information for a queue
+   * Finds reservations linked to this queue and associated nodes
+   */
+  private parseReservation(
+    queue: PbsQueue,
+    serverName?: string,
+  ): QueueReservationDTO | null {
+    const pbsData = this.dataCollectionService.getPbsData();
+    if (!pbsData?.servers) {
+      return null;
+    }
+
+    // Find the server data
+    let serverData = serverName ? pbsData.servers[serverName] : null;
+    if (!serverData) {
+      // Search across all servers if serverName not provided
+      for (const [key, data] of Object.entries(pbsData.servers)) {
+        if (data.reservations?.items) {
+          const foundReservation = data.reservations.items.find(
+            (r) => r.attributes.queue === queue.name,
+          );
+          if (foundReservation) {
+            serverData = data;
+            serverName = key;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!serverData?.reservations?.items) {
+      return null;
+    }
+
+    // Find reservation(s) linked to this queue
+    const reservations = serverData.reservations.items.filter(
+      (r) => r.attributes.queue === queue.name,
+    );
+
+    if (reservations.length === 0) {
+      return null;
+    }
+
+    // Use the first reservation (typically there's only one per queue)
+    const reservation = reservations[0];
+
+    // Find nodes that have this reservation
+    const nodes: string[] = [];
+    if (serverData.nodes?.items) {
+      for (const node of serverData.nodes.items) {
+        const nodeResv = node.attributes.resv;
+        if (nodeResv && nodeResv === reservation.name) {
+          nodes.push(node.name);
+        }
+      }
+    }
+
+    // Parse authorized users
+    const authorizedUsers = reservation.attributes.Authorized_Users
+      ? reservation.attributes.Authorized_Users.split(',')
+          .map((u) => u.trim())
+          .filter(Boolean)
+      : null;
+
+    // Parse reservation start/end times
+    const startTime = reservation.attributes.reserve_start
+      ? parseInt(reservation.attributes.reserve_start, 10)
+      : null;
+    const endTime = reservation.attributes.reserve_end
+      ? parseInt(reservation.attributes.reserve_end, 10)
+      : null;
+    const duration = reservation.attributes.reserve_duration
+      ? parseInt(reservation.attributes.reserve_duration, 10)
+      : null;
+
+    return {
+      name: reservation.name,
+      displayName: reservation.attributes.Reserve_Name || null,
+      owner: reservation.attributes.Reserve_Owner || null,
+      state: reservation.attributes.reserve_state || null,
+      startTime,
+      endTime,
+      duration,
+      resourceMem: reservation.attributes['Resource_List.mem'] || null,
+      resourceNcpus: reservation.attributes['Resource_List.ncpus'] || null,
+      resourceNgpus: reservation.attributes['Resource_List.ngpus'] || null,
+      resourceNodect: reservation.attributes['Resource_List.nodect'] || null,
+      authorizedUsers,
+      nodes: nodes.length > 0 ? nodes : null,
+    };
   }
 
   /**

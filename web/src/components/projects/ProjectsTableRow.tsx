@@ -63,23 +63,6 @@ export function ProjectsTableRow({ project }: ProjectsTableRowProps) {
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span className="text-sm text-gray-600">
-          {project.createdAt
-            ? (() => {
-                const dateValue =
-                  typeof project.createdAt === "string"
-                    ? project.createdAt
-                    : typeof project.createdAt === "number"
-                    ? new Date(project.createdAt).toISOString()
-                    : null;
-                return dateValue
-                  ? new Date(dateValue).toLocaleDateString()
-                  : t("projects.noDate");
-              })()
-            : t("projects.noDate")}
-        </span>
-      </td>
     </tr>
   );
 }

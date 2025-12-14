@@ -139,6 +139,14 @@ export class QueueListDTO {
   aclUsers?: QueueAclUserDTO[] | null;
 
   @Expose()
+  @ApiProperty({
+    description:
+      'Whether this queue is created for a reservation (has an associated reservation)',
+    required: false,
+  })
+  hasReservation?: boolean;
+
+  @Expose()
   @Type(() => QueueListDTO)
   @ApiProperty({
     description: 'Child queues (queues that this queue routes to)',

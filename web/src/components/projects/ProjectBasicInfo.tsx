@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Icon } from "@iconify/react";
+import { Tooltip } from "react-tooltip";
 import type { ProjectDetailDTO } from "@/lib/generated-api";
 
 interface ProjectBasicInfoProps {
@@ -23,10 +24,20 @@ export function ProjectBasicInfo({ project }: ProjectBasicInfoProps) {
               {project.name}
             </div>
             {project.isPersonal && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                <Icon icon="mdi:account" className="w-3 h-3 mr-1" />
-                {t("projects.personal")}
-              </span>
+              <>
+                <span
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 cursor-help"
+                  data-tooltip-id="personal-project-tooltip"
+                  data-tooltip-content={t("projects.personalTooltip")}
+                >
+                  <Icon icon="mdi:account" className="w-3 h-3 mr-1" />
+                  {t("projects.personal")}
+                </span>
+                <Tooltip
+                  id="personal-project-tooltip"
+                  style={{ maxWidth: "300px", whiteSpace: "normal" }}
+                />
+              </>
             )}
             {project.isMyProject && (
               <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
@@ -58,24 +69,6 @@ export function ProjectBasicInfo({ project }: ProjectBasicInfoProps) {
             </span>
           </div>
         </div>
-        {project.createdAt && (
-          <div>
-            <div className="text-sm text-gray-500">
-              {t("projects.createdAt")}
-            </div>
-            <div className="text-lg font-medium text-gray-900">
-              {(() => {
-                if (typeof project.createdAt === "string") {
-                  return new Date(project.createdAt).toLocaleDateString();
-                }
-                if (typeof project.createdAt === "number") {
-                  return new Date(project.createdAt).toLocaleDateString();
-                }
-                return t("projects.noDate");
-              })()}
-            </div>
-          </div>
-        )}
         <div>
           <div className="text-sm text-gray-500">
             {t("projects.reservedResources")}

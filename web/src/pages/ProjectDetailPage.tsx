@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useProjectDetail } from "@/hooks/useProjectDetail";
 import { ProjectBasicInfo } from "@/components/projects/ProjectBasicInfo";
 import { ProjectVmsSection } from "@/components/projects/ProjectVmsSection";
+import { ProjectUsersSection } from "@/components/projects/ProjectUsersSection";
 
 export function ProjectDetailPage() {
   const { t } = useTranslation();
@@ -86,6 +87,7 @@ export function ProjectDetailPage() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <ProjectBasicInfo project={project} />
           <ProjectVmsSection vms={project.vms} />
+          <ProjectUsersSection users={project.users} />
         </div>
       </div>
     </>

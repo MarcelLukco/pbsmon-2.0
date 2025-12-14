@@ -89,6 +89,32 @@ export function QueueTreeNode({ queue, level, isLast }: QueueTreeNodeProps) {
                 />
               </div>
             )}
+            {queue.hasReservation && (
+              <div
+                className={`flex-shrink-0 ${
+                  queue.started ? "text-purple-600" : "text-orange-600"
+                }`}
+              >
+                <Icon
+                  icon={
+                    queue.started
+                      ? "mdi:calendar-clock"
+                      : "mdi:calendar-clock-outline"
+                  }
+                  className="w-5 h-5"
+                  data-tooltip-id={`reservation-${queue.name}-${queue.server}`}
+                  data-tooltip-content={
+                    queue.started
+                      ? t("queues.queueReserved")
+                      : t("queues.queueReservedNotStarted")
+                  }
+                />
+                <Tooltip
+                  id={`reservation-${queue.name}-${queue.server}`}
+                  style={{ maxWidth: "300px", whiteSpace: "normal" }}
+                />
+              </div>
+            )}
             <Link
               to={`/queues/${queueId}`}
               className="font-medium text-gray-900 cursor-pointer hover:text-primary-600 truncate"

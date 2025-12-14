@@ -15,11 +15,10 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
   // Format date (DD.MM.YYYY)
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString("cs-CZ", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
   };
 
   // Format time (HH:MM)
@@ -100,14 +99,27 @@ export function WaitingJobsTableRow({ job }: WaitingJobsTableRowProps) {
 
       {/* GPU Column */}
       <div className="text-sm">
-        <div className="flex items-center gap-1">
-          <span className="text-gray-900">
-            {typeof job.gpuReserved === "number"
+        {(() => {
+          const gpuReserved =
+            typeof job.gpuReserved === "number"
               ? job.gpuReserved
-              : Number(job.gpuReserved) || 0}
-          </span>
-          <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
-        </div>
+              : Number(job.gpuReserved) || 0;
+
+          // Show "no GPU" in gray if gpuReserved is 0
+          if (gpuReserved === 0) {
+            return (
+              <div className="text-gray-400 text-sm">{t("jobs.noGpu")}</div>
+            );
+          }
+
+          // Show gpu count
+          return (
+            <div className="flex items-center gap-1">
+              <span className="text-gray-900">{gpuReserved}</span>
+              <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
+            </div>
+          );
+        })()}
       </div>
 
       {/* RAM Column */}

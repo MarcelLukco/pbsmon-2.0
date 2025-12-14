@@ -50,27 +50,32 @@ export function UserBasicInfo({ user }: UserBasicInfoProps) {
             <div className="text-lg font-medium text-gray-900">
               {(() => {
                 const expiration = user.membershipExpiration;
+                let date: Date | null = null;
+                
                 if (expiration instanceof Date) {
-                  return expiration.toLocaleDateString();
-                }
-                if (
+                  date = expiration;
+                } else if (
                   typeof expiration === "string" ||
                   typeof expiration === "number"
                 ) {
-                  return new Date(expiration).toLocaleDateString();
-                }
-                // If it's a Record, try to extract a date value
-                if (typeof expiration === "object" && expiration !== null) {
+                  date = new Date(expiration);
+                } else if (typeof expiration === "object" && expiration !== null) {
                   const dateValue = Object.values(expiration).find(
                     (v) => typeof v === "string" || typeof v === "number"
                   );
                   if (dateValue) {
-                    return new Date(
-                      dateValue as string | number
-                    ).toLocaleDateString();
+                    date = new Date(dateValue as string | number);
                   }
                 }
-                return String(expiration);
+                
+                if (!date || isNaN(date.getTime())) {
+                  return String(expiration);
+                }
+                
+                const day = String(date.getDate()).padStart(2, "0");
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`;
               })()}
             </div>
           </div>

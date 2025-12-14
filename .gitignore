@@ -144,3 +144,7 @@ temp
 
 # Nginx basic auth password file
 nginx/.htpasswd
+
+*.keytab
+
+pbs-collector/krb5.conf

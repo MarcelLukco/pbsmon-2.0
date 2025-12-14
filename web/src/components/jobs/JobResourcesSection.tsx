@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { Icon } from "@iconify/react";
 import type { JobDetailDTO } from "@/lib/generated-api";
 import { ProgressBar } from "@/components/common/ProgressBar";
 
@@ -16,6 +17,45 @@ export function JobResourcesSection({ job }: JobResourcesSectionProps) {
     job.state === "R" ||
     job.state === "E" ||
     completedStates.includes(job.state);
+
+  // Parse time string (HH:MM:SS) to seconds
+  const parseTimeToSeconds = (timeStr: string | null | undefined): number => {
+    if (!timeStr) return 0;
+    const parts = String(timeStr).split(":").map(Number);
+    if (parts.length === 3) {
+      return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    }
+    return 0;
+  };
+
+  // Format seconds to HH:MM:SS
+  const formatSecondsToTime = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  // Calculate GPU time from GPU percent
+  // Note: gpuPercent represents the total percentage for all GPUs combined
+  // With 2 GPUs, gpuPercent can be up to 200% (100% per GPU)
+  // Formula: per-GPU percentage = gpuPercent / gpuReserved
+  //         GPU time = (gpuPercent / gpuReserved) * runtime
+  const calculateGpuTimeFromPercent = (
+    gpuPercent: number,
+    runtime: string | null | undefined,
+    gpuReserved: number
+  ): string | null => {
+    if (!runtime || gpuReserved === 0) return null;
+    const runtimeSeconds = parseTimeToSeconds(runtime);
+    if (runtimeSeconds === 0) return null;
+    // Calculate GPU time: (total percentage / number of GPUs) * runtime
+    const perGpuPercent = gpuPercent / gpuReserved;
+    const gpuTimeSeconds = (perGpuPercent / 100) * runtimeSeconds;
+    return formatSecondsToTime(gpuTimeSeconds);
+  };
 
   return (
     <div className="px-6 py-4 border-b border-gray-200">
@@ -47,9 +87,15 @@ export function JobResourcesSection({ job }: JobResourcesSectionProps) {
           </div>
           <div>
             <div className="text-sm text-gray-500">{t("jobs.gpu")}</div>
-            <div className="text-lg font-medium text-gray-900">
-              {job.gpuReserved}
-            </div>
+            {job.gpuReserved === 0 ? (
+              <div className="text-lg font-medium text-gray-400">
+                {t("jobs.noGpu")}
+              </div>
+            ) : (
+              <div className="text-lg font-medium text-gray-900">
+                {job.gpuReserved}
+              </div>
+            )}
           </div>
           <div>
             <div className="text-sm text-gray-500">{t("jobs.memory")}</div>
@@ -111,17 +157,42 @@ export function JobResourcesSection({ job }: JobResourcesSectionProps) {
                 )}
               </div>
             )}
-            {job.gpuTimeUsed && (
+            {job.gpuReserved > 0 && (
               <div>
                 {typeof job.gpuUsagePercent === "number" &&
                 job.gpuUsagePercent !== null ? (
-                  <ProgressBar
-                    label={t("jobs.gpuTimeUsed")}
-                    value={String(job.gpuTimeUsed)}
-                    percent={job.gpuUsagePercent}
-                    color="#4b5563"
-                  />
-                ) : (
+                  (() => {
+                    // Calculate GPU time from GPU percent
+                    const calculatedGpuTime = calculateGpuTimeFromPercent(
+                      job.gpuUsagePercent,
+                      job.runtime ? String(job.runtime) : null,
+                      job.gpuReserved
+                    );
+                    // Calculate per-GPU percentage for display (clamp to 100% max)
+                    const perGpuPercent = Math.min(
+                      100,
+                      job.gpuUsagePercent / job.gpuReserved
+                    );
+                    return (
+                      <ProgressBar
+                        label={t("jobs.gpu")}
+                        value={
+                          calculatedGpuTime
+                            ? calculatedGpuTime
+                            : `${job.gpuReserved} ${t("jobs.gpu")}`
+                        }
+                        percent={perGpuPercent}
+                        color="#4b5563"
+                        icon={
+                          <Icon
+                            icon="bi:gpu-card"
+                            className="w-[14px] h-[14px]"
+                          />
+                        }
+                      />
+                    );
+                  })()
+                ) : job.gpuTimeUsed ? (
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-gray-600">
@@ -132,7 +203,7 @@ export function JobResourcesSection({ job }: JobResourcesSectionProps) {
                       </span>
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             )}
             {job.memoryUsed !== null && (
@@ -216,7 +287,11 @@ export function JobResourcesSection({ job }: JobResourcesSectionProps) {
                       {resource.cpu}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                      {resource.gpu}
+                      {resource.gpu === 0 ? (
+                        <span className="text-gray-400">{t("jobs.noGpu")}</span>
+                      ) : (
+                        resource.gpu
+                      )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                       {resource.ram.toFixed(2)} GB

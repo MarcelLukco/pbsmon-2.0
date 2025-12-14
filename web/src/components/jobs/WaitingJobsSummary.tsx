@@ -55,7 +55,7 @@ export function WaitingJobsSummary({
               <div className="font-semibold text-gray-900 min-w-[80px] text-right">
                 {count}x
               </div>
-              <div className="text-gray-700 flex-1">
+              <div className="text-gray-700 flex-1 min-w-0 break-words">
                 {reason || <span className="text-gray-400 italic">-</span>}
               </div>
               {onFilterByReason && (

@@ -39,12 +39,9 @@ export function ProjectsPage() {
       setOrder(order === "asc" ? "desc" : "asc");
     } else {
       // Set new column with default order
-      // Default to desc for numeric fields and createdAt, asc for text fields
+      // Default to desc for numeric fields, asc for text fields
       const defaultOrder =
-        column === "createdAt" ||
-        column === "vmCount" ||
-        column === "vcpus" ||
-        column === "memoryGb"
+        column === "vmCount" || column === "vcpus" || column === "memoryGb"
           ? "desc"
           : "asc";
       setSort(column);
@@ -69,8 +66,7 @@ export function ProjectsPage() {
       : 0;
   const totalPages = totalCount ? Math.ceil(totalCount / limit) : 0;
 
-  const projects: Project[] =
-    data?.data?.projects || [];
+  const projects: Project[] = data?.data?.projects || [];
 
   return (
     <>

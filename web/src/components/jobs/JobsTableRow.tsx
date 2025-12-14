@@ -43,11 +43,10 @@ export function JobsTableRow({
   // Format date (DD.MM.YYYY)
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString("cs-CZ", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
   };
 
   // Format time (HH:MM)
@@ -63,6 +62,45 @@ export function JobsTableRow({
   const formatTimeString = (timeStr: string | null | undefined) => {
     if (!timeStr) return null;
     return timeStr;
+  };
+
+  // Parse time string (HH:MM:SS) to seconds
+  const parseTimeToSeconds = (timeStr: string | null | undefined): number => {
+    if (!timeStr) return 0;
+    const parts = String(timeStr).split(":").map(Number);
+    if (parts.length === 3) {
+      return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    }
+    return 0;
+  };
+
+  // Format seconds to HH:MM:SS
+  const formatSecondsToTime = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  // Calculate GPU time from GPU percent
+  // Note: gpuPercent represents the total percentage for all GPUs combined
+  // With 2 GPUs, gpuPercent can be up to 200% (100% per GPU)
+  // Formula: per-GPU percentage = gpuPercent / gpuReserved
+  //         GPU time = (gpuPercent / gpuReserved) * runtime
+  const calculateGpuTimeFromPercent = (
+    gpuPercent: number,
+    runtime: string | null | undefined,
+    gpuReserved: number
+  ): string | null => {
+    if (!runtime || gpuReserved === 0) return null;
+    const runtimeSeconds = parseTimeToSeconds(runtime);
+    if (runtimeSeconds === 0) return null;
+    // Calculate GPU time: (total percentage / number of GPUs) * runtime
+    const perGpuPercent = gpuPercent / gpuReserved;
+    const gpuTimeSeconds = (perGpuPercent / 100) * runtimeSeconds;
+    return formatSecondsToTime(gpuTimeSeconds);
   };
 
   // Calculate grid columns based on which columns are hidden
@@ -223,41 +261,71 @@ export function JobsTableRow({
 
       {/* GPU Column */}
       <div className="text-sm">
-        {jobState === "R" && job.gpuTimeUsed && (
-          <div className="mb-1">
-            <span className="text-gray-600">{t("jobs.gpuTime")}: </span>
-            <span className="font-medium">
-              {formatTimeString(String(job.gpuTimeUsed))}
-            </span>
-          </div>
-        )}
-        {jobState === "R" &&
-        typeof job.gpuUsagePercent === "number" &&
-        job.gpuUsagePercent !== null &&
-        job.gpuUsagePercent !== undefined ? (
-          <div className="mb-1">
-            <ProgressBar
-              label=""
-              value={
-                typeof job.gpuReserved === "number"
-                  ? job.gpuReserved
-                  : Number(job.gpuReserved) || 0
-              }
-              percent={job.gpuUsagePercent}
-              color="#4b5563"
-              icon={<Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />}
-            />
-          </div>
-        ) : (
-          <div className="flex items-center gap-1">
-            <span className="text-gray-900">
-              {typeof job.gpuReserved === "number"
-                ? job.gpuReserved
-                : Number(job.gpuReserved) || 0}
-            </span>
-            <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
-          </div>
-        )}
+        {(() => {
+          const gpuReserved =
+            typeof job.gpuReserved === "number"
+              ? job.gpuReserved
+              : Number(job.gpuReserved) || 0;
+          const gpuUsagePercent =
+            typeof job.gpuUsagePercent === "number" &&
+            job.gpuUsagePercent !== null &&
+            job.gpuUsagePercent !== undefined
+              ? job.gpuUsagePercent
+              : null;
+
+          // Show "no GPU" in gray if gpuReserved is 0
+          if (gpuReserved === 0) {
+            return (
+              <div className="text-gray-400 text-sm">{t("jobs.noGpu")}</div>
+            );
+          }
+
+          // Show progress bar if we have gpuUsagePercent and job is running or completed
+          if (
+            (jobState === "R" ||
+              jobState === "C" ||
+              jobState === "F" ||
+              jobState === "X") &&
+            gpuUsagePercent !== null
+          ) {
+            // Calculate GPU time from GPU percent
+            const calculatedGpuTime = calculateGpuTimeFromPercent(
+              gpuUsagePercent,
+              (job as any).runtime,
+              gpuReserved
+            );
+            // Calculate per-GPU percentage for display (clamp to 100% max)
+            const perGpuPercent = Math.min(100, gpuUsagePercent / gpuReserved);
+
+            return (
+              <div className="mb-1">
+                <ProgressBar
+                  label=""
+                  value={gpuReserved}
+                  percent={perGpuPercent}
+                  color="#4b5563"
+                  icon={
+                    <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
+                  }
+                />
+                {calculatedGpuTime && (
+                  <div className="text-gray-600 flex justify-between ">
+                    <span>{t("jobs.gpuTime")}:</span>
+                    <span>{calculatedGpuTime}</span>
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // Default: show gpu count
+          return (
+            <div className="flex items-center gap-1">
+              <span className="text-gray-900">{gpuReserved}</span>
+              <Icon icon="bi:gpu-card" className="w-[14px] h-[14px]" />
+            </div>
+          );
+        })()}
       </div>
 
       {/* RAM Column */}
@@ -277,6 +345,7 @@ export function JobsTableRow({
               percent={job.memoryUsagePercent}
               color="#4b5563"
             />
+            <div className="h-4"></div>
           </div>
         ) : (
           <div className="flex items-center gap-1">

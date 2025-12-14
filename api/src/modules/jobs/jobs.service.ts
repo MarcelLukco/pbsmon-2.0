@@ -225,12 +225,19 @@ export class JobsService {
       }
     }
 
-    if (
+    // Use GPU percent from PBS directly (if available)
+    if (hasResourceUsage && attrs['resources_used.gpupercent']) {
+      const gpuPercent = parseFloat(attrs['resources_used.gpupercent']);
+      if (!isNaN(gpuPercent)) {
+        gpuUsagePercent = Math.min(100, Math.round(gpuPercent));
+      }
+    } else if (
       hasResourceUsage &&
       gpuTimeUsed &&
       attrs['Resource_List.walltime'] &&
       gpuReserved > 0
     ) {
+      // Fall back to calculation from gpuTimeUsed if gpupercent is not available
       const gpuTimeSeconds = this.parseTimeToSeconds(gpuTimeUsed);
       const walltimeSeconds = this.parseTimeToSeconds(
         attrs['Resource_List.walltime'],
@@ -632,12 +639,19 @@ export class JobsService {
       }
     }
 
-    if (
+    // Use GPU percent from PBS directly (if available)
+    if (hasResourceUsage && attrs['resources_used.gpupercent']) {
+      const gpuPercent = parseFloat(attrs['resources_used.gpupercent']);
+      if (!isNaN(gpuPercent)) {
+        gpuUsagePercent = Math.min(100, Math.round(gpuPercent));
+      }
+    } else if (
       hasResourceUsage &&
       gpuTimeUsed &&
       walltimeReserved &&
       gpuReserved > 0
     ) {
+      // Fall back to calculation from gpuTimeUsed if gpupercent is not available
       const gpuTimeSeconds = this.parseTimeToSeconds(gpuTimeUsed);
       const maxGpuTimeSeconds = walltimeReserved * gpuReserved;
       if (maxGpuTimeSeconds > 0) {

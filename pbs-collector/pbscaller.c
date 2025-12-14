@@ -32,32 +32,39 @@ int main(int argc, char **argv) {
         fprintf(stderr,"Cannot connect to %s, error %d \n",server,pbs_errno);
         return 1;
     }
+    printf("Connected to %s\n", server);
+    printf("Getting server info\n");
     /* get server info */
     bs = pbs_statserver(con, NULL, NULL);
     process_data_json(bs,"servers", output_dir);
-
+    printf("Getting queues info\n");
     /* get queues info */
     bs = pbs_statque(con, "", NULL, NULL);
     process_data_json(bs,"queues", output_dir);
-
+    printf("Getting nodes info\n");
     /* get nodes info */
     bs = pbs_statnode(con, "", NULL, NULL);
     process_data_json(bs,"nodes", output_dir);
+    printf("Getting jobs info\n");
     /* get jobs info: t - job arrays, x - finished jobs*/
     bs = pbs_statjob(con, "", NULL, "tx");
     process_data_json(bs,"jobs", output_dir);
+    printf("Getting reservations info\n");
     /* get reservations info */
     bs = pbs_statresv(con, NULL, NULL, NULL);
     process_data_json(bs,"reservations", output_dir);
+    printf("Getting resources info\n");
     /* get resources info */
     bs = pbs_statrsc(con, NULL, NULL, NULL);
     process_data_json(bs,"resources", output_dir);
+    printf("Getting scheduler info\n");
     /* get scheduler info */
     bs = pbs_statsched(con, NULL, NULL);
     process_data_json(bs,"schedulers", output_dir);
     /* get hook info */
-    bs = pbs_stathook(con, NULL, NULL, NULL);
-    process_data_json(bs,"hooks", output_dir);
+    // printf("Getting hook info\n");
+    // bs = pbs_stathook(con, NULL, NULL, NULL);
+    // process_data_json(bs,"hooks");
     /* end connection */
     pbs_disconnect(con);
     return 0;
@@ -118,12 +125,25 @@ int process_data_json(struct batch_status *bs, char *type, const char* output_di
     struct attrl *atp;
     int count = 0;
     char filename[512];
+    char temp_filename[512];
+    char *buffer = NULL;
+    FILE *fp = NULL;
 
     snprintf(filename, sizeof(filename), "%s/%s.json", output_dir, type);
-    FILE *fp = fopen(filename, "w");
+    snprintf(temp_filename, sizeof(temp_filename), "%s/%s.json.tmp", output_dir, type);
+    
+    /* Write to temporary file first for atomic updates */
+    fp = fopen(temp_filename, "w");
     if (!fp) {
-        fprintf(stderr, "Failed to open file %s for writing\n", filename);
+        fprintf(stderr, "Failed to open temporary file %s for writing\n", temp_filename);
         return -1;
+    }
+    
+    /* Set large buffer (256KB) for better performance with very large JSON files */
+    /* This significantly reduces system calls when writing large files like jobs.json */
+    buffer = (char *)malloc(262144); /* 256KB buffer */
+    if (buffer) {
+        setvbuf(fp, buffer, _IOFBF, 262144);
     }
 
     /* Count items */
@@ -165,12 +185,36 @@ int process_data_json(struct batch_status *bs, char *type, const char* output_di
         if (tmp->next != NULL)
             fprintf(fp, ",");
         fputc('\n', fp);
+        
+        /* For very large files (like jobs), flush periodically to ensure progress */
+        /* Flush every 1000 items to prevent buffer from getting too large */
+        if (i > 0 && i % 1000 == 0 && strcmp(type, "jobs") == 0) {
+            fflush(fp);
+        }
     }
 
     fprintf(fp, "  ]\n");
     fprintf(fp, "}\n");
 
+    /* Flush all buffered data to disk before closing */
+    fflush(fp);
     fclose(fp);
+    fp = NULL;
+    
+    /* Free buffer */
+    if (buffer) {
+        free(buffer);
+        buffer = NULL;
+    }
+    
+    /* Atomically rename temp file to final filename */
+    if (rename(temp_filename, filename) != 0) {
+        fprintf(stderr, "Failed to rename %s to %s\n", temp_filename, filename);
+        unlink(temp_filename); /* Clean up temp file on error */
+        pbs_statfree(bs);
+        return -1;
+    }
+    
     pbs_statfree(bs);
     return 0;
 }

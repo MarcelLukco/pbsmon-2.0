@@ -70,6 +70,11 @@ export class PrometheusCollectionService {
       description: 'List of OpenStack servers/VMs (id, name, project_id)',
       query: 'custom_openstack_server_info',
     },
+    {
+      name: 'OpenStack Users',
+      description: 'List of all OpenStack users with their projects',
+      query: 'aai_dump_user_resource_capability_info',
+    },
   ];
 
   constructor(private readonly prometheusClient: PrometheusClient) {}

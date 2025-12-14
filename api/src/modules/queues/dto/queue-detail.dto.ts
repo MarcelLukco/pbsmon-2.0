@@ -169,6 +169,80 @@ export class QueueStateCountDTO {
 }
 
 /**
+ * Reservation information for a queue
+ */
+export class QueueReservationDTO {
+  @Expose()
+  @ApiProperty({ description: 'Reservation name/ID' })
+  name: string;
+
+  @Expose()
+  @ApiProperty({ description: 'Reservation display name', nullable: true })
+  displayName?: string | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Reservation owner', nullable: true })
+  owner?: string | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Reservation state', nullable: true })
+  state?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Reservation start time (Unix timestamp)',
+    nullable: true,
+  })
+  startTime?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Reservation end time (Unix timestamp)',
+    nullable: true,
+  })
+  endTime?: number | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Reservation duration (seconds)',
+    nullable: true,
+  })
+  duration?: number | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Resource list - memory', nullable: true })
+  resourceMem?: string | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Resource list - CPUs', nullable: true })
+  resourceNcpus?: string | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Resource list - GPUs', nullable: true })
+  resourceNgpus?: string | null;
+
+  @Expose()
+  @ApiProperty({ description: 'Resource list - node count', nullable: true })
+  resourceNodect?: string | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Authorized users',
+    type: [String],
+    nullable: true,
+  })
+  authorizedUsers?: string[] | null;
+
+  @Expose()
+  @ApiProperty({
+    description: 'Reserved nodes',
+    type: [String],
+    nullable: true,
+  })
+  nodes?: string[] | null;
+}
+
+/**
  * Queue Detail DTO
  */
 export class QueueDetailDTO {
@@ -239,6 +313,16 @@ export class QueueDetailDTO {
     nullable: true,
   })
   resources?: QueueResourcesDTO | null;
+
+  @Expose()
+  @Type(() => QueueReservationDTO)
+  @ApiProperty({
+    description:
+      'Reservation information if this queue is created for a reservation',
+    type: QueueReservationDTO,
+    nullable: true,
+  })
+  reservation?: QueueReservationDTO | null;
 
   @Expose()
   @Type(() => QueueDetailDTO)

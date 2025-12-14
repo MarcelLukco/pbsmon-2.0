@@ -9,6 +9,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { UserContext, UserRole } from '@/common/types/user-context.types';
+import { DataCollectionService } from '@/modules/data-collection/data-collection.service';
 import { OidcConfig } from '@/config/oidc.config';
 
 /**
@@ -34,13 +35,14 @@ export class UserContextGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private configService: ConfigService,
+    private dataCollectionService: DataCollectionService,
   ) {
     // Check if we're in development mode
     this.isDevelopment =
       process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'prod';
   }
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const userContext = this.extractUserContext(request);
@@ -85,10 +87,15 @@ export class UserContextGuard implements CanActivate {
         throw new ForbiddenException('Invalid impersonation username');
       }
 
+      // Look up user's id from pbsmon_users.json
+      const userId = await this.getUserIdFromUsername(
+        impersonatedUsername.trim(),
+      );
+
       // Create impersonated user context
       // Keep role as USER so admins can see what regular users see
       request.userContext = {
-        id: '', // todo: retrievie this from perun_machines.json
+        id: userId || '',
         username: impersonatedUsername.trim(),
         role: UserRole.USER,
         groups: userContext.groups || [],
@@ -161,6 +168,39 @@ export class UserContextGuard implements CanActivate {
     }
 
     return null;
+  }
+
+  /**
+   * Get user's AAI id from pbsmon_users.json by username (logname)
+   * Returns the id if found, null otherwise
+   */
+  private async getUserIdFromUsername(
+    username: string,
+  ): Promise<string | null> {
+    try {
+      const perunData = this.dataCollectionService.getPerunData();
+      if (!perunData?.users?.users) {
+        return null;
+      }
+
+      // Look for user by logname (exact match or without @domain)
+      const usernameBase = username.split('@')[0];
+      for (const user of perunData.users.users) {
+        if (
+          user.logname === username ||
+          user.logname === usernameBase ||
+          user.logname.split('@')[0] === usernameBase
+        ) {
+          // Return the id if available, otherwise return null
+          return user.id || null;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      // If lookup fails, return null (will use empty string as fallback)
+      return null;
+    }
   }
 
   /**
