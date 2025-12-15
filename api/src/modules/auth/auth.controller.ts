@@ -124,9 +124,6 @@ export class AuthController {
 
       const unixAdminEtcGroups = ['pbs-admins', 'metasw'];
 
-      // todo: temporary solution, but still secure solution
-      // ideally, this should be taken from eduperson_entitlement
-      // unixAdminEtcGroups should be taken from the config
       const isAdmin = this.checkIsAdmin(username, unixAdminEtcGroups);
 
       if (req.session) {

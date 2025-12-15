@@ -87,12 +87,10 @@ export class PbsCollectionService {
         return;
       }
 
-      // Collect data for each server
       for (const serverDir of serverDirs) {
         const serverPath = path.join(basePath, serverDir);
         this.logger.debug(`Collecting data for server: ${serverDir}`);
 
-        // Load all PBS entity files for this server
         const jobs = await this.loadEntityFile<PbsJob>(
           path.join(serverPath, 'jobs.json'),
           'jobs',
@@ -129,10 +127,8 @@ export class PbsCollectionService {
           path.join(serverPath, 'default_fairshare.txt'),
         );
 
-        // Determine server name from servers collection or use directory name
         let serverName = serverDir;
         if (servers?.items && servers.items.length > 0) {
-          // Extract server name from first server's name (e.g., "pbs-m1.metacentrum.cz" -> "pbs-m1")
           const fullServerName = servers.items[0].name;
           serverName = fullServerName.split('.')[0] || serverDir;
         }
@@ -152,7 +148,6 @@ export class PbsCollectionService {
             fairshare,
           };
         } else {
-          // Update only successfully loaded data, preserve previous values for failed reads
           serversData[serverName] = {
             timestamp: new Date().toISOString(),
             serverName,
@@ -280,10 +275,6 @@ export class PbsCollectionService {
       return null;
     }
   }
-
-  // Removed callPbscaller() method - PBS data collection is now handled by
-  // the separate pbs-collector service that runs every minute.
-  // This service only reads the data files from the shared volume.
 
   getData(): PbsData | null {
     return this.pbsData;

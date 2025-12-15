@@ -27,9 +27,6 @@ import { PrometheusResponse } from '@/modules/data-collection/clients/prometheus
 export class InfrastructureService {
   constructor(private readonly dataCollectionService: DataCollectionService) {}
 
-  /**
-   * Get list of all infrastructure (limited data) with statistics
-   */
   getInfrastructureList(): {
     data: InfrastructureOrganizationListDTO[];
     meta: InfrastructureListMetaDto;
@@ -52,9 +49,6 @@ export class InfrastructureService {
     return { data, meta };
   }
 
-  /**
-   * Calculate statistics from infrastructure list
-   */
   private calculateStatistics(
     organizations: InfrastructureOrganizationListDTO[],
   ): InfrastructureListMetaDto {
@@ -79,24 +73,22 @@ export class InfrastructureService {
       // Extract hostname from PERUN name for matching
       const perunHostname = perunNodeName.split('.')[0];
 
-      // Find node across all servers
       for (const serverData of Object.values(pbsData.servers)) {
         if (serverData.nodes?.items) {
-          // Try exact match first
           let pbsNode = serverData.nodes.items.find(
             (node) => node.name === perunNodeName,
           );
           if (pbsNode) {
             return pbsNode;
           }
-          // Try hostname match (PERUN FQDN vs PBS short name)
+
           pbsNode = serverData.nodes.items.find(
             (node) => node.name === perunHostname,
           );
           if (pbsNode) {
             return pbsNode;
           }
-          // Try matching against PBS host attribute (full hostname)
+
           pbsNode = serverData.nodes.items.find(
             (node) =>
               node.attributes['resources_available.host'] === perunNodeName ||
@@ -112,7 +104,6 @@ export class InfrastructureService {
       return undefined;
     };
 
-    // Calculate totals and GPU/memory from PBS
     let totalGpu = 0;
     let totalMemory = 0;
 
@@ -123,7 +114,6 @@ export class InfrastructureService {
         totalCpu += cluster.totalCpu;
 
         for (const node of cluster.nodes) {
-          // Count node states
           if (node.actualState === NodeState.FREE) {
             freeNodes++;
           } else if (node.actualState === NodeState.PARTIALLY_USED) {

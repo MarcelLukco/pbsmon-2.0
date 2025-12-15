@@ -51,14 +51,10 @@ export class UserContextGuard implements CanActivate {
 
     const userContext = this.extractUserContext(request);
 
-    // If no user context, return 401 Unauthorized
-    // Frontend will handle redirecting to /api/auth/login
     if (!userContext) {
       throw new UnauthorizedException('Authentication required');
     }
 
-    // Handle impersonation: check if X-Impersonate-User header is present
-    // Headers are typically lowercased by Express, but check both cases
     const impersonateHeader =
       request.headers['x-impersonate-user'] ||
       request.headers['X-Impersonate-User'];
@@ -84,7 +80,7 @@ export class UserContextGuard implements CanActivate {
       }
 
       // Look up user's id from pbsmon_users.json
-      const userId = await this.getUserIdFromUsername(
+      const userId = await this.getUserSubIdFromUsername(
         impersonatedUsername.trim(),
       );
 
@@ -98,22 +94,14 @@ export class UserContextGuard implements CanActivate {
       return true;
     }
 
-    // Attach user context to request for use in controllers/services
     request.userContext = userContext;
 
     return true;
   }
 
-  /**
-   * Extract user context from request
-   * Priority:
-   * 1. MOCK_ADMIN config (if enabled)
-   * 2. Session user (from OIDC authentication)
-   */
   private extractUserContext(request: any): UserContext | null {
     const oidcConfig = this.configService.get<OidcConfig>('oidc');
 
-    // 1. Check MOCK_ADMIN config
     if (oidcConfig?.mockAdmin) {
       if (!this.isDevelopment) {
         throw new Error('Cannot use MOCK_ADMIN .env and be in production mode');
@@ -126,7 +114,6 @@ export class UserContextGuard implements CanActivate {
       };
     }
 
-    // 2. Check session (from OIDC login)
     if (request.session?.user) {
       const sessionUser = request.session.user;
       return {
@@ -139,11 +126,7 @@ export class UserContextGuard implements CanActivate {
     return null;
   }
 
-  /**
-   * Get user's AAI id from pbsmon_users.json by username (logname)
-   * Returns the id if found, null otherwise
-   */
-  private async getUserIdFromUsername(
+  private async getUserSubIdFromUsername(
     username: string,
   ): Promise<string | null> {
     try {

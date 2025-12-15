@@ -1,9 +1,6 @@
 import { PbsNode, PbsQueue } from '@/modules/data-collection/types/pbs.types';
 import { QueueListDTO } from '@/modules/queues/dto/queue-list.dto';
 
-/**
- * Field types for QSUB form fields
- */
 export type QsubFieldType =
   | 'select'
   | 'time'
@@ -13,17 +10,10 @@ export type QsubFieldType =
   | 'multiselect'
   | 'memory';
 
-/**
- * Context for filter and script param functions (contains values of dependent fields)
- */
 export interface QsubFieldContext {
   [fieldName: string]: any;
 }
 
-/**
- * Filter function type - filters nodes based on current field value
- * Returns true if node matches the filter, false otherwise
- */
 export type QsubFilterFunction = (
   node: PbsNode,
   value: any,
@@ -31,35 +21,21 @@ export type QsubFilterFunction = (
   context?: QsubFieldContext,
 ) => boolean;
 
-/**
- * Script parameter function - generates PBS script parameter from field value
- * Returns the parameter string to add to qsub command, or null if no parameter needed
- */
 export type QsubScriptParamFunction = (
   value: any,
   context?: QsubFieldContext,
 ) => string | null;
 
-/**
- * Data collection function - collects available values for this field from nodes/queues
- * Returns array of available options (for select fields) or null for other types
- */
 export type QsubDataCollectionFunction = (
   nodes: PbsNode[],
   queues: PbsQueue[],
 ) => any[] | null;
 
-/**
- * Multilingual text object
- */
 export interface MultilingualText {
   en: string;
   cs: string;
 }
 
-/**
- * QSUB field configuration
- */
 export interface QsubFieldConfig {
   name: string;
   type: QsubFieldType;
@@ -74,12 +50,8 @@ export interface QsubFieldConfig {
   dependsOn?: string[]; // Field names this field depends on
 }
 
-/**
- * QSUB configuration - defines all form fields
- */
 export const qsubConfig: QsubFieldConfig[] = [
   // ========== BASIC SETTINGS ==========
-
   {
     name: 'walltime',
     type: 'time',
@@ -860,9 +832,6 @@ export const qsubConfig: QsubFieldConfig[] = [
   },
 ];
 
-/**
- * Helper function to parse size strings (e.g., "100gb", "50mb") to number in GB
- */
 export function parseSize(sizeStr: string): number {
   if (!sizeStr) return 0;
   const match = sizeStr.match(/^(\d+(?:\.\d+)?)\s*(gb|mb|tb|kb)?$/i);
@@ -883,23 +852,14 @@ export function parseSize(sizeStr: string): number {
   }
 }
 
-/**
- * Get basic fields configuration
- */
 export function getBasicFields(): QsubFieldConfig[] {
   return qsubConfig.filter((field) => field.category === 'basic');
 }
 
-/**
- * Get advanced fields configuration
- */
 export function getAdvancedFields(): QsubFieldConfig[] {
   return qsubConfig.filter((field) => field.category === 'advanced');
 }
 
-/**
- * Get field configuration by name
- */
 export function getFieldConfig(name: string): QsubFieldConfig | undefined {
   return qsubConfig.find((field) => field.name === name);
 }

@@ -7,7 +7,6 @@ import {
 } from '@nestjs/swagger';
 import { MetaDto } from '../dto/meta.dto';
 
-// Describes: { data: T, meta?: MetaDto }
 export function ApiOkResponseModel(
   model: any,
   description?: string,
@@ -29,7 +28,6 @@ export function ApiOkResponseModel(
   );
 }
 
-// Describes: { data: T[], meta?: MetaDto }
 export function ApiOkResponseArray(
   model: any,
   description?: string,
@@ -51,7 +49,6 @@ export function ApiOkResponseArray(
   );
 }
 
-// Describes an error response: { error: string, details?: any }
 export function ApiErrorResponse(status: number, description?: string) {
   return applyDecorators(
     SwaggerApiResponse({

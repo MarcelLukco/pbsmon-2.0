@@ -3,9 +3,6 @@ import { Expose, Type } from 'class-transformer';
 import { NodeState } from './infrastructure-list.dto';
 import { QueueListDTO } from '@/modules/queues/dto/queue-list.dto';
 
-/**
- * Localized string DTO
- */
 export class LocalizedStringDTO {
   @Expose()
   @ApiProperty({ description: 'Czech translation' })
@@ -16,9 +13,6 @@ export class LocalizedStringDTO {
   en: string;
 }
 
-/**
- * PBS Node Data DTO - contains all PBS-related information
- */
 export class InfrastructureNodePbsDTO {
   @Expose()
   @ApiProperty({
@@ -267,9 +261,6 @@ export class InfrastructureNodePbsDTO {
   } | null;
 }
 
-/**
- * Node DTO for detail view (full Perun data + optional PBS state)
- */
 export class InfrastructureNodeDetailDTO {
   @Expose()
   @ApiProperty({ description: 'Node name (from Perun)' })
@@ -330,9 +321,6 @@ export class InfrastructureNodeDetailDTO {
   } | null;
 }
 
-/**
- * Cluster DTO for detail view (full Perun data + aggregated PBS state)
- */
 export class InfrastructureClusterDetailDTO {
   @Expose()
   @ApiProperty({ description: 'Cluster ID' })
@@ -409,9 +397,6 @@ export class InfrastructureClusterDetailDTO {
   machines: InfrastructureNodeDetailDTO[];
 }
 
-/**
- * Organization DTO for detail view (full Perun data)
- */
 export class InfrastructureOrganizationDetailDTO {
   @Expose()
   @ApiProperty({ description: 'Organization ID' })
@@ -431,9 +416,6 @@ export class InfrastructureOrganizationDetailDTO {
   resources: InfrastructureClusterDetailDTO[];
 }
 
-/**
- * Main Infrastructure DTO - supports both list and detail views
- */
 export class InfrastructureDetailDTO {
   @Expose()
   @ApiProperty({ description: 'Infrastructure type' })
@@ -447,7 +429,6 @@ export class InfrastructureDetailDTO {
   @ApiProperty({ description: 'Name (can be string or localized object)' })
   name: string | LocalizedStringDTO;
 
-  // Organization fields (only for Organization type)
   @Expose()
   @Type(() => InfrastructureOrganizationDetailDTO)
   @ApiProperty({
@@ -457,7 +438,6 @@ export class InfrastructureDetailDTO {
   })
   organization?: InfrastructureOrganizationDetailDTO | null;
 
-  // Cluster fields (only for Cluster type)
   @Expose()
   @Type(() => InfrastructureClusterDetailDTO)
   @ApiProperty({
@@ -467,7 +447,6 @@ export class InfrastructureDetailDTO {
   })
   cluster?: InfrastructureClusterDetailDTO | null;
 
-  // Node fields (only for Node type)
   @Expose()
   @Type(() => InfrastructureNodeDetailDTO)
   @ApiProperty({

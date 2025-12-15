@@ -46,7 +46,6 @@ export class QueuesService {
       };
     }
 
-    // If server name is provided, only get queues from that server
     if (serverName) {
       const serverData = pbsData.servers[serverName];
       if (!serverData?.queues?.items) {
@@ -63,8 +62,6 @@ export class QueuesService {
       );
     }
 
-    // Otherwise, aggregate queues from all servers
-    // Track which server each queue belongs to
     const allQueues: PbsQueue[] = [];
     const queueToServerMap = new Map<string, string>();
     for (const [serverNameKey, serverData] of Object.entries(pbsData.servers)) {

@@ -1,22 +1,13 @@
-/**
- * Localized string with Czech and English translations
- */
 export interface LocalizedString {
   cs: string;
   en: string;
 }
 
-/**
- * Perun Machine (individual machine within a resource)
- */
 export interface PerunMachine {
   cpu: number;
   name: string;
 }
 
-/**
- * Perun Resource (cluster or computing resource)
- */
 export interface PerunResource {
   id: string;
   name: string;
@@ -36,26 +27,17 @@ export interface PerunResource {
   machines: PerunMachine[];
 }
 
-/**
- * Perun Physical Machine (organization/institution)
- */
 export interface PerunPhysicalMachine {
   id: string;
   name: LocalizedString;
   resources: PerunResource[];
 }
 
-/**
- * Perun Machines data structure
- */
 export interface PerunMachines {
   frontends: unknown[]; // Typically empty, structure unknown
   physical_machines: PerunPhysicalMachine[];
 }
 
-/**
- * Perun VOS (Virtual Organization) information
- */
 export interface PerunVosInfo {
   expires: string; // Date string (YYYY-MM-DD)
   groups: string[];
@@ -63,23 +45,14 @@ export interface PerunVosInfo {
   status: 'VALID' | 'EXPIRED' | string;
 }
 
-/**
- * Perun User VOS mapping
- */
 export interface PerunUserVos {
   [vosName: string]: PerunVosInfo;
 }
 
-/**
- * Perun User Publications mapping
- */
 export interface PerunUserPublications {
   [publicationName: string]: string;
 }
 
-/**
- * Perun User
- */
 export interface PerunUser {
   id?: string;
   logname: string;
@@ -89,16 +62,10 @@ export interface PerunUser {
   vos: PerunUserVos;
 }
 
-/**
- * Perun Users data structure
- */
 export interface PerunUsers {
   users: PerunUser[];
 }
 
-/**
- * Etc Group entry (parsed from /etc/group format)
- */
 export interface EtcGroupEntry {
   groupname: string;
   password: string;
@@ -106,22 +73,13 @@ export interface EtcGroupEntry {
   members: string[];
 }
 
-/**
- * Etc Groups entry for a specific server
- */
 export interface PerunEtcGroupServer {
   serverName: string;
   entries: EtcGroupEntry[];
 }
 
-/**
- * Etc Groups array structure
- */
 export type PerunEtcGroups = PerunEtcGroupServer[];
 
-/**
- * Storage space entry
- */
 export interface StorageSpace {
   directory: string;
   usedTiB: number;
@@ -131,9 +89,6 @@ export interface StorageSpace {
   formattedSize: string;
 }
 
-/**
- * Storage spaces data
- */
 export interface StorageSpaces {
   storageSpaces: StorageSpace[];
   totalTiB: number;
@@ -144,9 +99,6 @@ export interface StorageSpaces {
   formattedTotalFree: string;
 }
 
-/**
- * Combined Perun data structure
- */
 export interface PerunData {
   timestamp: string;
   machines: PerunMachines | null;

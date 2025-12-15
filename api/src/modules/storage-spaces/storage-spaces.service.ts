@@ -24,7 +24,6 @@ export class StorageSpacesService {
       };
     }
 
-    // Convert from internal types to DTOs
     const storageSpaceDTOs: StorageSpaceDTO[] = storageSpaces.storageSpaces.map(
       (space) => ({
         directory: space.directory,

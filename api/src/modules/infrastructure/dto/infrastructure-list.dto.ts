@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 
-/**
- * Node state (for future PBS integration)
- */
 export enum NodeState {
   FREE = 'free',
   PARTIALLY_USED = 'partially_used',
@@ -13,9 +10,6 @@ export enum NodeState {
   NOT_AVAILABLE = 'not-available',
 }
 
-/**
- * Node DTO for list view
- */
 export class InfrastructureNodeListDTO {
   @Expose()
   @ApiProperty({ description: 'Node name' })
