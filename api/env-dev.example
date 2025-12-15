@@ -1,0 +1,5 @@
+# OpenStack Prometheus login
+PROMETHEUS_BASE_URL=https://dummy
+PROMETHEUS_API_ENDPOINT=/api/v1/query
+PROMETHEUS_USERNAME=user
+PROMETHEUS_PASSWORD=pass

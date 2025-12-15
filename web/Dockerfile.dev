@@ -1,0 +1,20 @@
+# Development stage for web application
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci
+
+# Expose Vite dev server port
+EXPOSE 5173
+
+# Set NODE_ENV to development
+ENV NODE_ENV=development
+
+# Default command (can be overridden in docker-compose)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
