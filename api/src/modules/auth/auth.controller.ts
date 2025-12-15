@@ -22,7 +22,7 @@ import { DataCollectionService } from '@/modules/data-collection/data-collection
 import '@/common/types/session.types';
 
 @ApiTags('auth')
-@Controller()
+@Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
@@ -32,7 +32,7 @@ export class AuthController {
     private dataCollectionService: DataCollectionService,
   ) {}
 
-  @Get('auth/login')
+  @Get('login')
   @SkipAuth()
   async login(@Req() req: Request, @Res() res: Response) {
     if (!this.oidcService.isConfigured()) {
@@ -54,7 +54,7 @@ export class AuthController {
     res.redirect(authData.url);
   }
 
-  @Get('login')
+  @Get('login/callback')
   @SkipAuth()
   async callback(@Req() req: Request, @Res() res: Response) {
     this.logger.log('OIDC callback received', {
@@ -164,7 +164,7 @@ export class AuthController {
     res.redirect(frontendUrl);
   }
 
-  @Get('auth/current-user')
+  @Get('current-user')
   @ApiOperation({
     summary: 'Get current user information',
     description:
