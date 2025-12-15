@@ -33,8 +33,7 @@ if (process.env.DEBUG_ENV) {
   );
 }
 
-const API_URL =
-  env.API_BASE_URL || process.env.API_BASE_URL || "http://147.251.245.82/:4200";
+const API_URL = env.API_BASE_URL || process.env.API_BASE_URL;
 const API_AUTH_USERNAME =
   env.API_AUTH_USERNAME || process.env.API_AUTH_USERNAME;
 const API_AUTH_PASSWORD =

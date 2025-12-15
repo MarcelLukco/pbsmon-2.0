@@ -28,7 +28,7 @@ If you need to connect to Prometheus in development, create an `api/.env` file w
 cp api/env-dev.example api/.env
 ```
 
-Then edit `api/.env` and configure the listed variables. (these credentials are confidental and must be transferred through a **secure channel**s)
+Then edit `api/.env` and configure the listed variables. (these credentials are confidential and must be transferred through a **secure channel**s)
 
 The `docker-compose.dev.yml` will automatically read these variables from `api/.env` and pass them to the API container.
 
