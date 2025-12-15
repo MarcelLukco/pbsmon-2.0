@@ -35,14 +35,18 @@ async function bootstrap() {
   );
 
   // Enable CORS
-  const frontendUrl = process.env.FRONTEND_URL;
-  const allowedOrigins = frontendUrl
-    ? frontendUrl.split(',').map((url) => url.trim())
-    : [
-        'http://localhost:4200',
-        'http://localhost:5173',
-        'http://localhost:3000',
-      ];
+
+  let allowedOrigins: string[] = [];
+  if (process.env.NODE_ENV === 'development') {
+    const frontendUrl = process.env.FRONTEND_URL || '';
+    allowedOrigins = frontendUrl
+      ? frontendUrl.split(',').map((url) => url.trim())
+      : [
+          'http://localhost:4000',
+          'http://localhost:5173',
+          'http://localhost:3000',
+        ];
+  }
 
   app.enableCors({
     origin: (origin, callback) => {

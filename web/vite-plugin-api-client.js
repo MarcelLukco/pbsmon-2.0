@@ -42,7 +42,7 @@ export default function apiClientPlugin() {
 
       // Watch for API server changes by polling the OpenAPI endpoint
       const API_URL =
-        env.API_BASE_URL || process.env.API_BASE_URL || "http://localhost:4200";
+        env.API_BASE_URL || process.env.API_BASE_URL || "http://localhost:4000";
       const API_AUTH_USERNAME =
         env.API_AUTH_USERNAME || process.env.API_AUTH_USERNAME;
       const API_AUTH_PASSWORD =

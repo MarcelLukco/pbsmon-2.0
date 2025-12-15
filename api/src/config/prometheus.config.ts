@@ -26,9 +26,7 @@ export class PrometheusConfig {
 }
 
 export const getPrometheusConfig = (): PrometheusConfig => ({
-  baseUrl:
-    process.env.PROMETHEUS_BASE_URL ||
-    'https://prometheus.brno.openstack.cloud.e-infra.cz',
+  baseUrl: process.env.PROMETHEUS_BASE_URL || 'https://dummy',
   apiEndpoint: process.env.PROMETHEUS_API_ENDPOINT || '/api/v1/query',
   username: process.env.PROMETHEUS_USERNAME || '',
   password: process.env.PROMETHEUS_PASSWORD || '',

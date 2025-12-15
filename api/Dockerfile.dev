@@ -20,6 +20,9 @@ EXPOSE 4000
 # Set NODE_ENV to development
 ENV NODE_ENV=development
 
+# Add node_modules/.bin to PATH so nest CLI is available
+ENV PATH="/app/node_modules/.bin:${PATH}"
+
 # Default command (can be overridden in docker-compose)
 CMD ["npm", "run", "start:dev"]
 

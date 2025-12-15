@@ -4,7 +4,7 @@ import type { ApiRequestOptions } from "./generated-api/core/ApiRequestOptions";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.API_BASE_URL ||
-  (import.meta.env.PROD ? "/api" : "http://localhost:4200");
+  (import.meta.env.PROD ? "/api" : "http://localhost:4000");
 
 const normalizedBaseUrl = API_BASE_URL.endsWith("/")
   ? API_BASE_URL.slice(0, -1)

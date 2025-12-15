@@ -9,7 +9,7 @@ export function useMachineDetail(nodeName: string) {
       const baseUrl =
         import.meta.env.VITE_API_BASE_URL ||
         import.meta.env.API_BASE_URL ||
-        (import.meta.env.PROD ? "/api" : "http://localhost:4200");
+        (import.meta.env.PROD ? "/api" : "http://localhost:4000");
       const normalizedBaseUrl = baseUrl.endsWith("/")
         ? baseUrl.slice(0, -1)
         : baseUrl;

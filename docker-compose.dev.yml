@@ -23,7 +23,6 @@ services:
       - ./api/tsconfig.build.json:/app/tsconfig.build.json
       - ./api/nest-cli.json:/app/nest-cli.json
       - ./api/data:/app/data
-      - /app/node_modules
     networks:
       - pbsmon-dev-network
     command: npm run start:dev
@@ -48,7 +47,6 @@ services:
       - ./web/vite.config.js:/app/vite.config.js
       - ./web/vite-plugin-api-client.js:/app/vite-plugin-api-client.js
       - ./web/scripts:/app/scripts
-      - /app/node_modules
     networks:
       - pbsmon-dev-network
     command: npm run dev -- --host 0.0.0.0
